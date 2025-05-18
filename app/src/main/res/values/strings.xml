@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name" translatable="false">Etomer</string>
+    <string name="create_connection">Create connection</string>
+    <string name="connections_list">Connections list</string>
+</resources>

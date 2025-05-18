@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Etomer</string>
+    <string name="create_connection">Créer une connection</string>
+    <string name="connections_list">Liste des connexions</string>
+</resources>
