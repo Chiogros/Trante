@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.1.21"
+    id("androidx.room")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -38,6 +40,9 @@ android {
     buildFeatures {
         compose = true
     }
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -51,6 +56,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose.android)
     implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -64,4 +70,13 @@ dependencies {
 
     // Jetpack Compose integration
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    val room_version = "2.7.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+
+    // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
+    // See Add the KSP plugin to your project
+    ksp("androidx.room:room-compiler:$room_version")
+
 }
