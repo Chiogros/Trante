@@ -1,15 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.1.21"
 }
-
-/*tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
-    compilerOptions.optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
-}*/
 
 android {
     namespace = "chiogros.etomer"
@@ -56,6 +50,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.androidx.room.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
