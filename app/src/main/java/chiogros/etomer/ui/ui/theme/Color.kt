@@ -1,4 +1,4 @@
-package chiogros.etomer.ui.theme
+package chiogros.etomer.ui.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

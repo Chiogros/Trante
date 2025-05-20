@@ -1,4 +1,4 @@
-package chiogros.etomer.ui.screens
+package chiogros.etomer.ui.ui.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

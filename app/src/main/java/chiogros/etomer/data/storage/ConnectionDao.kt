@@ -1,4 +1,4 @@
-package chiogros.etomer.dao
+package chiogros.etomer.data.storage
 
 import androidx.room.Dao
 import androidx.room.Delete

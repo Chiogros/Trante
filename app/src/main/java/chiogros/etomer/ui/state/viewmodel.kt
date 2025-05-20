@@ -1,7 +1,8 @@
-package chiogros.etomer.dao
+package chiogros.etomer.ui.state
 
 import androidx.lifecycle.ViewModel
-import androidx.room.RoomDatabase
+import chiogros.etomer.data.storage.Connection
+import chiogros.etomer.data.storage.ConnectionDatabase
 import kotlinx.coroutines.flow.Flow
 
 class MyViewModel(db: ConnectionDatabase) : ViewModel() {

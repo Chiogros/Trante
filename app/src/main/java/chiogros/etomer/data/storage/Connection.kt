@@ -1,4 +1,4 @@
-package chiogros.etomer.dao
+package chiogros.etomer.data.storage
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

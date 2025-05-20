@@ -1,4 +1,4 @@
-package chiogros.etomer.ui.screens
+package chiogros.etomer.ui.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,16 +31,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
+import chiogros.etomer.ui.state.MyViewModel
 
 @Composable
-fun ConnectionsList(onClick: () -> Unit) {
+fun ConnectionsList(onClick: () -> Unit, viewModel: MyViewModel) {
+    val entities by viewModel.allEntities.collectAsState(initial = emptyList())
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { TopBar() },
         floatingActionButton = { Fab(onClick) },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(10) { index ->
+            items(entities.size) { index ->
                 Item()
             }
         }

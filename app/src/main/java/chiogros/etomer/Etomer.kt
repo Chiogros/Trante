@@ -1,16 +1,12 @@
 package chiogros.etomer
 
-import androidx.compose.animation.EnterTransition
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import chiogros.etomer.dao.DiceRollViewModel
-import chiogros.etomer.dao.MyViewModel
-import chiogros.etomer.ui.screens.ConnectionEdit
-import chiogros.etomer.ui.screens.ConnectionsList
+import chiogros.etomer.ui.state.MyViewModel
+import chiogros.etomer.ui.ui.screens.ConnectionEdit
+import chiogros.etomer.ui.ui.screens.ConnectionsList
 import kotlinx.serialization.Serializable
 
 @Serializable
