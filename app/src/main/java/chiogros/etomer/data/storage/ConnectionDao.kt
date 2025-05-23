@@ -19,9 +19,9 @@ interface ConnectionDao {
     @Delete
     suspend fun delete(con: Connection)
 
-    @Query("SELECT * from Connection WHERE id = :id")
+    @Query("SELECT * from Connection WHERE connectionId = :id")
     fun get(id: Int): Flow<Connection>
 
-    @Query("SELECT * from Connection ORDER BY id ASC")
+    @Query("SELECT * from Connection")
     fun getAll(): Flow<List<Connection>>
 }

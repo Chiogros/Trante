@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,23 +21,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chiogros.etomer.R
-import chiogros.etomer.ui.state.MyViewModel
+import chiogros.etomer.data.storage.Connection
+import chiogros.etomer.ui.state.ConnectionViewModel
 
 @Composable
-fun ConnectionsList(onClick: () -> Unit, viewModel: MyViewModel) {
-    val entities by viewModel.allEntities.collectAsState(initial = emptyList())
+fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionViewModel) {
+    val connections = viewModel.connections.collectAsStateWithLifecycle(emptyList()).value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -43,9 +42,7 @@ fun ConnectionsList(onClick: () -> Unit, viewModel: MyViewModel) {
         floatingActionButton = { Fab(onClick) },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(entities.size) { index ->
-                Item()
-            }
+            items(connections) { connection -> Item(connection, viewModel) }
         }
     }
 }
@@ -73,7 +70,8 @@ fun Fab(onClick: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Sharp.Add,
-                contentDescription = stringResource(R.string.create_connection)
+                contentDescription = stringResource(R.string.create_connection),
+                modifier = Modifier.width(24.dp).padding(end = 8.dp)
             )
             Text(text = stringResource(R.string.create_connection))
         }
@@ -81,19 +79,20 @@ fun Fab(onClick: () -> Unit) {
 }
 
 @Composable
-fun Item() {
+fun Item(connection: Connection, viewModel: ConnectionViewModel) {
     Row (modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(modifier = Modifier.weight(1F), text = "Type", fontWeight = FontWeight.Normal, fontFamily = FontFamily.Monospace)
+        Text(text = "Type", modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal, fontFamily = FontFamily.Monospace)
         Column(modifier = Modifier.weight(3F)) {
-            Text(text = "example.net", style = MaterialTheme.typography.bodyLarge, fontFamily = FontFamily.Monospace)
+            Text(text = "example.net", fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyLarge)
             Text(text = "User: user", style = MaterialTheme.typography.bodyMedium)
         }
-        var checked by remember { mutableStateOf(true) }
         Switch(
-            checked = checked,
-            onCheckedChange = { checked = it },
+            checked = connection.enabled,
+            onCheckedChange = {
+                viewModel.update(connection.copy(enabled = it))
+            },
             modifier = Modifier.weight(1F)
         )
     }
-    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 }
