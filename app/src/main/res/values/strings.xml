@@ -2,4 +2,7 @@
     <string name="app_name" translatable="false">Etomer</string>
     <string name="create_connection">Create connection</string>
     <string name="connections_list">Connections list</string>
+    <string name="get_back_previous_screen">Get back to previous screen</string>
+    <string name="host">Host</string>
+    <string name="example_dot_net" translatable="false">example.net</string>
 </resources>

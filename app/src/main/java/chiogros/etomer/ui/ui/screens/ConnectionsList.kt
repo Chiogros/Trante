@@ -38,7 +38,7 @@ fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { TopBar() },
+        topBar = { ConnectionsListTopBar() },
         floatingActionButton = { Fab(onClick) },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
@@ -50,7 +50,7 @@ fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+fun ConnectionsListTopBar() {
     TopAppBar(
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
