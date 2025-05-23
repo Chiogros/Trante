@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -25,14 +26,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import chiogros.etomer.R
+import chiogros.etomer.data.storage.Connection
+import chiogros.etomer.ui.state.ConnectionViewModel
 
 @Composable
-fun ConnectionEdit(onClick: () -> Unit) {
+fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { ConnectionEditTopBar(onClick) }
+        topBar = { ConnectionEditTopBar(onBack, onBack, viewModel) }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).fillMaxWidth()) {
+        Column(modifier = Modifier.padding(innerPadding)) {
             ConnectionEditForm()
         }
     }
@@ -40,7 +43,7 @@ fun ConnectionEdit(onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectionEditTopBar(onClick: () -> Unit) {
+fun ConnectionEditTopBar(onClick: () -> Unit, onSave: () -> Unit, viewModel: ConnectionViewModel) {
     TopAppBar(
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -55,6 +58,16 @@ fun ConnectionEditTopBar(onClick: () -> Unit) {
                     imageVector = Icons.AutoMirrored.Sharp.ArrowBack,
                     contentDescription = stringResource(R.string.get_back_previous_screen)
                 )
+            }
+        },
+        actions = {
+            TextButton(
+                onClick = {
+                    viewModel.insert(Connection(enabled = false))
+                    onSave()
+                }
+            ) {
+                Text(stringResource(R.string.save))
             }
         }
     )

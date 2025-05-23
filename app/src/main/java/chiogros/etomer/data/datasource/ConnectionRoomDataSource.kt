@@ -9,6 +9,10 @@ class ConnectionRoomDataSource(private val dao: ConnectionDao) {
         return dao.getAll()
     }
 
+    suspend fun insert(connection: Connection) {
+        dao.insert(connection)
+    }
+
     suspend fun update(connection: Connection) {
         dao.update(connection)
     }

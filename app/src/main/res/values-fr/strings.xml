@@ -4,4 +4,5 @@
     <string name="connections_list">Liste des connexions</string>
     <string name="get_back_previous_screen">Retourner à l\'écran précédent</string>
     <string name="host">Hôte</string>
+    <string name="save">Enregistrer</string>
 </resources>

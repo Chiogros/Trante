@@ -9,6 +9,10 @@ class ConnectionRepository(private val localDataSource: ConnectionRoomDataSource
         return localDataSource.getAll()
     }
 
+    suspend fun insert(connection: Connection) {
+        localDataSource.insert(connection)
+    }
+
     suspend fun update(connection: Connection) {
         localDataSource.update(connection)
     }

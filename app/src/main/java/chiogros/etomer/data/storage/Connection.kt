@@ -25,6 +25,6 @@ data class ConnectionNetwork(
 @Entity
 data class Connection(
     @PrimaryKey(autoGenerate = true)
-    val connectionId: Long,
+    val connectionId: Long = 0,
     var enabled: Boolean,
 )

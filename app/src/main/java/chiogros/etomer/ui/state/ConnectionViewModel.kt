@@ -16,6 +16,12 @@ class ConnectionViewModel(private val repository: ConnectionRepository) : ViewMo
         emptyList()
     )
 
+    fun insert(connection: Connection) {
+        viewModelScope.launch {
+            repository.insert(connection)
+        }
+    }
+
     fun update(connection: Connection) {
         viewModelScope.launch {
             repository.update(connection)

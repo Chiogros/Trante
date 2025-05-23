@@ -22,7 +22,10 @@ fun Etomer(connectionViewModel: ConnectionViewModel) {
         navController = navController,
         startDestination = ConnectionsList
     ) {
-        composable<ConnectionEdit> { ConnectionEdit( onClick = { navController.navigate(ConnectionsList) } ) }
+        composable<ConnectionEdit> { ConnectionEdit(
+            onBack = { navController.popBackStack() },
+            viewModel = connectionViewModel
+        ) }
         composable<ConnectionsList> { ConnectionsList(
             onClick = { navController.navigate(ConnectionEdit) },
             viewModel = connectionViewModel
