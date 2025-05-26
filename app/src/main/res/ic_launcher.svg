@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg width="58.972363mm" height="62.250271mm" viewBox="0 0 58.972363 62.250271" version="1.1" id="svg1"
+    inkscape:version="1.4 (e7c3feb100, 2024-10-09)" sodipodi:docname="etomer.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.5"
+     inkscape:cx="-102"
+     inkscape:cy="211"
+     inkscape:window-width="1920"
+     inkscape:window-height="1018"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient37"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#58ddff;stop-opacity:1;"
+         offset="0"
+         id="stop37" />
+      <stop
+         style="stop-color:#2280ff;stop-opacity:1;"
+         offset="1"
+         id="stop38" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient37"
+       id="linearGradient38"
+       x1="75.287727"
+       y1="108.12132"
+       x2="79.302872"
+       y2="112.13646"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(10.385636,0,0,10.385636,-698.81849,-1005.5013)" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-74.456167,-107.13193)">
+    <path
+       id="rect23"
+       style="fill:url(#linearGradient38);stroke:none;stroke-width:1.77594;stroke-opacity:1"
+       d="m 74.456167,146.03029 h 10.385636 v 10.38565 H 74.456167 Z m 0,-12.96604 h 10.385636 v 10.38563 H 74.456167 Z m 0,-12.96616 h 10.385636 v 10.38563 H 74.456167 Z m 8.077293,49.28411 13.973001,-62.25027 h 36.922069 l -2.40595,10.81104 h -23.13413 l -3.05371,13.68807 h 21.56101 l -2.49848,10.81092 h -21.561 l -3.608933,16.04205 h 23.134123 l -2.40594,10.89819 z m -8.077293,-62.25027 h 10.385636 v 10.38565 H 74.456167 Z m 0,51.86462 H 84.841803 V 169.3822 H 74.456167 Z" />
+  </g>
+</svg>
