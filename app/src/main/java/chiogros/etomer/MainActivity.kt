@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import chiogros.etomer.data.datasource.ConnectionRoomDataSource
 import chiogros.etomer.data.repositories.ConnectionRepository
 import chiogros.etomer.data.storage.AppDatabase
@@ -12,6 +13,8 @@ import chiogros.etomer.ui.ui.theme.EtomerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
 
         val connectionViewModel = ConnectionViewModel(
