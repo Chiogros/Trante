@@ -6,4 +6,5 @@
     <string name="host">Host</string>
     <string name="example_dot_net" translatable="false">example.net</string>
     <string name="save">Save</string>
+    <string name="user">User</string>
 </resources>

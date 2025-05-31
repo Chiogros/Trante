@@ -26,24 +26,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import chiogros.etomer.R
-import chiogros.etomer.data.storage.Connection
-import chiogros.etomer.ui.state.ConnectionViewModel
+import chiogros.etomer.data.storage.ConnectionSftp
+import chiogros.etomer.ui.state.ConnectionEditViewModel
 
 @Composable
-fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionViewModel) {
+fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { ConnectionEditTopBar(onBack, onBack, viewModel) }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            ConnectionEditForm()
+            ConnectionEditForm(viewModel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectionEditTopBar(onClick: () -> Unit, onSave: () -> Unit, viewModel: ConnectionViewModel) {
+fun ConnectionEditTopBar(onClick: () -> Unit, onSave: () -> Unit, viewModel: ConnectionEditViewModel) {
     TopAppBar(
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -63,7 +63,7 @@ fun ConnectionEditTopBar(onClick: () -> Unit, onSave: () -> Unit, viewModel: Con
         actions = {
             TextButton(
                 onClick = {
-                    viewModel.insert(Connection(enabled = false))
+                    viewModel.insert(ConnectionSftp(host = viewModel.uiState.value.host, user = viewModel.uiState.value.user))
                     onSave()
                 }
             ) {
@@ -74,15 +74,34 @@ fun ConnectionEditTopBar(onClick: () -> Unit, onSave: () -> Unit, viewModel: Con
 }
 
 @Composable
-fun ConnectionEditForm() {
+fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
     var host by remember { mutableStateOf("") }
+    var user by remember { mutableStateOf("") }
 
     OutlinedTextField(
         value = host,
-        onValueChange = { host = it },
+        onValueChange = {
+            host = it
+            viewModel.uiState.value.host = it
+        },
         modifier = Modifier.fillMaxWidth(),
         label = { Text(stringResource(R.string.host)) },
         placeholder = { Text(stringResource(R.string.example_dot_net)) },
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.None,
+            autoCorrectEnabled = false
+        ),
+        singleLine = true
+    )
+
+    OutlinedTextField(
+        value = user,
+        onValueChange = {
+            user = it
+            viewModel.uiState.value.user = it
+        },
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(stringResource(R.string.user)) },
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.None,
             autoCorrectEnabled = false

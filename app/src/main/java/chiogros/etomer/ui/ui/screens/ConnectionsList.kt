@@ -29,11 +29,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chiogros.etomer.R
-import chiogros.etomer.data.storage.Connection
-import chiogros.etomer.ui.state.ConnectionViewModel
+import chiogros.etomer.data.storage.ConnectionSftp
+import chiogros.etomer.ui.state.ConnectionListViewModel
 
 @Composable
-fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionViewModel) {
+fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionListViewModel) {
     val connections = viewModel.connections.collectAsStateWithLifecycle(emptyList()).value
 
     Scaffold(
@@ -42,7 +42,7 @@ fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionViewModel) {
         floatingActionButton = { Fab(onClick) },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(connections) { connection -> Item(connection, viewModel) }
+            items(items = connections) { connection -> Item(connection, viewModel) }
         }
     }
 }
@@ -79,12 +79,12 @@ fun Fab(onClick: () -> Unit) {
 }
 
 @Composable
-fun Item(connection: Connection, viewModel: ConnectionViewModel) {
+fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel) {
     Row (modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(text = "Type", modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal, fontFamily = FontFamily.Monospace)
         Column(modifier = Modifier.weight(3F)) {
-            Text(text = "example.net", fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyLarge)
-            Text(text = "User: user", style = MaterialTheme.typography.bodyMedium)
+            Text(text = connection.host, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyLarge)
+            Text(text = connection.user, style = MaterialTheme.typography.bodyMedium)
         }
         Switch(
             checked = connection.enabled,

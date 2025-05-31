@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import chiogros.etomer.ui.state.ConnectionViewModel
+import chiogros.etomer.ui.state.ConnectionEditViewModel
+import chiogros.etomer.ui.state.ConnectionListViewModel
 import chiogros.etomer.ui.ui.screens.ConnectionEdit
 import chiogros.etomer.ui.ui.screens.ConnectionsList
 import kotlinx.serialization.Serializable
@@ -15,7 +16,7 @@ object ConnectionsList
 object ConnectionEdit
 
 @Composable
-fun Etomer(connectionViewModel: ConnectionViewModel) {
+fun Etomer(connectionListViewModel: ConnectionListViewModel, connectionEditViewModel: ConnectionEditViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -24,11 +25,11 @@ fun Etomer(connectionViewModel: ConnectionViewModel) {
     ) {
         composable<ConnectionEdit> { ConnectionEdit(
             onBack = { navController.popBackStack() },
-            viewModel = connectionViewModel
+            viewModel = connectionEditViewModel
         ) }
         composable<ConnectionsList> { ConnectionsList(
             onClick = { navController.navigate(ConnectionEdit) },
-            viewModel = connectionViewModel
+            viewModel = connectionListViewModel
         ) }
     }
 }

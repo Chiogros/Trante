@@ -5,10 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Connection::class], version = 1)
+@Database(entities = [ConnectionSftp::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun ConnectionDao(): ConnectionDao // Provides DAO instance.
+    abstract fun ConnectionSftpDao(): ConnectionSftpDao
 
     companion object {
 

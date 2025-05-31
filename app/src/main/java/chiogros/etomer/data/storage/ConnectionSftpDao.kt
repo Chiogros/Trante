@@ -9,19 +9,16 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ConnectionDao {
+interface ConnectionSftpDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(con: Connection)
+    suspend fun insert(con: ConnectionSftp)
 
     @Update
-    suspend fun update(con: Connection)
+    suspend fun update(con: ConnectionSftp)
 
     @Delete
-    suspend fun delete(con: Connection)
+    suspend fun delete(con: ConnectionSftp)
 
-    @Query("SELECT * from Connection WHERE connectionId = :id")
-    fun get(id: Int): Flow<Connection>
-
-    @Query("SELECT * from Connection")
-    fun getAll(): Flow<List<Connection>>
+    @Query("SELECT * from ConnectionSftp")
+    fun getAll(): Flow<List<ConnectionSftp>>
 }
