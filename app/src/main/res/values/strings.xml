@@ -7,4 +7,5 @@
     <string name="example_dot_net" translatable="false">example.net</string>
     <string name="save">Save</string>
     <string name="user">User</string>
+    <string name="sftp" translatable="false">SFTP</string>
 </resources>
