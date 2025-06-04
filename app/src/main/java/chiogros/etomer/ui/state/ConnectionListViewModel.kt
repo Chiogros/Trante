@@ -4,47 +4,38 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chiogros.etomer.data.repositories.ConnectionSftpRepository
 import chiogros.etomer.data.storage.ConnectionSftp
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/*
-data class ConnectionListUiState(
-    val sftpConnections: List<ConnectionSftp> = emptyList()
-)
-*/
-
 class ConnectionListViewModel(private val repository: ConnectionSftpRepository) : ViewModel() {
-    /*
-    private val _uiState = MutableStateFlow(ConnectionListUiState())
-    val uiState: StateFlow<ConnectionListUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<List<ConnectionSftp>> = repository.getAll().stateIn(
+            viewModelScope,
+            WhileSubscribed(5000),
+            emptyList()
+        )
 
-    init {
-        refresh()
-    }
-
-    fun refresh() {
+    fun delete(connection: ConnectionSftp) {
         viewModelScope.launch {
-            val sftpConnections = repository.getAll()
-            _uiState.update {
-                it.copy(
-                    sftpConnections = repository.getAll()
-                )
-            }
+            repository.delete(connection)
         }
     }
-    */
 
-    val connections: Flow<List<ConnectionSftp>> = repository.getAll().stateIn(
-        viewModelScope,
-        WhileSubscribed(5000),
-        emptyList()
-    )
-
-    fun update(connection: ConnectionSftp) {
+    fun insert(connection: ConnectionSftp) {
         viewModelScope.launch {
-            repository.update(connection)
+            repository.insert(connection)
         }
+    }
+
+    fun update(from: ConnectionSftp, to: ConnectionSftp) {
+        delete(from)
+        insert(to)
+    }
+
+    fun toggle(connection: ConnectionSftp) {
+        val newConnection = connection.copy()
+        newConnection.enabled = !connection.enabled
+        update(connection, newConnection)
     }
 }

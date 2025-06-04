@@ -37,9 +37,9 @@ import chiogros.etomer.ui.state.ConnectionEditViewModel
 fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { ConnectionEditTopBar(onBack, onBack, viewModel) }
+        topBar = { ConnectionEditTopBar(onBack, onBack, viewModel) },
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp)) {
             ConnectionEditForm(viewModel)
         }
     }
@@ -89,7 +89,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
 
     Row( modifier = Modifier.fillMaxWidth() ) { ConnectionEditTypePicker(viewModel) }
 
-    if (uiState.type != "") {
+    if (!uiState.type.isEmpty()) {
         OutlinedTextField(
             value = uiState.host,
             onValueChange = { viewModel.setHost(it) },
@@ -122,7 +122,7 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
     FilterChip(
-        onClick = { viewModel.setType( if (uiState.type != "SFTP") "SFTP" else "" ) },
+        onClick = { viewModel.setType("SFTP") },
         label = { Text(stringResource(R.string.sftp)) },
         modifier = Modifier.padding(start = 8.dp),
         selected = (uiState.type == "SFTP"),

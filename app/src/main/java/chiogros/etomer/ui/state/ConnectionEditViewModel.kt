@@ -11,18 +11,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ConnectionEditUiState(
-    var host: String = "",
-    var type: String = "",
-    var user: String = ""
+    val host: String = "",
+    val type: String = "SFTP",
+    val user: String = ""
     )
 
 class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow(ConnectionEditUiState())
+    private val _uiState =  MutableStateFlow(ConnectionEditUiState())
     val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
 
     fun refreshAll() {
         setHost("")
-        setType("")
+        setType("SFTP")
         setUser("")
     }
 

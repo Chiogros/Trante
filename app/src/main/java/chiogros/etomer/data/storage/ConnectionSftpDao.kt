@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ConnectionSftpDao {
+    @Delete
+    suspend fun delete(con: ConnectionSftp)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(con: ConnectionSftp)
 
     @Update
     suspend fun update(con: ConnectionSftp)
-
-    @Delete
-    suspend fun delete(con: ConnectionSftp)
 
     @Query("SELECT * from ConnectionSftp")
     fun getAll(): Flow<List<ConnectionSftp>>

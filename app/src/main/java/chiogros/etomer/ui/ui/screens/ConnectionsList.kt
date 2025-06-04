@@ -21,20 +21,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chiogros.etomer.R
 import chiogros.etomer.data.storage.ConnectionSftp
 import chiogros.etomer.ui.state.ConnectionListViewModel
 
 @Composable
 fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionListViewModel) {
-    val connections = viewModel.connections.collectAsStateWithLifecycle(emptyList()).value
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -42,7 +43,7 @@ fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionListViewModel) {
         floatingActionButton = { Fab(onClick) },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(items = connections) { connection -> Item(connection, viewModel) }
+            items(items = uiState) { connection -> Item(connection, viewModel) }
         }
     }
 }
@@ -80,8 +81,10 @@ fun Fab(onClick: () -> Unit) {
 
 @Composable
 fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Row (modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(text = "Type", modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal, fontFamily = FontFamily.Monospace)
+        Text(text = "SFTP", modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal, fontFamily = FontFamily.Monospace)
         Column(modifier = Modifier.weight(3F)) {
             Text(text = connection.host, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyLarge)
             Text(text = connection.user, style = MaterialTheme.typography.bodyMedium)
@@ -89,7 +92,7 @@ fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel) {
         Switch(
             checked = connection.enabled,
             onCheckedChange = {
-                viewModel.update(connection.copy(enabled = it))
+                viewModel.toggle(connection)
             },
             modifier = Modifier.weight(1F)
         )

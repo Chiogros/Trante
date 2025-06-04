@@ -9,6 +9,10 @@ class ConnectionSftpRepository(private val localDataSource: ConnectionSftpRoomDa
         return localDataSource.getAll()
     }
 
+    suspend fun delete(connection: ConnectionSftp) {
+        localDataSource.delete(connection)
+    }
+
     suspend fun insert(connection: ConnectionSftp) {
         localDataSource.insert(connection)
     }

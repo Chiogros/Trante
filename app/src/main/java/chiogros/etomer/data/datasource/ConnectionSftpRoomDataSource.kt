@@ -9,6 +9,10 @@ class ConnectionSftpRoomDataSource(private val dao: ConnectionSftpDao) {
         return dao.getAll()
     }
 
+    suspend fun delete(connection: ConnectionSftp) {
+        dao.delete(connection)
+    }
+
     suspend fun insert(connection: ConnectionSftp) {
         dao.insert(connection)
     }
