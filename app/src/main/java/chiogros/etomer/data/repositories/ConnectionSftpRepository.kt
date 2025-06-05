@@ -5,12 +5,16 @@ import chiogros.etomer.data.storage.ConnectionSftp
 import kotlinx.coroutines.flow.Flow
 
 class ConnectionSftpRepository(private val localDataSource: ConnectionSftpRoomDataSource) {
-    fun getAll(): Flow<List<ConnectionSftp>> {
-        return localDataSource.getAll()
-    }
-
     suspend fun delete(connection: ConnectionSftp) {
         localDataSource.delete(connection)
+    }
+
+    fun get(id: Long): Flow<ConnectionSftp> {
+        return localDataSource.get(id)
+    }
+
+    fun getAll(): Flow<List<ConnectionSftp>> {
+        return localDataSource.getAll()
     }
 
     suspend fun insert(connection: ConnectionSftp) {

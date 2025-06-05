@@ -19,6 +19,9 @@ interface ConnectionSftpDao {
     @Update
     suspend fun update(con: ConnectionSftp)
 
-    @Query("SELECT * from ConnectionSftp")
+    @Query("SELECT * FROM ConnectionSftp WHERE id = :id")
+    fun get(id: Long): Flow<ConnectionSftp>
+
+    @Query("SELECT * FROM ConnectionSftp")
     fun getAll(): Flow<List<ConnectionSftp>>
 }

@@ -1,5 +1,6 @@
 package chiogros.etomer.ui.ui.screens
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,16 +34,16 @@ import chiogros.etomer.data.storage.ConnectionSftp
 import chiogros.etomer.ui.state.ConnectionListViewModel
 
 @Composable
-fun ConnectionsList(onClick: () -> Unit, viewModel: ConnectionListViewModel) {
+fun ConnectionsList(onFabClick: () -> Unit, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { ConnectionsListTopBar() },
-        floatingActionButton = { Fab(onClick) },
+        floatingActionButton = { Fab(onFabClick) },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(items = uiState) { connection -> Item(connection, viewModel) }
+            items(items = uiState) { connection -> Item(connection, viewModel, onItemClick) }
         }
     }
 }
@@ -80,10 +80,14 @@ fun Fab(onClick: () -> Unit) {
 }
 
 @Composable
-fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel) {
+fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Row (modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row (modifier = Modifier.fillMaxWidth().padding(16.dp)
+        .combinedClickable(
+            onClick = { onItemClick(connection.id) }
+        ),
+        verticalAlignment = Alignment.CenterVertically) {
         Text(text = "SFTP", modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal, fontFamily = FontFamily.Monospace)
         Column(modifier = Modifier.weight(3F)) {
             Text(text = connection.host, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyLarge)
@@ -97,5 +101,4 @@ fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel) {
             modifier = Modifier.weight(1F)
         )
     }
-    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 }

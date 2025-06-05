@@ -5,21 +5,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.ArrowBack
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -34,7 +33,12 @@ import chiogros.etomer.data.storage.ConnectionSftp
 import chiogros.etomer.ui.state.ConnectionEditViewModel
 
 @Composable
-fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel) {
+fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: Long? = null) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    if (id == null) viewModel.refresh()
+    else            viewModel.init(id)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { ConnectionEditTopBar(onBack, onBack, viewModel) },
@@ -59,10 +63,7 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
             Text(stringResource(R.string.create_connection))
         },
         navigationIcon = {
-            IconButton(onClick = {
-                viewModel.refreshAll()
-                onBack()
-            }) {
+            IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Sharp.ArrowBack,
                     contentDescription = stringResource(R.string.get_back_previous_screen)
@@ -70,14 +71,19 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
             }
         },
         actions = {
-            TextButton(
+            IconButton(
                 onClick = {
-                    viewModel.insert(ConnectionSftp(host = uiState.host, user = uiState.user))
-                    viewModel.refreshAll()
+                    if (uiState.isEditing)   viewModel.update()
+                    else                     viewModel.insert()
+
                     onSave()
-                }
+                },
+                enabled = (!uiState.isEditing || (uiState.isEditing && uiState.isEdited))
             ) {
-                Text(stringResource(R.string.save))
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = stringResource(R.string.create_connection),
+                )
             }
         }
     )
@@ -120,19 +126,19 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
 @Composable
 fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
+    val types = listOf<String>(ConnectionSftp.asString())
 
-    FilterChip(
-        onClick = { viewModel.setType("SFTP") },
-        label = { Text(stringResource(R.string.sftp)) },
-        modifier = Modifier.padding(start = 8.dp),
-        selected = (uiState.type == "SFTP"),
-        leadingIcon =
-            if (uiState.type == "SFTP") {{
-                Icon(
-                    imageVector = Icons.Filled.Done,
-                    contentDescription = "",
-                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                )}
-            } else { null }
-    )
+    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+        types.forEachIndexed { index, label ->
+            SegmentedButton(
+                selected = (uiState.type == label),
+                onClick = { viewModel.setType(label) },
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = types.size
+                ),
+                label = { Text(label) }
+            )
+        }
+    }
 }
