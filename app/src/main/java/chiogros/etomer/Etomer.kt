@@ -1,5 +1,6 @@
 package chiogros.etomer
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,7 +24,10 @@ fun Etomer(connectionListViewModel: ConnectionListViewModel, connectionEditViewM
         navController = navController,
         startDestination = ConnectionsList
     ) {
-        composable<ConnectionEdit> { ConnectionEdit(
+        composable<ConnectionEdit>(
+            enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Start) },
+            popExitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End) }
+        ) { ConnectionEdit(
             onBack = { navController.popBackStack() },
             viewModel = connectionEditViewModel
         ) }
