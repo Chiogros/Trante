@@ -36,6 +36,7 @@ import chiogros.etomer.ui.state.ConnectionListViewModel
 @Composable
 fun ConnectionsList(onFabClick: () -> Unit, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
+    val connections by uiState.connections.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -43,7 +44,7 @@ fun ConnectionsList(onFabClick: () -> Unit, viewModel: ConnectionListViewModel, 
         floatingActionButton = { Fab(onFabClick) },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(items = uiState) { connection -> Item(connection, viewModel, onItemClick) }
+            items(items = connections) { connection -> Item(connection, viewModel, onItemClick) }
         }
     }
 }
@@ -88,7 +89,7 @@ fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel, onItemC
             onClick = { onItemClick(connection.id) }
         ),
         verticalAlignment = Alignment.CenterVertically) {
-        Text(text = "SFTP", modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal, fontFamily = FontFamily.Monospace)
+        Text(text = ConnectionSftp.asString(), modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal)
         Column(modifier = Modifier.weight(3F)) {
             Text(text = connection.host, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyLarge)
             Text(text = connection.user, style = MaterialTheme.typography.bodyMedium)
