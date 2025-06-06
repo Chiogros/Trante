@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.ArrowBack
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.sharp.Check
+import androidx.compose.material.icons.sharp.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,7 +42,7 @@ fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: L
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { ConnectionEditTopBar(onBack, onBack, viewModel) },
+        topBar = { ConnectionEditTopBar(onBack, onBack, viewModel, onBack) }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp)) {
             ConnectionEditForm(viewModel)
@@ -51,7 +52,7 @@ fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: ConnectionEditViewModel) {
+fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: ConnectionEditViewModel, onDelete: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
 
     TopAppBar(
@@ -71,6 +72,20 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
             }
         },
         actions = {
+            if (uiState.isEditing) {
+                IconButton(
+                    onClick = {
+                        viewModel.delete()
+                        onDelete()
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Sharp.Delete,
+                        contentDescription = stringResource(R.string.delete_connection),
+                    )
+                }
+            }
+
             IconButton(
                 onClick = {
                     if (uiState.isEditing)   viewModel.update()
@@ -81,8 +96,8 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
                 enabled = (!uiState.isEditing || (uiState.isEditing && uiState.isEdited))
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = stringResource(R.string.create_connection),
+                    imageVector = Icons.Sharp.Check,
+                    contentDescription = stringResource(R.string.save),
                 )
             }
         }

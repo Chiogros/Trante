@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="create_connection">Créer une connection</string>
+    <string name="create_connection">Créer une connexion</string>
     <string name="connections_list">Liste des connexions</string>
     <string name="get_back_previous_screen">Retourner à l\'écran précédent</string>
     <string name="host">Hôte</string>
     <string name="save">Enregistrer</string>
     <string name="user">Utilisateur</string>
     <string name="edit_connection">Éditer la connexion</string>
+    <string name="delete_connection">Supprimer la connexion</string>
 </resources>

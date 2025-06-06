@@ -25,17 +25,9 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
     private val _uiState = MutableStateFlow(ConnectionEditUiState())
     val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
 
-    fun refresh() {
-        _uiState.update {
-            it.copy(
-                id = 0,
-                host = "",
-                name = "",
-                type = "SFTP",
-                user = "",
-                isEdited = false,
-                isEditing = false
-            )
+    fun delete() {
+        viewModelScope.launch {
+            repository.delete(ConnectionSftp(id = uiState.value.id))
         }
     }
 
@@ -61,6 +53,20 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
                 name = uiState.value.name,
                 user = uiState.value.user
             ))
+        }
+    }
+
+    fun refresh() {
+        _uiState.update {
+            it.copy(
+                id = 0,
+                host = "",
+                name = "",
+                type = "SFTP",
+                user = "",
+                isEdited = false,
+                isEditing = false
+            )
         }
     }
 
