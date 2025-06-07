@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
-    id("androidx.room") version "2.7.1" apply false
-    id("com.google.devtools.ksp") version "2.0.21-1.0.27" apply false
+    alias(libs.plugins.androidx.room) apply false
+    alias(libs.plugins.com.google.devtools.ksp) apply false
+    kotlin(libs.plugins.plugin.serialization.get().pluginId).version(libs.versions.serialization).apply(false)
 }
