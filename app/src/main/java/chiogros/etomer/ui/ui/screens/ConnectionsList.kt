@@ -84,10 +84,9 @@ fun Fab(onClick: () -> Unit) {
 fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Row (modifier = Modifier.fillMaxWidth().padding(16.dp)
-        .combinedClickable(
-            onClick = { onItemClick(connection.id) }
-        ),
+    Row (modifier = Modifier.fillMaxWidth()
+        .combinedClickable(onClick = { onItemClick(connection.id) })
+        .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Text(text = ConnectionSftp.asString(), modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal)
         Column(modifier = Modifier.weight(3F)) {
