@@ -38,6 +38,7 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
                 it.copy(
                     id = con.id,
                     host = con.host,
+                    name = con.name,
                     type = "SFTP",
                     user = con.user,
                     isEditing = true
@@ -74,6 +75,15 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
         _uiState.update {
             it.copy(
                 host = host,
+                isEdited = true
+            )
+        }
+    }
+
+    fun setName(name: String) {
+        _uiState.update {
+            it.copy(
+                name = name,
                 isEdited = true
             )
         }

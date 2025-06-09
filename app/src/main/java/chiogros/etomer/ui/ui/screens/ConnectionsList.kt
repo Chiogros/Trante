@@ -82,17 +82,21 @@ fun Fab(onClick: () -> Unit) {
 
 @Composable
 fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit) {
-    val uiState by viewModel.uiState.collectAsState()
-
     Row (modifier = Modifier.fillMaxWidth()
         .combinedClickable(onClick = { onItemClick(connection.id) })
         .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Text(text = ConnectionSftp.asString(), modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal)
-        Column(modifier = Modifier.weight(3F)) {
-            Text(text = connection.host, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyLarge)
-            Text(text = connection.user, style = MaterialTheme.typography.bodyMedium)
+
+        if (!connection.name.isEmpty()) {
+            Text(text = connection.name, modifier = Modifier.weight(3F))
+        } else {
+            Column(modifier = Modifier.weight(3F)) {
+                Text(text = connection.host,fontFamily = FontFamily.Monospace,style = MaterialTheme.typography.bodyLarge)
+                Text(text = connection.user, style = MaterialTheme.typography.bodyMedium)
+            }
         }
+
         Switch(
             checked = connection.enabled,
             onCheckedChange = {

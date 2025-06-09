@@ -108,7 +108,7 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
 fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Row( modifier = Modifier.fillMaxWidth() ) { ConnectionEditTypePicker(viewModel) }
+    ConnectionEditTypePicker(viewModel)
 
     if (!uiState.type.isEmpty()) {
         OutlinedTextField(
@@ -131,6 +131,19 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
             label = { Text(stringResource(R.string.user)) },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
+                autoCorrectEnabled = false
+            ),
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            value = uiState.name,
+            onValueChange = { viewModel.setName(it) },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(stringResource(R.string.name)) },
+            placeholder = { Text(uiState.host) },
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
                 autoCorrectEnabled = false
             ),
             singleLine = true

@@ -8,4 +8,5 @@
     <string name="user">Utilisateur</string>
     <string name="edit_connection">Éditer la connexion</string>
     <string name="delete_connection">Supprimer la connexion</string>
+    <string name="name">Nom</string>
 </resources>
