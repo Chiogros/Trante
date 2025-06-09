@@ -67,7 +67,8 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
             titleContentColor = MaterialTheme.colorScheme.onBackground,
         ),
         title = {
-            Text(stringResource(R.string.create_connection))
+            if (uiState.isEditing)  Text(stringResource(R.string.edit_connection))
+            else                    Text(stringResource(R.string.create_connection))
         },
         navigationIcon = {
             IconButton(onClick = onBack) {
@@ -116,9 +117,9 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
 
     ConnectionEditTypePicker(viewModel)
 
-    if (!uiState.type.isEmpty()) {
+    if (!uiState.formState.type.isEmpty()) {
         OutlinedTextField(
-            value = uiState.host,
+            value = uiState.formState.host,
             onValueChange = { viewModel.setHost(it) },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.host)) },
@@ -131,7 +132,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
         )
 
         OutlinedTextField(
-            value = uiState.user,
+            value = uiState.formState.user,
             onValueChange = { viewModel.setUser(it) },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.user)) },
@@ -143,11 +144,11 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
         )
 
         OutlinedTextField(
-            value = uiState.name,
+            value = uiState.formState.name,
             onValueChange = { viewModel.setName(it) },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.name)) },
-            placeholder = { Text(uiState.host) },
+            placeholder = { Text(uiState.formState.host) },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 autoCorrectEnabled = false
@@ -165,7 +166,7 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         types.forEachIndexed { index, label ->
             SegmentedButton(
-                selected = (uiState.type == label),
+                selected = (uiState.formState.type == label),
                 onClick = { viewModel.setType(label) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
