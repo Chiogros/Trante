@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="create_connection">Créer une connection</string>
+    <string name="create_connection">Créer une connexion</string>
     <string name="connections_list">Liste des connexions</string>
     <string name="get_back_previous_screen">Retourner à l\'écran précédent</string>
     <string name="host">Hôte</string>
@@ -14,4 +14,5 @@
     <string name="cancel">Annuler</string>
     <string name="changes_not_saved">Modifications non sauvegardées</string>
     <string name="you_may_lost_your_changes">Vous risquez de perdre vos changements.</string>
+    <string name="no_connection">Aucune connexion</string>
 </resources>

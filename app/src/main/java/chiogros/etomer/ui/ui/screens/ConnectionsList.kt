@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
 import chiogros.etomer.data.storage.ConnectionSftp
@@ -43,8 +45,19 @@ fun ConnectionsList(onFabClick: () -> Unit, viewModel: ConnectionListViewModel, 
         topBar = { ConnectionsListTopBar() },
         floatingActionButton = { Fab(onFabClick) },
     ) { innerPadding ->
-        LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(items = connections, contentType = { it }) { connection -> Item(connection, viewModel, onItemClick) }
+        if (connections.isEmpty()) {
+            // Print a message if there is nothing to list
+            Text(
+                text = stringResource(R.string.no_connection) + "...",
+                modifier = Modifier.padding(innerPadding).fillMaxSize().wrapContentHeight(),
+                textAlign = TextAlign.Center
+            )
+        } else {
+            LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                items(items = connections, contentType = { it }) { connection ->
+                    Item(connection, viewModel, onItemClick)
+                }
+            }
         }
     }
 }
