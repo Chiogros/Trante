@@ -15,4 +15,5 @@
     <string name="changes_not_saved">Modifications non sauvegardées</string>
     <string name="you_may_lost_your_changes">Vous risquez de perdre vos changements.</string>
     <string name="no_connection">Aucune connexion</string>
+    <string name="app_info">Informations sur l\'application</string>
 </resources>
