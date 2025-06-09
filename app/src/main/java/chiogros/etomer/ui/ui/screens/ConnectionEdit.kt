@@ -45,32 +45,27 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ConnectionEdit(
-    onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: Long? = null,
-    snackbarHostState: SnackbarHostState, coroutineScope: CoroutineScope
+    onBack: () -> Unit,
+    viewModel: ConnectionEditViewModel,
+    id: Long? = null,
+    snackbarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope
 ) {
     if (id == null) viewModel.refresh()
     else viewModel.initFrom(id)
 
     ConnectionEditDialog(viewModel, onBack)
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            ConnectionEditTopBar(
-                onBack,
-                onBack,
-                viewModel,
-                onBack,
-                snackbarHostState,
-                coroutineScope
-            )
-        },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .padding(horizontal = 16.dp),
-               verticalArrangement = Arrangement.spacedBy(8.dp)
+    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
+        ConnectionEditTopBar(
+            onBack, onBack, viewModel, onBack, snackbarHostState, coroutineScope
+        )
+    }, snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             ConnectionEditForm(viewModel)
         }
@@ -95,20 +90,17 @@ fun ConnectionEditTopBar(
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = MaterialTheme.colorScheme.onBackground,
-        ),
-        title = {
-            if (uiState.isEditing)  Text(stringResource(R.string.edit_connection))
-            else                    Text(stringResource(R.string.create_connection))
-        },
-        navigationIcon = {
+        ), title = {
+            if (uiState.isEditing) Text(stringResource(R.string.edit_connection))
+            else Text(stringResource(R.string.create_connection))
+        }, navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.cancel)
                 )
             }
-        },
-        actions = {
+        }, actions = {
             if (uiState.isEditing) {
                 IconButton(
                     onClick = {
@@ -142,20 +134,18 @@ fun ConnectionEditTopBar(
 
             IconButton(
                 onClick = {
-                    if (uiState.isEditing)   viewModel.update()
-                    else                     viewModel.insert()
+                    if (uiState.isEditing) viewModel.update()
+                    else viewModel.insert()
 
                     onSave()
-                },
-                enabled = (!uiState.isEditing || uiState.isEdited)
+                }, enabled = (!uiState.isEditing || uiState.isEdited)
             ) {
                 Icon(
                     imageVector = Icons.Sharp.Check,
                     contentDescription = stringResource(R.string.save),
                 )
             }
-        }
-    )
+        })
 }
 
 @Composable
@@ -172,8 +162,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
             label = { Text(stringResource(R.string.host)) },
             placeholder = { Text(stringResource(R.string.example_dot_net)) },
             keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                autoCorrectEnabled = false
+                capitalization = KeyboardCapitalization.None, autoCorrectEnabled = false
             ),
             singleLine = true
         )
@@ -184,8 +173,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
             modifier = Modifier.fillMaxWidth(),
             label = { Text(stringResource(R.string.user)) },
             keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                autoCorrectEnabled = false
+                capitalization = KeyboardCapitalization.None, autoCorrectEnabled = false
             ),
             singleLine = true
         )
@@ -197,8 +185,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
             label = { Text(stringResource(R.string.name)) },
             placeholder = { Text(uiState.formState.host) },
             keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
-                autoCorrectEnabled = false
+                capitalization = KeyboardCapitalization.Sentences, autoCorrectEnabled = false
             ),
             singleLine = true
         )
@@ -216,11 +203,9 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
                 selected = (uiState.formState.type == label),
                 onClick = { viewModel.setType(label) },
                 shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = types.size
+                    index = index, count = types.size
                 ),
-                label = { Text(label) }
-            )
+                label = { Text(label) })
         }
     }
 }
@@ -237,14 +222,21 @@ fun ConnectionEditDialog(viewModel: ConnectionEditViewModel, onSave: () -> Unit)
     if (uiState.isDialogShown) {
         AlertDialog(
             onDismissRequest = { viewModel.setIsDialogShown(false) },
-            icon = { Icon(
-                imageVector = Icons.Default.Warning,
-                contentDescription = stringResource(R.string.warning)
-            )},
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = stringResource(R.string.warning)
+                )
+            },
             title = { Text(stringResource(R.string.changes_not_saved)) },
             text = { Text(stringResource(R.string.you_may_lost_your_changes)) },
             confirmButton = { TextButton(onClick = onSave) { Text(stringResource(R.string.continue_)) } },
-            dismissButton = { TextButton(onClick = { viewModel.setIsDialogShown(false) }) { Text(stringResource(R.string.cancel)) } }
-        )
+            dismissButton = {
+                TextButton(onClick = { viewModel.setIsDialogShown(false) }) {
+                    Text(
+                        stringResource(R.string.cancel)
+                    )
+                }
+            })
     }
 }

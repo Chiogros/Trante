@@ -17,11 +17,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object ConnectionsList
+
 @Serializable
 data class ConnectionEdit(val connectionId: Long? = null)
 
 @Composable
-fun Etomer(connectionListViewModel: ConnectionListViewModel, connectionEditViewModel: ConnectionEditViewModel) {
+fun Etomer(
+    connectionListViewModel: ConnectionListViewModel,
+    connectionEditViewModel: ConnectionEditViewModel
+) {
     val navController = rememberNavController()
     val snackbarHostState = SnackbarHostState()
     val coroutineScope = rememberCoroutineScope()
@@ -33,8 +37,7 @@ fun Etomer(connectionListViewModel: ConnectionListViewModel, connectionEditViewM
     ) {
         composable<ConnectionEdit>(
             enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Start) },
-            popExitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End) }
-        ) { backStackEntry ->
+            popExitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End) }) { backStackEntry ->
             ConnectionEdit(
                 onBack = { navController.popBackStack() },
                 viewModel = connectionEditViewModel,
@@ -44,11 +47,13 @@ fun Etomer(connectionListViewModel: ConnectionListViewModel, connectionEditViewM
             )
         }
 
-        composable<ConnectionsList> { ConnectionsList(
-            onFabClick = { navController.navigate(ConnectionEdit()) },
-            viewModel = connectionListViewModel,
-            onItemClick = { id: Long -> navController.navigate(ConnectionEdit(id)) },
-            snackbarHostState = snackbarHostState
-        ) }
+        composable<ConnectionsList> {
+            ConnectionsList(
+                onFabClick = { navController.navigate(ConnectionEdit()) },
+                viewModel = connectionListViewModel,
+                onItemClick = { id: Long -> navController.navigate(ConnectionEdit(id)) },
+                snackbarHostState = snackbarHostState
+            )
+        }
     }
 }

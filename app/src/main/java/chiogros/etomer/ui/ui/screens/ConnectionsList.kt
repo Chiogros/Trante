@@ -42,7 +42,9 @@ import chiogros.etomer.ui.state.ConnectionListViewModel
 
 @Composable
 fun ConnectionsList(
-    onFabClick: () -> Unit, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit,
+    onFabClick: () -> Unit,
+    viewModel: ConnectionListViewModel,
+    onItemClick: (Long) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -85,19 +87,16 @@ fun ConnectionsListTopBar() {
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
-        title = {
+        ), title = {
             Text(stringResource(R.string.connections_list))
-        },
-        actions = {
+        }, actions = {
             IconButton(onClick = { uriHandler.openUri(repositoryUrl) }) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = stringResource(R.string.app_info)
                 )
             }
-        }
-    )
+        })
 }
 
 @Composable
@@ -119,29 +118,39 @@ fun Fab(onClick: () -> Unit) {
 }
 
 @Composable
-fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit) {
-    Row (modifier = Modifier
-        .fillMaxWidth()
-        .combinedClickable(onClick = { onItemClick(connection.id) })
-        .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically) {
-        Text(text = ConnectionSftp.asString(), modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal)
+fun Item(
+    connection: ConnectionSftp, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .combinedClickable(onClick = { onItemClick(connection.id) })
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = ConnectionSftp.asString(),
+            modifier = Modifier.weight(1F),
+            fontWeight = FontWeight.Normal
+        )
 
         if (!connection.name.isEmpty()) {
             Text(text = connection.name, modifier = Modifier.weight(3F))
         } else {
             Column(modifier = Modifier.weight(3F)) {
-                Text(text = connection.host,fontFamily = FontFamily.Monospace,style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = connection.host,
+                    fontFamily = FontFamily.Monospace,
+                    style = MaterialTheme.typography.bodyLarge
+                )
                 Text(text = connection.user, style = MaterialTheme.typography.bodyMedium)
             }
         }
 
         Switch(
-            checked = connection.enabled,
-            onCheckedChange = {
+            checked = connection.enabled, onCheckedChange = {
                 viewModel.toggle(connection)
-            },
-            modifier = Modifier.weight(1F)
+            }, modifier = Modifier.weight(1F)
         )
     }
 }

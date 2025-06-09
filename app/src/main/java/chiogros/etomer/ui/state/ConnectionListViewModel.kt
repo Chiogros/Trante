@@ -12,18 +12,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class ConnectionListUiState(
-    val connections: StateFlow<List<ConnectionSftp>>,
-    val isConnectionDeleted: Boolean = false
+    val connections: StateFlow<List<ConnectionSftp>>, val isConnectionDeleted: Boolean = false
 )
 
 class ConnectionListViewModel(private val repository: ConnectionSftpRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow(ConnectionListUiState(
-        connections = repository.getAll().stateIn(
-            viewModelScope,
-            WhileSubscribed(5000),
-            emptyList()
+    private val _uiState = MutableStateFlow(
+        ConnectionListUiState(
+            connections = repository.getAll().stateIn(
+                viewModelScope, WhileSubscribed(5000), emptyList()
+            )
         )
-    ))
+    )
     val uiState: StateFlow<ConnectionListUiState> = _uiState.asStateFlow()
 
     fun delete(connection: ConnectionSftp) {

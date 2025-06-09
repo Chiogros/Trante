@@ -19,12 +19,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val connectionListViewModel = ConnectionListViewModel(
-                ConnectionSftpRepository(
-                    ConnectionSftpRoomDataSource(
-                        AppDatabase.getDatabase(this).ConnectionSftpDao()
-                    )
+            ConnectionSftpRepository(
+                ConnectionSftpRoomDataSource(
+                    AppDatabase.getDatabase(this).ConnectionSftpDao()
                 )
             )
+        )
         val connectionEditViewModel = ConnectionEditViewModel(
             ConnectionSftpRepository(
                 ConnectionSftpRoomDataSource(

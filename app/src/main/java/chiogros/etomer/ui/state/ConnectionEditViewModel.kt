@@ -47,19 +47,13 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
             // Fill out the form with connection data
             val con: ConnectionSftp = repository.get(id).first()
             val conForm = ConnectionEditFormState(
-                id = con.id,
-                host = con.host,
-                name = con.name,
-                type = "SFTP",
-                user = con.user
+                id = con.id, host = con.host, name = con.name, type = "SFTP", user = con.user
             )
 
             refresh()
             _uiState.update {
                 it.copy(
-                    formState = conForm,
-                    originalFormState = conForm,
-                    isEditing = true
+                    formState = conForm, originalFormState = conForm, isEditing = true
                 )
             }
         }
@@ -67,12 +61,14 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
 
     fun insert() {
         viewModelScope.launch {
-            repository.insert(ConnectionSftp(
-                id = uiState.value.formState.id,
-                host = uiState.value.formState.host,
-                name = uiState.value.formState.name,
-                user = uiState.value.formState.user
-            ))
+            repository.insert(
+                ConnectionSftp(
+                    id = uiState.value.formState.id,
+                    host = uiState.value.formState.host,
+                    name = uiState.value.formState.name,
+                    user = uiState.value.formState.user
+                )
+            )
         }
     }
 
