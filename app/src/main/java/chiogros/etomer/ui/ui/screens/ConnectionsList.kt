@@ -19,6 +19,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -39,20 +41,27 @@ import chiogros.etomer.data.storage.ConnectionSftp
 import chiogros.etomer.ui.state.ConnectionListViewModel
 
 @Composable
-fun ConnectionsList(onFabClick: () -> Unit, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit) {
+fun ConnectionsList(
+    onFabClick: () -> Unit, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
     val uiState by viewModel.uiState.collectAsState()
     val connections by uiState.connections.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { ConnectionsListTopBar() },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = { Fab(onFabClick) },
     ) { innerPadding ->
         if (connections.isEmpty()) {
             // Print a message if there is nothing to list
             Text(
                 text = stringResource(R.string.no_connection) + "...",
-                modifier = Modifier.padding(innerPadding).fillMaxSize().wrapContentHeight(),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .wrapContentHeight(),
                 textAlign = TextAlign.Center
             )
         } else {
@@ -100,7 +109,9 @@ fun Fab(onClick: () -> Unit) {
             Icon(
                 imageVector = Icons.Sharp.Add,
                 contentDescription = stringResource(R.string.create_connection),
-                modifier = Modifier.width(24.dp).padding(end = 8.dp)
+                modifier = Modifier
+                    .width(24.dp)
+                    .padding(end = 8.dp)
             )
             Text(text = stringResource(R.string.create_connection))
         }
@@ -109,7 +120,8 @@ fun Fab(onClick: () -> Unit) {
 
 @Composable
 fun Item(connection: ConnectionSftp, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit) {
-    Row (modifier = Modifier.fillMaxWidth()
+    Row (modifier = Modifier
+        .fillMaxWidth()
         .combinedClickable(onClick = { onItemClick(connection.id) })
         .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically) {

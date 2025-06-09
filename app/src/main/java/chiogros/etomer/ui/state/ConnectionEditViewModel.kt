@@ -24,7 +24,8 @@ data class ConnectionEditUiState(
     // Holds initial form data, useful to check for changes
     val originalFormState: ConnectionEditFormState = ConnectionEditFormState(),
     val isEditing: Boolean = false,
-    val isDialogShown: Boolean = false
+    val isDialogShown: Boolean = false,
+    var deletedConnection: ConnectionSftp = ConnectionSftp()
 ) {
     val isEdited: Boolean
         get() = formState != originalFormState
@@ -35,12 +36,13 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
     val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
 
     fun delete() {
+        save()
         viewModelScope.launch {
             repository.delete(ConnectionSftp(id = uiState.value.formState.id))
         }
     }
 
-    fun init(id: Long) {
+    fun initFrom(id: Long) {
         viewModelScope.launch {
             // Fill out the form with connection data
             val con: ConnectionSftp = repository.get(id).first()
@@ -66,6 +68,7 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
     fun insert() {
         viewModelScope.launch {
             repository.insert(ConnectionSftp(
+                id = uiState.value.formState.id,
                 host = uiState.value.formState.host,
                 name = uiState.value.formState.name,
                 user = uiState.value.formState.user
@@ -80,8 +83,35 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
                 formState = ConnectionEditFormState(),
                 originalFormState = ConnectionEditFormState(),
                 isEditing = false,
-                isDialogShown = false
+                isDialogShown = false,
+                deletedConnection = ConnectionSftp()
             )
+        }
+    }
+
+    // Restore the last deleted connection
+    fun restore() {
+        _uiState.update {
+            it.copy(
+                formState = ConnectionEditFormState(
+                    id = uiState.value.deletedConnection.id,
+                    host = uiState.value.deletedConnection.host,
+                    name = uiState.value.deletedConnection.name,
+                    user = uiState.value.deletedConnection.user
+                )
+            )
+        }
+        insert()
+    }
+
+    // Backup the deleted connection, useful in case of restore()
+    fun save() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    deletedConnection = repository.get(uiState.value.formState.id).first()
+                )
+            }
         }
     }
 

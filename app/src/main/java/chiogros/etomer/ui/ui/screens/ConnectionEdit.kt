@@ -22,6 +22,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -36,19 +40,36 @@ import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
 import chiogros.etomer.data.storage.ConnectionSftp
 import chiogros.etomer.ui.state.ConnectionEditViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: Long? = null) {
+fun ConnectionEdit(
+    onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: Long? = null,
+    snackbarHostState: SnackbarHostState, coroutineScope: CoroutineScope
+) {
     if (id == null) viewModel.refresh()
-    else            viewModel.init(id)
+    else viewModel.initFrom(id)
 
     ConnectionEditDialog(viewModel, onBack)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { ConnectionEditTopBar(onBack, onBack, viewModel, onBack) }
+        topBar = {
+            ConnectionEditTopBar(
+                onBack,
+                onBack,
+                viewModel,
+                onBack,
+                snackbarHostState,
+                coroutineScope
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .padding(horizontal = 16.dp),
                verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             ConnectionEditForm(viewModel)
@@ -58,8 +79,17 @@ fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: ConnectionEditViewModel, onDelete: () -> Unit) {
+fun ConnectionEditTopBar(
+    onBack: () -> Unit,
+    onSave: () -> Unit,
+    viewModel: ConnectionEditViewModel,
+    onDelete: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope
+) {
     val uiState by viewModel.uiState.collectAsState()
+    val connectionDeleted: String = stringResource(R.string.connection_deleted)
+    val undoDelete: String = stringResource(R.string.undo)
 
     TopAppBar(
         colors = topAppBarColors(
@@ -83,6 +113,23 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
                 IconButton(
                     onClick = {
                         viewModel.delete()
+                        // Handle all the snackbar stuff
+                        coroutineScope.launch {
+                            val result = snackbarHostState.showSnackbar(
+                                message = connectionDeleted,
+                                actionLabel = undoDelete,
+                                duration = SnackbarDuration.Long
+                            )
+                            when (result) {
+                                // Restore connection which got deleted
+                                SnackbarResult.ActionPerformed -> {
+                                    viewModel.restore()
+                                }
+
+                                SnackbarResult.Dismissed -> {}
+                            }
+                        }
+                        // Go back to previous screen
                         onDelete()
                     },
                 ) {

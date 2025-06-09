@@ -19,4 +19,6 @@
     <string name="no_connection">No connection</string>
     <string name="app_info">Application information</string>
     <string name="repository_url" translatable="false">https://github.com/Chiogros/Etomer</string>
+    <string name="connection_deleted">Connection deleted</string>
+    <string name="undo">Undo</string>
 </resources>

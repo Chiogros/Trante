@@ -2,7 +2,9 @@ package chiogros.etomer
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,6 +23,8 @@ data class ConnectionEdit(val connectionId: Long? = null)
 @Composable
 fun Etomer(connectionListViewModel: ConnectionListViewModel, connectionEditViewModel: ConnectionEditViewModel) {
     val navController = rememberNavController()
+    val snackbarHostState = SnackbarHostState()
+    val coroutineScope = rememberCoroutineScope()
 
     NavHost(
         navController = navController,
@@ -34,14 +38,17 @@ fun Etomer(connectionListViewModel: ConnectionListViewModel, connectionEditViewM
             ConnectionEdit(
                 onBack = { navController.popBackStack() },
                 viewModel = connectionEditViewModel,
-                id = backStackEntry.toRoute<ConnectionEdit>().connectionId
+                id = backStackEntry.toRoute<ConnectionEdit>().connectionId,
+                snackbarHostState = snackbarHostState,
+                coroutineScope = coroutineScope
             )
         }
 
         composable<ConnectionsList> { ConnectionsList(
             onFabClick = { navController.navigate(ConnectionEdit()) },
             viewModel = connectionListViewModel,
-            onItemClick = { id: Long -> navController.navigate(ConnectionEdit(id)) }
+            onItemClick = { id: Long -> navController.navigate(ConnectionEdit(id)) },
+            snackbarHostState = snackbarHostState
         ) }
     }
 }
