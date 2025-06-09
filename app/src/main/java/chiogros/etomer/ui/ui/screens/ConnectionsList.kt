@@ -44,7 +44,7 @@ fun ConnectionsList(onFabClick: () -> Unit, viewModel: ConnectionListViewModel, 
         floatingActionButton = { Fab(onFabClick) },
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(items = connections) { connection -> Item(connection, viewModel, onItemClick) }
+            items(items = connections, contentType = { it }) { connection -> Item(connection, viewModel, onItemClick) }
         }
     }
 }
