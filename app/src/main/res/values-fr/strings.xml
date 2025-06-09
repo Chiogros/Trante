@@ -9,4 +9,9 @@
     <string name="edit_connection">Éditer la connexion</string>
     <string name="delete_connection">Supprimer la connexion</string>
     <string name="name">Nom</string>
+    <string name="warning">Attention</string>
+    <string name="continue_">Continuer</string>
+    <string name="cancel">Annuler</string>
+    <string name="changes_not_saved">Modifications non sauvegardées</string>
+    <string name="you_may_lost_your_changes">Vous risquez de perdre vos changements.</string>
 </resources>

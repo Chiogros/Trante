@@ -11,4 +11,9 @@
     <string name="edit_connection">Edit connection</string>
     <string name="delete_connection">Delete connection</string>
     <string name="name">Friendly name</string>
+    <string name="warning">Warning</string>
+    <string name="continue_">Continue</string>
+    <string name="cancel">Cancel</string>
+    <string name="changes_not_saved">Changes not saved</string>
+    <string name="you_may_lost_your_changes">You may lost your changes.</string>
 </resources>

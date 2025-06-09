@@ -1,15 +1,18 @@
 package chiogros.etomer.ui.ui.screens
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.sharp.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.sharp.Check
 import androidx.compose.material.icons.sharp.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,6 +23,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -35,8 +39,6 @@ import chiogros.etomer.ui.state.ConnectionEditViewModel
 
 @Composable
 fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: Long? = null) {
-    val uiState by viewModel.uiState.collectAsState()
-
     if (id == null) viewModel.refresh()
     else            viewModel.init(id)
 
@@ -44,7 +46,9 @@ fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: L
         modifier = Modifier.fillMaxSize(),
         topBar = { ConnectionEditTopBar(onBack, onBack, viewModel, onBack) }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp)) {
+        Column(modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
+               verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             ConnectionEditForm(viewModel)
         }
     }
@@ -66,8 +70,8 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Sharp.ArrowBack,
-                    contentDescription = stringResource(R.string.get_back_previous_screen)
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.cancel)
                 )
             }
         },
@@ -93,7 +97,7 @@ fun ConnectionEditTopBar(onBack: () -> Unit, onSave: () -> Unit, viewModel: Conn
 
                     onSave()
                 },
-                enabled = (!uiState.isEditing || (uiState.isEditing && uiState.isEdited))
+                enabled = (!uiState.isEditing || uiState.isEdited)
             ) {
                 Icon(
                     imageVector = Icons.Sharp.Check,
