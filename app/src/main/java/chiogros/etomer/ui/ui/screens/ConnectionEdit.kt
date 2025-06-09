@@ -42,6 +42,8 @@ fun ConnectionEdit(onBack: () -> Unit, viewModel: ConnectionEditViewModel, id: L
     if (id == null) viewModel.refresh()
     else            viewModel.init(id)
 
+    ConnectionEditDialog(viewModel, onBack)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { ConnectionEditTopBar(onBack, onBack, viewModel, onBack) }
@@ -172,5 +174,29 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
                 label = { Text(label) }
             )
         }
+    }
+}
+
+@Composable
+fun ConnectionEditDialog(viewModel: ConnectionEditViewModel, onSave: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    // If data is modified, when back button is pressed set dialog state
+    BackHandler(enabled = uiState.isEdited, onBack = {
+        viewModel.setIsDialogShown(true)
+    })
+
+    if (uiState.isDialogShown) {
+        AlertDialog(
+            onDismissRequest = { viewModel.setIsDialogShown(false) },
+            icon = { Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = stringResource(R.string.warning)
+            )},
+            title = { Text(stringResource(R.string.changes_not_saved)) },
+            text = { Text(stringResource(R.string.you_may_lost_your_changes)) },
+            confirmButton = { TextButton(onClick = onSave) { Text(stringResource(R.string.continue_)) } },
+            dismissButton = { TextButton(onClick = { viewModel.setIsDialogShown(false) }) { Text(stringResource(R.string.cancel)) } }
+        )
     }
 }

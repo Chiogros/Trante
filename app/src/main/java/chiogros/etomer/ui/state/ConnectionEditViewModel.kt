@@ -18,7 +18,8 @@ data class ConnectionEditUiState(
     val type: String = "SFTP",
     val user: String = "",
     val isEdited: Boolean = false,
-    val isEditing: Boolean = false
+    val isEditing: Boolean = false,
+    val isDialogShown: Boolean = false
     )
 
 class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) : ViewModel() {
@@ -34,6 +35,7 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
     fun init(id: Long) {
         viewModelScope.launch {
             val con: ConnectionSftp = repository.get(id).first()
+            refresh()
             _uiState.update {
                 it.copy(
                     id = con.id,
@@ -66,7 +68,16 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
                 type = "SFTP",
                 user = "",
                 isEdited = false,
-                isEditing = false
+                isEditing = false,
+                isDialogShown = false
+            )
+        }
+    }
+
+    fun setIsDialogShown(state: Boolean) {
+        _uiState.update {
+            it.copy(
+                isDialogShown = state
             )
         }
     }
