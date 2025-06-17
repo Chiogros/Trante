@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -92,7 +92,7 @@ fun ConnectionsListTopBar() {
         }, actions = {
             IconButton(onClick = { uriHandler.openUri(repositoryUrl) }) {
                 Icon(
-                    imageVector = Icons.Default.Info,
+                    imageVector = Icons.Outlined.Info,
                     contentDescription = stringResource(R.string.app_info)
                 )
             }
