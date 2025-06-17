@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import chiogros.etomer.R
 
 @Database(entities = [ConnectionSftp::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
@@ -21,7 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
                     db = Room.databaseBuilder(
                         context.applicationContext,
                         AppDatabase::class.java,
-                        "Etomer"
+                        context.getString(R.string.app_name)
                     ).build()
                 }
             }
