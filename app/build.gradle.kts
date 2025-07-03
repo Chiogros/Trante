@@ -41,6 +41,11 @@ android {
     room {
         schemaDirectory("$projectDir/schemas")
     }
+    packaging {
+        resources {
+            pickFirsts += "META-INF/DEPENDENCIES"
+        }
+    }
 }
 
 dependencies {
@@ -50,4 +55,6 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(platform(libs.androidx.compose.bom))
     ksp(libs.androidx.room.compiler)
+    // https://mvnrepository.com/artifact/org.apache.sshd/sshd-core
+    implementation("org.apache.sshd:sshd-sftp:2.15.0")
 }
