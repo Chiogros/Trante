@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
 object ConnectionsList
 
 @Serializable
-data class ConnectionEdit(val connectionId: Long? = null)
+data class ConnectionEdit(val connectionId: String = "")
 
 @Composable
 fun Etomer(
@@ -51,7 +51,7 @@ fun Etomer(
             ConnectionsList(
                 onFabClick = { navController.navigate(ConnectionEdit()) },
                 viewModel = connectionListViewModel,
-                onItemClick = { id: Long -> navController.navigate(ConnectionEdit(id)) },
+                onItemClick = { id: String -> navController.navigate(ConnectionEdit(id)) },
                 snackbarHostState = snackbarHostState
             )
         }

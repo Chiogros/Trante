@@ -44,7 +44,7 @@ import chiogros.etomer.ui.state.ConnectionListViewModel
 fun ConnectionsList(
     onFabClick: () -> Unit,
     viewModel: ConnectionListViewModel,
-    onItemClick: (Long) -> Unit,
+    onItemClick: (String) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -119,7 +119,7 @@ fun Fab(onClick: () -> Unit) {
 
 @Composable
 fun Item(
-    connection: Connection, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit
+    connection: Connection, viewModel: ConnectionListViewModel, onItemClick: (String) -> Unit
 ) {
     Row(
         modifier = Modifier

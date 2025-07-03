@@ -2,11 +2,14 @@ package chiogros.etomer.data.room
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 @Entity()
 data class ConnectionSftp(
-    @PrimaryKey(autoGenerate = true)
-    override val id: Long = 0,
+    @PrimaryKey
+    override val id: String = Uuid.random().toString(),
     override var name: String = "",
     override var enabled: Boolean = false,
     override var host: String = "",

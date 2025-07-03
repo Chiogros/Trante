@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ConnectionEditFormState(
-    val id: Long = 0,
+    val id: String = "",
     val host: String = "",
     val name: String = "",
     val type: String = ConnectionSftp.toString(),
@@ -43,7 +43,7 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
         }
     }
 
-    fun initFrom(id: Long) {
+    fun initFrom(id: String) {
         viewModelScope.launch {
             // Fill out the form with connection data
             val con: Connection = repository.get(id).first()
@@ -67,12 +67,15 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
     fun insert() {
         viewModelScope.launch {
             repository.insert(
-                ConnectionSftp(
-                    id = uiState.value.formState.id,
-                    host = uiState.value.formState.host,
-                    name = uiState.value.formState.name,
-                    user = uiState.value.formState.user
-                )
+                when (uiState.value.formState.type) {
+                    ConnectionSftp.toString() -> ConnectionSftp(
+                        host = uiState.value.formState.host,
+                        name = uiState.value.formState.name,
+                        user = uiState.value.formState.user
+                    )
+
+                    else -> error("Type ${uiState.value.formState.type} unknown!")
+                }
             )
         }
     }

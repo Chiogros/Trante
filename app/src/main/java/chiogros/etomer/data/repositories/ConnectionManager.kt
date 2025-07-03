@@ -20,7 +20,7 @@ class ConnectionManager(private val connectionSftpRepository: ConnectionSftpRepo
         getRepositoryForObject(con).delete(con)
     }
 
-    fun get(id: Long): Flow<Connection> {
+    fun get(id: String): Flow<Connection> {
         return connectionSftpRepository.get(id)
     }
 

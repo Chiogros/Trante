@@ -15,7 +15,7 @@ class ConnectionSftpRepository(private val localDataSource: ConnectionSftpRoomDa
         localDataSource.delete(connection)
     }
 
-    override fun get(id: Long): Flow<ConnectionSftp> {
+    override fun get(id: String): Flow<ConnectionSftp> {
         return localDataSource.get(id)
     }
 

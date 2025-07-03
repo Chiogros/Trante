@@ -9,7 +9,7 @@ class ConnectionSftpRoomDataSource(private val dao: ConnectionSftpDao) {
         dao.delete(connection)
     }
 
-    fun get(id: Long): Flow<ConnectionSftp> {
+    fun get(id: String): Flow<ConnectionSftp> {
         return dao.get(id)
     }
 

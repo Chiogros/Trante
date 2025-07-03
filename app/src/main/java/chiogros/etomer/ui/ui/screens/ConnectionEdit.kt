@@ -47,11 +47,11 @@ import kotlinx.coroutines.launch
 fun ConnectionEdit(
     onBack: () -> Unit,
     viewModel: ConnectionEditViewModel,
-    id: Long? = null,
+    id: String = "",
     snackbarHostState: SnackbarHostState,
     coroutineScope: CoroutineScope
 ) {
-    if (id == null) viewModel.refresh()
+    if (id.isEmpty()) viewModel.refresh()
     else viewModel.initFrom(id)
 
     ConnectionEditDialog(viewModel, onBack)
