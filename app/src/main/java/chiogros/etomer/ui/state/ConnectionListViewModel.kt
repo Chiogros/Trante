@@ -1,6 +1,7 @@
 package chiogros.etomer.ui.state
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,8 @@ import kotlinx.coroutines.launch
 import org.apache.sshd.client.SshClient
 import org.apache.sshd.client.session.ClientSession
 import org.apache.sshd.common.util.io.PathUtils.setUserHomeFolderResolver
+import org.apache.sshd.sftp.client.SftpClient
+import org.apache.sshd.sftp.client.SftpClientFactory
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.function.Supplier
@@ -39,7 +42,7 @@ class ConnectionListViewModel(private val repository: ConnectionManager) : ViewM
     init {
         viewModelScope.launch(Dispatchers.IO) {
             // Set Android's filesystem path
-            val path: Supplier<Path> = Supplier { Paths.get("/").normalize() }
+            val path: Supplier<Path> = Supplier { Paths.get("").normalize() }
             setUserHomeFolderResolver(path)
 
             // Create a client handler
@@ -53,6 +56,14 @@ class ConnectionListViewModel(private val repository: ConnectionManager) : ViewM
             session.addPasswordIdentity("testtest")
             session.auth().verify()
             session.executeRemoteCommand("touch worked")
+
+            val factory: SftpClientFactory = SftpClientFactory.instance()
+            val sftpClient: SftpClient = factory.createSftpClient(session)
+
+            val content: String =
+                sftpClient.read("/home/test/worked").readAllBytes().decodeToString()
+
+            Log.i("Test", content)
 
             client.stop()
         }
