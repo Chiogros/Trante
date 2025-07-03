@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
-import chiogros.etomer.data.storage.ConnectionSftp
+import chiogros.etomer.data.room.Connection
 import chiogros.etomer.ui.state.ConnectionListViewModel
 
 @Composable
@@ -119,7 +119,7 @@ fun Fab(onClick: () -> Unit) {
 
 @Composable
 fun Item(
-    connection: ConnectionSftp, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit
+    connection: Connection, viewModel: ConnectionListViewModel, onItemClick: (Long) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -129,12 +129,13 @@ fun Item(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = ConnectionSftp.asString(),
+            text = connection.toString(),
             modifier = Modifier.weight(1F),
             fontWeight = FontWeight.Normal
         )
 
         if (!connection.name.isEmpty()) {
+            // Only print connection name if defined
             Text(text = connection.name, modifier = Modifier.weight(3F))
         } else {
             Column(modifier = Modifier.weight(3F)) {
@@ -148,7 +149,8 @@ fun Item(
         }
 
         Switch(
-            checked = connection.enabled, onCheckedChange = {
+            checked = connection.enabled,
+            onCheckedChange = {
                 viewModel.toggle(connection)
             }, modifier = Modifier.weight(1F)
         )

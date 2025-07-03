@@ -2,8 +2,9 @@ package chiogros.etomer.ui.state
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import chiogros.etomer.data.repositories.ConnectionSftpRepository
-import chiogros.etomer.data.storage.ConnectionSftp
+import chiogros.etomer.data.repositories.ConnectionManager
+import chiogros.etomer.data.room.Connection
+import chiogros.etomer.data.room.ConnectionSftp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +16,7 @@ data class ConnectionEditFormState(
     val id: Long = 0,
     val host: String = "",
     val name: String = "",
-    val type: String = "SFTP",
+    val type: String = ConnectionSftp.toString(),
     val user: String = ""
 )
 
@@ -25,13 +26,13 @@ data class ConnectionEditUiState(
     val originalFormState: ConnectionEditFormState = ConnectionEditFormState(),
     val isEditing: Boolean = false,
     val isDialogShown: Boolean = false,
-    var deletedConnection: ConnectionSftp = ConnectionSftp()
+    var deletedConnection: Connection = ConnectionSftp()
 ) {
     val isEdited: Boolean
         get() = formState != originalFormState
 }
 
-class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) : ViewModel() {
+class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewModel() {
     private val _uiState = MutableStateFlow(ConnectionEditUiState())
     val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
 
@@ -45,9 +46,13 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
     fun initFrom(id: Long) {
         viewModelScope.launch {
             // Fill out the form with connection data
-            val con: ConnectionSftp = repository.get(id).first()
+            val con: Connection = repository.get(id).first()
             val conForm = ConnectionEditFormState(
-                id = con.id, host = con.host, name = con.name, type = "SFTP", user = con.user
+                id = con.id,
+                host = con.host,
+                name = con.name,
+                type = con.toString(),
+                user = con.user
             )
 
             refresh()
@@ -153,7 +158,7 @@ class ConnectionEditViewModel(private val repository: ConnectionSftpRepository) 
 
     fun update() {
         viewModelScope.launch {
-            var con: ConnectionSftp = repository.get(uiState.value.formState.id).first()
+            var con: Connection = repository.get(uiState.value.formState.id).first()
             con.host = uiState.value.formState.host
             con.name = uiState.value.formState.name
             con.user = uiState.value.formState.user

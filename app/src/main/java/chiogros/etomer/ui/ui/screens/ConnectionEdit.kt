@@ -38,7 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
-import chiogros.etomer.data.storage.ConnectionSftp
+import chiogros.etomer.data.room.ConnectionSftp
 import chiogros.etomer.ui.state.ConnectionEditViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -195,7 +195,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
 @Composable
 fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val types = listOf<String>(ConnectionSftp.asString())
+    val types = listOf<String>(ConnectionSftp.toString())
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         types.forEachIndexed { index, label ->
