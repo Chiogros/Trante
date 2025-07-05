@@ -1,12 +1,9 @@
 package chiogros.etomer.ui.ui.screens.connectionslist
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chiogros.etomer.data.repositories.room.ConnectionManager
 import chiogros.etomer.data.room.Connection
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
@@ -19,21 +16,14 @@ data class ConnectionsListUiState(
     val connections: StateFlow<List<Connection>>, val isConnectionDeleted: Boolean = false
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 class ConnectionsListViewModel(private val repository: ConnectionManager) : ViewModel() {
     private val _uiState = MutableStateFlow(
-        ConnectionsListUiState(
-            connections = repository.getAll().stateIn(
-                viewModelScope, WhileSubscribed(5000), emptyList()
-            )
-        )
+        ConnectionsListUiState(connections = MutableStateFlow(emptyList()))
     )
     val uiState: StateFlow<ConnectionsListUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-
-        }
+        loadConnections()
     }
 
     fun delete(connection: Connection) {
@@ -48,23 +38,25 @@ class ConnectionsListViewModel(private val repository: ConnectionManager) : View
         }
     }
 
-    fun update(connection: Connection) {
-        viewModelScope.launch {
-            repository.update(connection)
-
-            // This is a horrible workaround to trigger recomposition
-            _uiState.update {
-                it.copy(
-                    connections = repository.getAll().stateIn(
-                        viewModelScope, WhileSubscribed(5000), emptyList()
-                    )
+    fun loadConnections() {
+        _uiState.update {
+            it.copy(
+                connections = repository.getAll().stateIn(
+                    viewModelScope, WhileSubscribed(5000), emptyList()
                 )
-            }
+            )
         }
     }
 
     fun toggle(connection: Connection) {
         connection.enabled = !connection.enabled
         update(connection)
+    }
+
+    fun update(connection: Connection) {
+        viewModelScope.launch {
+            repository.update(connection)
+            loadConnections()
+        }
     }
 }
