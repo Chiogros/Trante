@@ -13,7 +13,7 @@ interface ConnectionSftpDao {
     @Delete
     suspend fun delete(con: ConnectionSftp)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(con: ConnectionSftp)
 
     @Update
