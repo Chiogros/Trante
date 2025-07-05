@@ -1,6 +1,6 @@
 package chiogros.etomer.domain
 
-import chiogros.etomer.data.repositories.room.ConnectionManager
+import chiogros.etomer.data.room.repository.ConnectionManager
 import kotlinx.coroutines.flow.first
 
 class DisableConnectionUseCase(private val repository: ConnectionManager) {

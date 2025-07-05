@@ -2,8 +2,8 @@ package chiogros.etomer.domain
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import chiogros.etomer.data.repositories.remote.RemoteRepository
-import chiogros.etomer.data.repositories.room.ConnectionManager
+import chiogros.etomer.data.remote.repository.RemoteRepository
+import chiogros.etomer.data.room.repository.ConnectionManager
 import kotlinx.coroutines.flow.first
 
 class EnableConnectionUseCase(

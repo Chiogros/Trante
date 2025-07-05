@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import chiogros.etomer.R
+import chiogros.etomer.data.room.sftp.ConnectionSftp
+import chiogros.etomer.data.room.sftp.ConnectionSftpDao
 
 @Database(entities = [ConnectionSftp::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

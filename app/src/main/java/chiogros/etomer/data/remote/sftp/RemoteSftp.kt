@@ -1,4 +1,4 @@
-package chiogros.etomer.data.remote
+package chiogros.etomer.data.remote.sftp
 
 import android.os.Build
 import android.util.Log

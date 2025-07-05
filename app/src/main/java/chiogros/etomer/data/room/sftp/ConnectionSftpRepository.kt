@@ -1,8 +1,7 @@
-package chiogros.etomer.data.repositories.room
+package chiogros.etomer.data.room.sftp
 
-import chiogros.etomer.data.datasource.room.ConnectionSftpRoomDataSource
 import chiogros.etomer.data.room.Connection
-import chiogros.etomer.data.room.ConnectionSftp
+import chiogros.etomer.data.room.repository.ConnectionRepository
 import kotlinx.coroutines.flow.Flow
 
 class ConnectionSftpRepository(private val localDataSource: ConnectionSftpRoomDataSource) :

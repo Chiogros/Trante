@@ -1,7 +1,8 @@
-package chiogros.etomer.data.repositories.room
+package chiogros.etomer.data.room.repository
 
 import chiogros.etomer.data.room.Connection
-import chiogros.etomer.data.room.ConnectionSftp
+import chiogros.etomer.data.room.sftp.ConnectionSftp
+import chiogros.etomer.data.room.sftp.ConnectionSftpRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.merge
 

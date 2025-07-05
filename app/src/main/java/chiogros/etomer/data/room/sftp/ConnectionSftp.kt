@@ -1,7 +1,8 @@
-package chiogros.etomer.data.room
+package chiogros.etomer.data.room.sftp
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import chiogros.etomer.data.room.Connection
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 

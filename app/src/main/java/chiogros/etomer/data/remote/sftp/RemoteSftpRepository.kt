@@ -1,10 +1,10 @@
-package chiogros.etomer.data.repositories.remote
+package chiogros.etomer.data.remote.sftp
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import chiogros.etomer.data.datasource.remote.RemoteSftpDataSource
+import chiogros.etomer.data.remote.repository.RemoteRepository
 import chiogros.etomer.data.room.Connection
-import chiogros.etomer.data.room.ConnectionSftp
+import chiogros.etomer.data.room.sftp.ConnectionSftp
 
 class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRepository() {
     @RequiresApi(Build.VERSION_CODES.O)

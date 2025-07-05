@@ -1,9 +1,10 @@
-package chiogros.etomer.data.repositories.remote
+package chiogros.etomer.data.remote.repository
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import chiogros.etomer.data.remote.sftp.RemoteSftpRepository
 import chiogros.etomer.data.room.Connection
-import chiogros.etomer.data.room.ConnectionSftp
+import chiogros.etomer.data.room.sftp.ConnectionSftp
 
 /**
  * Aggregates all repositories to handle data requests from SAF.

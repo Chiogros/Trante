@@ -1,4 +1,4 @@
-package chiogros.etomer.data.repositories.remote
+package chiogros.etomer.data.remote.repository
 
 import chiogros.etomer.data.room.Connection
 

@@ -38,7 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
-import chiogros.etomer.data.room.ConnectionSftp
+import chiogros.etomer.data.room.sftp.ConnectionSftp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

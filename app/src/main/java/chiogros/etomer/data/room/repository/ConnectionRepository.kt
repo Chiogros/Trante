@@ -1,4 +1,4 @@
-package chiogros.etomer.data.repositories.room
+package chiogros.etomer.data.room.repository
 
 import chiogros.etomer.data.room.Connection
 import kotlinx.coroutines.flow.Flow
