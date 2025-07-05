@@ -7,12 +7,12 @@ import kotlinx.coroutines.flow.Flow
 
 class ConnectionSftpRepository(private val localDataSource: ConnectionSftpRoomDataSource) :
     ConnectionRepository() {
-    override suspend fun delete(connection: Connection) {
-        delete(connection as ConnectionSftp)
+    override suspend fun delete(con: Connection) {
+        delete(con as ConnectionSftp)
     }
 
-    suspend fun delete(connection: ConnectionSftp) {
-        localDataSource.delete(connection)
+    suspend fun delete(con: ConnectionSftp) {
+        localDataSource.delete(con)
     }
 
     override fun get(id: String): Flow<ConnectionSftp> {
@@ -23,19 +23,19 @@ class ConnectionSftpRepository(private val localDataSource: ConnectionSftpRoomDa
         return localDataSource.getAll()
     }
 
-    override suspend fun insert(connection: Connection) {
-        insert(connection as ConnectionSftp)
+    override suspend fun insert(con: Connection) {
+        insert(con as ConnectionSftp)
     }
 
-    suspend fun insert(connection: ConnectionSftp) {
-        localDataSource.insert(connection)
+    suspend fun insert(con: ConnectionSftp) {
+        localDataSource.insert(con)
     }
 
-    override suspend fun update(connection: Connection) {
-        update(connection as ConnectionSftp)
+    override suspend fun update(con: Connection) {
+        update(con as ConnectionSftp)
     }
 
-    suspend fun update(connection: ConnectionSftp) {
-        localDataSource.update(connection)
+    suspend fun update(con: ConnectionSftp) {
+        localDataSource.update(con)
     }
 }

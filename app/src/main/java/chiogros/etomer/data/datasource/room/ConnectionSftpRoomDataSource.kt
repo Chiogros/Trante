@@ -5,8 +5,8 @@ import chiogros.etomer.data.room.ConnectionSftpDao
 import kotlinx.coroutines.flow.Flow
 
 class ConnectionSftpRoomDataSource(private val dao: ConnectionSftpDao) {
-    suspend fun delete(connection: ConnectionSftp) {
-        dao.delete(connection)
+    suspend fun delete(con: ConnectionSftp) {
+        dao.delete(con)
     }
 
     fun get(id: String): Flow<ConnectionSftp> {
@@ -17,12 +17,12 @@ class ConnectionSftpRoomDataSource(private val dao: ConnectionSftpDao) {
         return dao.getAll()
     }
 
-    suspend fun insert(connection: ConnectionSftp) {
-        dao.insert(connection)
+    suspend fun insert(con: ConnectionSftp) {
+        dao.insert(con)
     }
 
-    suspend fun update(connection: ConnectionSftp) {
-        dao.update(connection)
+    suspend fun update(con: ConnectionSftp) {
+        dao.update(con)
     }
 
 }

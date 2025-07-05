@@ -67,8 +67,8 @@ fun ConnectionsList(
             )
         } else {
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                items(items = connections, contentType = { it }) { connection ->
-                    Item(connection, viewModel, onItemClick)
+                items(items = connections, contentType = { it }) { con ->
+                    Item(con, viewModel, onItemClick)
                 }
             }
         }
@@ -118,39 +118,39 @@ fun Fab(onClick: () -> Unit) {
 
 @Composable
 fun Item(
-    connection: Connection, viewModel: ConnectionsListViewModel, onItemClick: (String) -> Unit
+    con: Connection, viewModel: ConnectionsListViewModel, onItemClick: (String) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .combinedClickable(onClick = { onItemClick(connection.id) })
+            .combinedClickable(onClick = { onItemClick(con.id) })
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = connection.toString(),
+            text = con.toString(),
             modifier = Modifier.weight(1F),
             fontWeight = FontWeight.Normal
         )
 
-        if (!connection.name.isEmpty()) {
+        if (!con.name.isEmpty()) {
             // Only print connection name if defined
-            Text(text = connection.name, modifier = Modifier.weight(3F))
+            Text(text = con.name, modifier = Modifier.weight(3F))
         } else {
             Column(modifier = Modifier.weight(3F)) {
                 Text(
-                    text = connection.host,
+                    text = con.host,
                     fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Text(text = connection.user, style = MaterialTheme.typography.bodyMedium)
+                Text(text = con.user, style = MaterialTheme.typography.bodyMedium)
             }
         }
 
         Switch(
-            checked = connection.enabled,
+            checked = con.enabled,
             onCheckedChange = {
-                viewModel.toggle(connection)
+                viewModel.toggle(con)
             }, modifier = Modifier.weight(1F)
         )
     }
