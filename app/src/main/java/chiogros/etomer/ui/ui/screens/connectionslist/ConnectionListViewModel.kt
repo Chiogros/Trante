@@ -1,11 +1,10 @@
-package chiogros.etomer.ui.state
+package chiogros.etomer.ui.ui.screens.connectionslist
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import chiogros.etomer.data.repositories.ConnectionManager
+import chiogros.etomer.data.repositories.room.ConnectionManager
 import chiogros.etomer.data.room.Connection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,14 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.apache.sshd.client.SshClient
-import org.apache.sshd.client.session.ClientSession
-import org.apache.sshd.common.util.io.PathUtils.setUserHomeFolderResolver
-import org.apache.sshd.sftp.client.SftpClient
-import org.apache.sshd.sftp.client.SftpClientFactory
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.function.Supplier
 
 data class ConnectionListUiState(
     val connections: StateFlow<List<Connection>>, val isConnectionDeleted: Boolean = false
@@ -41,31 +32,7 @@ class ConnectionListViewModel(private val repository: ConnectionManager) : ViewM
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            // Set Android's filesystem path
-            val path: Supplier<Path> = Supplier { Paths.get("").normalize() }
-            setUserHomeFolderResolver(path)
 
-            // Create a client handler
-            var client: SshClient = SshClient.setUpDefaultClient()
-            client.start()
-
-            // Connect to server, execute commands
-            var session: ClientSession = client.connect("test", "192.168.1.32", 22)
-                .verify()
-                .getClientSession()
-            session.addPasswordIdentity("testtest")
-            session.auth().verify()
-            session.executeRemoteCommand("touch worked")
-
-            val factory: SftpClientFactory = SftpClientFactory.instance()
-            val sftpClient: SftpClient = factory.createSftpClient(session)
-
-            val content: String =
-                sftpClient.read("/home/test/worked").readAllBytes().decodeToString()
-
-            Log.i("Test", content)
-
-            client.stop()
         }
     }
 

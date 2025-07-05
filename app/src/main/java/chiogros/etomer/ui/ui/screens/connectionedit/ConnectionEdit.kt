@@ -1,4 +1,4 @@
-package chiogros.etomer.ui.ui.screens
+package chiogros.etomer.ui.ui.screens.connectionedit
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +39,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
 import chiogros.etomer.data.room.ConnectionSftp
-import chiogros.etomer.ui.state.ConnectionEditViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

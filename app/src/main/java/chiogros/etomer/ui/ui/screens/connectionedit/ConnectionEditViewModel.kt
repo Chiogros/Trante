@@ -1,8 +1,8 @@
-package chiogros.etomer.ui.state
+package chiogros.etomer.ui.ui.screens.connectionedit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import chiogros.etomer.data.repositories.ConnectionManager
+import chiogros.etomer.data.repositories.room.ConnectionManager
 import chiogros.etomer.data.room.Connection
 import chiogros.etomer.data.room.ConnectionSftp
 import kotlinx.coroutines.flow.MutableStateFlow

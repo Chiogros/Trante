@@ -9,10 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import chiogros.etomer.ui.state.ConnectionEditViewModel
-import chiogros.etomer.ui.state.ConnectionListViewModel
-import chiogros.etomer.ui.ui.screens.ConnectionEdit
-import chiogros.etomer.ui.ui.screens.ConnectionsList
+import chiogros.etomer.ui.ui.screens.connectionedit.ConnectionEdit
+import chiogros.etomer.ui.ui.screens.connectionedit.ConnectionEditViewModel
+import chiogros.etomer.ui.ui.screens.connectionslist.ConnectionListViewModel
+import chiogros.etomer.ui.ui.screens.connectionslist.ConnectionsList
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,6 +1,6 @@
-package chiogros.etomer.data.repositories
+package chiogros.etomer.data.repositories.room
 
-import chiogros.etomer.data.datasource.ConnectionSftpRoomDataSource
+import chiogros.etomer.data.datasource.room.ConnectionSftpRoomDataSource
 import chiogros.etomer.data.room.Connection
 import chiogros.etomer.data.room.ConnectionSftp
 import kotlinx.coroutines.flow.Flow

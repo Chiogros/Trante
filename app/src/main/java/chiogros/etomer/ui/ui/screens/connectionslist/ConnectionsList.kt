@@ -1,4 +1,4 @@
-package chiogros.etomer.ui.ui.screens
+package chiogros.etomer.ui.ui.screens.connectionslist
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
 import chiogros.etomer.data.room.Connection
-import chiogros.etomer.ui.state.ConnectionListViewModel
 
 @Composable
 fun ConnectionsList(

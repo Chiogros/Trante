@@ -1,4 +1,4 @@
-package chiogros.etomer.data.datasource
+package chiogros.etomer.data.datasource.room
 
 import chiogros.etomer.data.room.ConnectionSftp
 import chiogros.etomer.data.room.ConnectionSftpDao

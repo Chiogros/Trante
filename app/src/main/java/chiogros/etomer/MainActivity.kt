@@ -5,12 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import chiogros.etomer.data.datasource.ConnectionSftpRoomDataSource
-import chiogros.etomer.data.repositories.ConnectionManager
-import chiogros.etomer.data.repositories.ConnectionSftpRepository
+import chiogros.etomer.data.datasource.room.ConnectionSftpRoomDataSource
+import chiogros.etomer.data.repositories.room.ConnectionManager
+import chiogros.etomer.data.repositories.room.ConnectionSftpRepository
 import chiogros.etomer.data.room.AppDatabase
-import chiogros.etomer.ui.state.ConnectionEditViewModel
-import chiogros.etomer.ui.state.ConnectionListViewModel
+import chiogros.etomer.ui.ui.screens.connectionedit.ConnectionEditViewModel
+import chiogros.etomer.ui.ui.screens.connectionslist.ConnectionListViewModel
 import chiogros.etomer.ui.ui.theme.EtomerTheme
 
 class MainActivity : ComponentActivity() {
