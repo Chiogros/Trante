@@ -42,7 +42,7 @@ import chiogros.etomer.data.room.Connection
 @Composable
 fun ConnectionsList(
     onFabClick: () -> Unit,
-    viewModel: ConnectionListViewModel,
+    viewModel: ConnectionsListViewModel,
     onItemClick: (String) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
@@ -118,7 +118,7 @@ fun Fab(onClick: () -> Unit) {
 
 @Composable
 fun Item(
-    connection: Connection, viewModel: ConnectionListViewModel, onItemClick: (String) -> Unit
+    connection: Connection, viewModel: ConnectionsListViewModel, onItemClick: (String) -> Unit
 ) {
     Row(
         modifier = Modifier

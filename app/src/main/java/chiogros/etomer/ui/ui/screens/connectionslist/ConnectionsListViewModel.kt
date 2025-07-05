@@ -15,20 +15,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class ConnectionListUiState(
+data class ConnectionsListUiState(
     val connections: StateFlow<List<Connection>>, val isConnectionDeleted: Boolean = false
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
-class ConnectionListViewModel(private val repository: ConnectionManager) : ViewModel() {
+class ConnectionsListViewModel(private val repository: ConnectionManager) : ViewModel() {
     private val _uiState = MutableStateFlow(
-        ConnectionListUiState(
+        ConnectionsListUiState(
             connections = repository.getAll().stateIn(
                 viewModelScope, WhileSubscribed(5000), emptyList()
             )
         )
     )
-    val uiState: StateFlow<ConnectionListUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<ConnectionsListUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

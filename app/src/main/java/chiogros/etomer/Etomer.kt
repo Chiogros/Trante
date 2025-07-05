@@ -11,8 +11,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import chiogros.etomer.ui.ui.screens.connectionedit.ConnectionEdit
 import chiogros.etomer.ui.ui.screens.connectionedit.ConnectionEditViewModel
-import chiogros.etomer.ui.ui.screens.connectionslist.ConnectionListViewModel
 import chiogros.etomer.ui.ui.screens.connectionslist.ConnectionsList
+import chiogros.etomer.ui.ui.screens.connectionslist.ConnectionsListViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,7 +23,7 @@ data class ConnectionEdit(val connectionId: String = "")
 
 @Composable
 fun Etomer(
-    connectionListViewModel: ConnectionListViewModel,
+    connectionsListViewModel: ConnectionsListViewModel,
     connectionEditViewModel: ConnectionEditViewModel
 ) {
     val navController = rememberNavController()
@@ -50,7 +50,7 @@ fun Etomer(
         composable<ConnectionsList> {
             ConnectionsList(
                 onFabClick = { navController.navigate(ConnectionEdit()) },
-                viewModel = connectionListViewModel,
+                viewModel = connectionsListViewModel,
                 onItemClick = { id: String -> navController.navigate(ConnectionEdit(id)) },
                 snackbarHostState = snackbarHostState
             )

@@ -10,7 +10,7 @@ import chiogros.etomer.data.repositories.room.ConnectionManager
 import chiogros.etomer.data.repositories.room.ConnectionSftpRepository
 import chiogros.etomer.data.room.AppDatabase
 import chiogros.etomer.ui.ui.screens.connectionedit.ConnectionEditViewModel
-import chiogros.etomer.ui.ui.screens.connectionslist.ConnectionListViewModel
+import chiogros.etomer.ui.ui.screens.connectionslist.ConnectionsListViewModel
 import chiogros.etomer.ui.ui.theme.EtomerTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,13 +25,13 @@ class MainActivity : ComponentActivity() {
 
         val connectionManager = ConnectionManager(connectionSftpRepository)
 
-        val connectionListViewModel = ConnectionListViewModel(connectionManager)
+        val connectionsListViewModel = ConnectionsListViewModel(connectionManager)
         val connectionEditViewModel = ConnectionEditViewModel(connectionManager)
 
         enableEdgeToEdge()
         setContent {
             EtomerTheme {
-                Etomer(connectionListViewModel, connectionEditViewModel)
+                Etomer(connectionsListViewModel, connectionEditViewModel)
             }
         }
     }
