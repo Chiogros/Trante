@@ -10,4 +10,12 @@ class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRep
             remote.connect(con.host, 22, con.user, "testtest")
         }
     }
+
+    override suspend fun listFiles(path: String) {
+        remote.listFiles(path)
+    }
+
+    override suspend fun readFile(path: String): ByteArray {
+        return remote.readFile(path)
+    }
 }

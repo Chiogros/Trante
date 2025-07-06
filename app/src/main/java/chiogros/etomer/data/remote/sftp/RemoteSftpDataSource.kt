@@ -4,4 +4,12 @@ class RemoteSftpDataSource(private val remote: RemoteSftp) {
     suspend fun connect(host: String, port: Int, user: String, pwd: String) {
         remote.connect(host, port, user, pwd)
     }
+
+    suspend fun listFiles(path: String) {
+        remote.listFiles(path)
+    }
+
+    suspend fun readFile(path: String): ByteArray {
+        return remote.readFile(path)
+    }
 }

@@ -18,4 +18,13 @@ class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
     suspend fun connect(con: Connection) {
         getRepositoryForObject(con).connect(con)
     }
+
+    suspend fun listFiles(path: String) {
+        //getRepositoryForObject(con).listFiles(path)
+    }
+
+    suspend fun readFile(path: String): ByteArray {
+        //getRepositoryForObject(con).readFile(path)
+        return ByteArray(0)
+    }
 }

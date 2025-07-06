@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import chiogros.etomer.data.remote.repository.RemoteManager
 import chiogros.etomer.data.remote.sftp.RemoteSftp
 import chiogros.etomer.data.remote.sftp.RemoteSftpDataSource
 import chiogros.etomer.data.remote.sftp.RemoteSftpRepository
@@ -37,10 +38,11 @@ class MainActivity : ComponentActivity() {
         val remoteSftp = RemoteSftp()
         val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftp)
         val remoteSftpRepository = RemoteSftpRepository(remoteSftpRoomDataSource)
+        val remoteManager = RemoteManager(remoteSftpRepository)
 
         // Use cases
         val enableConnectionUseCase =
-            EnableConnectionUseCase(connectionManager, remoteSftpRepository)
+            EnableConnectionUseCase(connectionManager, remoteManager)
         val disableConnectionUseCase = DisableConnectionUseCase(connectionManager)
         val deleteConnectionUseCase = DeleteConnectionUseCase()
         val insertConnectionUseCase = InsertConnectionUseCase()
