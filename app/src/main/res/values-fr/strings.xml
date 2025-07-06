@@ -20,4 +20,5 @@
     <string name="undo">Annuler</string>
     <string name="connection_failed">Connexion échouée</string>
     <string name="connection_succeed">Connexion réussie</string>
+    <string name="connection_type_not_supported">Le type de connexion n\'est pas supporté</string>
 </resources>

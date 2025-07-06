@@ -26,20 +26,27 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
         client.start()
     }
 
-    suspend fun connect(host: String, port: Int, user: String, pwd: String) {
-        // Connect to server, execute commands
-        var session: ClientSession
+    suspend fun connect(host: String, port: Int, user: String, pwd: String): Boolean {
+        var session: ClientSession? = null
+
         withContext(coroutineDispatcher) {
-            session = client.connect(user, host, port)
-                .verify()
-                .getClientSession()
+            try {
+                // Connect to server
+                session = client.connect(user, host, port)
+                    .verify()
+                    .clientSession
 
-            session.addPasswordIdentity(pwd)
-            session.auth().verify()
+                session.addPasswordIdentity(pwd)
+                session.auth().verify()
 
-            val factory: SftpClientFactory = SftpClientFactory.instance()
-            sftpClient = factory.createSftpClient(session)
+                val factory: SftpClientFactory = SftpClientFactory.instance()
+                sftpClient = factory.createSftpClient(session)
+
+            } catch (_: IOException) {
+            }
         }
+
+        return (session != null)
     }
 
     suspend fun listFiles(path: String) {
@@ -52,7 +59,7 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
         var content: ByteArray
         try {
             content = sftpClient.read(canonicalPath).readAllBytes()
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             content = ByteArray(0)
         }
         return content

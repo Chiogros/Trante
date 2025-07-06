@@ -1,5 +1,6 @@
 package chiogros.etomer.data.remote.repository
 
+import chiogros.etomer.R
 import chiogros.etomer.data.remote.sftp.RemoteSftpRepository
 import chiogros.etomer.data.room.Connection
 import chiogros.etomer.data.room.sftp.ConnectionSftp
@@ -11,12 +12,12 @@ class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
     fun getRepositoryForObject(con: Connection): RemoteRepository {
         return when (con) {
             is ConnectionSftp -> remoteSftpRepository
-            else -> error("Connection type isn't supported yet!")
+            else -> error(R.string.connection_type_not_supported)
         }
     }
 
-    suspend fun connect(con: Connection) {
-        getRepositoryForObject(con).connect(con)
+    suspend fun connect(con: Connection): Boolean {
+        return getRepositoryForObject(con).connect(con)
     }
 
     suspend fun listFiles(path: String) {

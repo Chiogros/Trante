@@ -5,10 +5,11 @@ import chiogros.etomer.data.room.Connection
 import chiogros.etomer.data.room.sftp.ConnectionSftp
 
 class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRepository() {
-    override suspend fun connect(con: Connection) {
+    override suspend fun connect(con: Connection): Boolean {
         if (con is ConnectionSftp) {
-            remote.connect(con.host, 22, con.user, "testtest")
+            return remote.connect(con.host, 22, con.user, "testtest")
         }
+        return false
     }
 
     override suspend fun listFiles(path: String) {

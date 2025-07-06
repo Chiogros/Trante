@@ -1,8 +1,8 @@
 package chiogros.etomer.data.remote.sftp
 
 class RemoteSftpDataSource(private val remote: RemoteSftp) {
-    suspend fun connect(host: String, port: Int, user: String, pwd: String) {
-        remote.connect(host, port, user, pwd)
+    suspend fun connect(host: String, port: Int, user: String, pwd: String): Boolean {
+        return remote.connect(host, port, user, pwd)
     }
 
     suspend fun listFiles(path: String) {
