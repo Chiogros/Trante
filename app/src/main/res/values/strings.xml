@@ -21,4 +21,6 @@
     <string name="repository_url" translatable="false">https://github.com/Chiogros/Etomer</string>
     <string name="connection_deleted">Connection deleted</string>
     <string name="undo">Undo</string>
+    <string name="connection_failed">Connection failed</string>
+    <string name="connection_succeed">Connection succeed</string>
 </resources>

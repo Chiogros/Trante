@@ -18,4 +18,6 @@
     <string name="app_info">Informations sur l\'application</string>
     <string name="connection_deleted">Connexion supprimée</string>
     <string name="undo">Annuler</string>
+    <string name="connection_failed">Connexion échouée</string>
+    <string name="connection_succeed">Connexion réussie</string>
 </resources>

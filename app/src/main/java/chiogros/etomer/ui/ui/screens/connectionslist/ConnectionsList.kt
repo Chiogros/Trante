@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.sharp.Add
+import androidx.compose.material.icons.sharp.Check
+import androidx.compose.material.icons.sharp.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -41,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import chiogros.etomer.R
 import chiogros.etomer.data.room.Connection
+import chiogros.etomer.data.room.ConnectionState
 
 @Composable
 fun ConnectionsList(
@@ -127,13 +130,10 @@ fun Item(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(onClick = { onItemClick(con.id) })
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(16.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = con.toString(),
-            modifier = Modifier.weight(1F),
-            fontWeight = FontWeight.Normal
+            text = con.toString(), modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal
         )
 
         if (!con.name.isEmpty()) {
@@ -152,16 +152,33 @@ fun Item(
 
         Switch(
             checked = con.enabled,
+            colors = SwitchDefaults.colors(),
             onCheckedChange = {
                 viewModel.toggle(con)
-            }, modifier = Modifier.weight(1F),
-            thumbContent = {
-                if (con.enabled) CircularProgressIndicator(
-                    modifier = Modifier.size(
-                        SwitchDefaults.IconSize
+            }, modifier = Modifier.weight(1F), thumbContent = {
+                val modifier = Modifier.size(SwitchDefaults.IconSize)
+
+                if (con.enabled) {
+                    when (con.state) {
+                        ConnectionState.CONNECTED -> Icon(
+                            imageVector = Icons.Sharp.Check,
+                            contentDescription = stringResource(R.string.connection_succeed),
+                            modifier = modifier
                     )
-                )
-            }
-        )
+
+                        ConnectionState.CONNECTING -> CircularProgressIndicator(
+                            modifier = modifier
+                        )
+
+                        ConnectionState.FAILED -> Icon(
+                            imageVector = Icons.Sharp.Close,
+                            contentDescription = stringResource(R.string.connection_failed),
+                            modifier = modifier
+                        )
+
+                        else -> {}
+                    }
+                }
+            })
     }
 }

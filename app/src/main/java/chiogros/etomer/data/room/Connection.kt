@@ -6,6 +6,7 @@ abstract class Connection() {
     abstract var enabled: Boolean
     abstract var host: String
     abstract var user: String
+    abstract var state: ConnectionState
 
     // Get the string name of the protocol: "SFTP", "FTP", ...
     abstract override fun toString(): String
