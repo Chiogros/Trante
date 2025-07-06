@@ -1,7 +1,5 @@
 package chiogros.etomer.ui.ui.screens.connectionslist
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chiogros.etomer.data.room.Connection
@@ -60,7 +58,6 @@ class ConnectionsListViewModel(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun toggle(con: Connection) {
         viewModelScope.launch {
             if (con.enabled) {

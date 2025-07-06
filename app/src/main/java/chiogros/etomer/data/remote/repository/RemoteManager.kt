@@ -1,7 +1,5 @@
 package chiogros.etomer.data.remote.repository
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import chiogros.etomer.data.remote.sftp.RemoteSftpRepository
 import chiogros.etomer.data.room.Connection
 import chiogros.etomer.data.room.sftp.ConnectionSftp
@@ -17,7 +15,6 @@ class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun connect(con: Connection) {
         getRepositoryForObject(con).connect(con)
     }
