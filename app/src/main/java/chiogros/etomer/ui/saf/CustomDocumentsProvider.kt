@@ -1,5 +1,6 @@
 package chiogros.etomer.ui.saf
 
+import android.content.Context
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.os.CancellationSignal
@@ -7,8 +8,41 @@ import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
 import chiogros.etomer.R
+import chiogros.etomer.data.remote.repository.RemoteManager
+import chiogros.etomer.data.remote.sftp.RemoteSftp
+import chiogros.etomer.data.remote.sftp.RemoteSftpDataSource
+import chiogros.etomer.data.remote.sftp.RemoteSftpRepository
+import chiogros.etomer.data.room.AppDatabase
+import chiogros.etomer.data.room.repository.ConnectionManager
+import chiogros.etomer.data.room.sftp.ConnectionSftpRepository
+import chiogros.etomer.data.room.sftp.ConnectionSftpRoomDataSource
+import chiogros.etomer.domain.GetEnabledConnectionsUseCase
+import chiogros.etomer.domain.ListFilesInDirectoryUseCase
+import chiogros.etomer.domain.ReadFileUseCase
 
 class CustomDocumentsProvider : DocumentsProvider() {
+    lateinit var listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase
+    lateinit var readFileUseCase: ReadFileUseCase
+    lateinit var getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase
+
+    fun initUseCases(context: Context) {
+        // Room
+        val connectionSftpRoomDataSource =
+            ConnectionSftpRoomDataSource(AppDatabase.getDatabase(context).ConnectionSftpDao())
+        val connectionSftpRepository = ConnectionSftpRepository(connectionSftpRoomDataSource)
+        val connectionManager = ConnectionManager(connectionSftpRepository)
+
+        // Remote
+        val remoteSftp = RemoteSftp()
+        val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftp)
+        val remoteSftpRepository = RemoteSftpRepository(remoteSftpRoomDataSource)
+        val remoteManager = RemoteManager(remoteSftpRepository)
+
+        listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(connectionManager, remoteManager)
+        readFileUseCase = ReadFileUseCase()
+        getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(connectionManager)
+    }
+
     override fun openDocument(
         documentId: String?,
         mode: String?,
@@ -33,7 +67,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
                 DocumentsContract.Document.COLUMN_SIZE,
                 DocumentsContract.Document.COLUMN_LAST_MODIFIED,
             )
-            column = Array<String>(columnNames.size, { index -> columnNames.get(index) })
+            column = Array<String>(columnNames.size, { index -> columnNames[index] })
         }
         return MatrixCursor(column).apply {
             newRow().apply {
@@ -70,7 +104,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
                 DocumentsContract.Document.COLUMN_SIZE,
                 DocumentsContract.Document.COLUMN_LAST_MODIFIED,
             )
-            column = Array<String>(columnNames.size, { index -> columnNames.get(index) })
+            column = Array<String>(columnNames.size, { index -> columnNames[index] })
         }
 
         val arr = MatrixCursor(column).apply {
@@ -90,6 +124,11 @@ class CustomDocumentsProvider : DocumentsProvider() {
     }
 
     override fun queryRoots(projection: Array<out String?>?): Cursor? {
+        val context = this.context
+        if (context == null) {
+            error(R.string.no_context)
+        }
+
         var column: Array<out String?>? = projection
 
         if (projection == null) {
@@ -100,34 +139,46 @@ class CustomDocumentsProvider : DocumentsProvider() {
                 DocumentsContract.Root.COLUMN_DOCUMENT_ID,
                 DocumentsContract.Root.COLUMN_ICON
             )
-            column = Array<String>(columnNames.size, { index -> columnNames.get(index) })
+            column = Array(columnNames.size, { index -> columnNames[index] })
         }
+
         val cursor = MatrixCursor(column)
-
-        // If user is not logged in, return an empty root cursor.  This removes our
-        // provider from the list entirely.
-        /*if (!isUserLoggedIn()) {
-            return result
-        }*/
-
-        val app_name = this.context?.getString(R.string.app_name)
 
         // It's possible to have multiple roots (e.g. for multiple accounts in the
         // same app) -- just add multiple cursor rows.
-        cursor.newRow().apply {
-            add(DocumentsContract.Root.COLUMN_TITLE, app_name)
-            add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_launcher)
-            add(DocumentsContract.Root.COLUMN_ROOT_ID, "ROOT")
-            add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, "root")
-            add(
-                DocumentsContract.Root.COLUMN_FLAGS, DocumentsContract.Root.FLAG_SUPPORTS_CREATE or
-                        DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
-            )
+        getEnabledConnectionsUseCase().forEach { con ->
+            cursor.newRow().apply {
+                add(
+                    DocumentsContract.Root.COLUMN_TITLE,
+                    if (con.name.isNotEmpty()) con.name
+                    else con.user + "@" + con.host
+                )
+                add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_launcher)
+                add(DocumentsContract.Root.COLUMN_ROOT_ID, con.id)
+                add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id + "/root")
+                add(
+                    DocumentsContract.Root.COLUMN_FLAGS,
+                    DocumentsContract.Root.FLAG_SUPPORTS_CREATE
+                            or DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
+                )
+            }
         }
+
         return cursor
     }
 
     override fun onCreate(): Boolean {
+        val context = this.context
+        if (context == null) {
+            error(R.string.no_context)
+        }
+        initUseCases(context)
+
+        /* Notify ContentProvider about changes in enabled connections
+        val uri = buildRootsUri("content://chiogros.etomer/7abf89a7-e7f4-446e-a5d8-045d18f323b4")
+        context.contentResolver.notifyChange(uri, null, false)
+        */
+
         return true
     }
 }
