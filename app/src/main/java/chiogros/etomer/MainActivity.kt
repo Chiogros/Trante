@@ -42,8 +42,9 @@ class MainActivity : ComponentActivity() {
 
         // Use cases
         val enableConnectionUseCase =
-            EnableConnectionUseCase(connectionManager, remoteManager)
-        val disableConnectionUseCase = DisableConnectionUseCase(connectionManager)
+            EnableConnectionUseCase(connectionManager, remoteManager, this.applicationContext)
+        val disableConnectionUseCase =
+            DisableConnectionUseCase(connectionManager, this.applicationContext)
         val deleteConnectionUseCase = DeleteConnectionUseCase()
         val insertConnectionUseCase = InsertConnectionUseCase()
         val getConnectionsUseCase = GetConnectionsUseCase(connectionManager)

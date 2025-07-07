@@ -148,14 +148,14 @@ class CustomDocumentsProvider : DocumentsProvider() {
         // same app) -- just add multiple cursor rows.
         getEnabledConnectionsUseCase().forEach { con ->
             cursor.newRow().apply {
+                // Set SAF entry with connection name, or user@host otherwise
                 add(
                     DocumentsContract.Root.COLUMN_TITLE,
-                    if (con.name.isNotEmpty()) con.name
-                    else con.user + "@" + con.host
+                    con.name.ifEmpty { con.user + "@" + con.host }
                 )
                 add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_launcher)
                 add(DocumentsContract.Root.COLUMN_ROOT_ID, con.id)
-                add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id + "/root")
+                add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id + "/")
                 add(
                     DocumentsContract.Root.COLUMN_FLAGS,
                     DocumentsContract.Root.FLAG_SUPPORTS_CREATE
@@ -173,11 +173,6 @@ class CustomDocumentsProvider : DocumentsProvider() {
             error(R.string.no_context)
         }
         initUseCases(context)
-
-        /* Notify ContentProvider about changes in enabled connections
-        val uri = buildRootsUri("content://chiogros.etomer/7abf89a7-e7f4-446e-a5d8-045d18f323b4")
-        context.contentResolver.notifyChange(uri, null, false)
-        */
 
         return true
     }
