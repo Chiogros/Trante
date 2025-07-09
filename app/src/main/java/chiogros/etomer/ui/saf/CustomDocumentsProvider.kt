@@ -145,6 +145,10 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return cursor
     }
 
+    /**
+     * It seems to be mostly called to get data about root folder,
+     * which is the reason why "." folder is hardcoded.
+     */
     override fun queryDocument(
         documentId: String?, projection: Array<out String?>?
     ): Cursor? {
@@ -168,26 +172,16 @@ class CustomDocumentsProvider : DocumentsProvider() {
             return cursor
         }
 
-        val conId = documentId.substringBefore('/')
-        val path = documentId.substringAfter('/', ".")
-
-        var files: List<File> = emptyList()
-        runBlocking {
-            files = listFilesInDirectoryUseCase(conId, path)
-        }
-
-        files.filter { it.path.fileName.toString() == "." }.forEach { file ->
-            cursor.newRow().apply {
-                add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, documentId)
-                add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString())
-                add(
-                    DocumentsContract.Document.COLUMN_MIME_TYPE,
-                    DocumentsContract.Document.MIME_TYPE_DIR
-                )
-                add(DocumentsContract.Document.COLUMN_FLAGS, 0)
-                add(DocumentsContract.Document.COLUMN_SIZE, file.size)
-                add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
-            }
+        cursor.newRow().apply {
+            add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, documentId)
+            add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, ".")
+            add(
+                DocumentsContract.Document.COLUMN_MIME_TYPE,
+                DocumentsContract.Document.MIME_TYPE_DIR
+            )
+            add(DocumentsContract.Document.COLUMN_FLAGS, 0)
+            add(DocumentsContract.Document.COLUMN_SIZE, null)
+            add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
         }
 
         return cursor
