@@ -49,8 +49,9 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
         return (session != null)
     }
 
-    suspend fun listFiles(path: String) {
-
+    suspend fun listFiles(path: String): Iterable<SftpClient.DirEntry> =
+        withContext(coroutineDispatcher) {
+            sftpClient.readEntries(sftpClient.canonicalPath(path))
     }
 
     suspend fun readFile(path: String): ByteArray {

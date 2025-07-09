@@ -8,6 +8,8 @@ import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
 import chiogros.etomer.R
+import chiogros.etomer.data.remote.File
+import chiogros.etomer.data.remote.FileAttributesType
 import chiogros.etomer.data.remote.repository.RemoteManager
 import chiogros.etomer.data.remote.sftp.RemoteSftp
 import chiogros.etomer.data.remote.sftp.RemoteSftpDataSource
@@ -19,6 +21,8 @@ import chiogros.etomer.data.room.sftp.ConnectionSftpRoomDataSource
 import chiogros.etomer.domain.GetEnabledConnectionsUseCase
 import chiogros.etomer.domain.ListFilesInDirectoryUseCase
 import chiogros.etomer.domain.ReadFileUseCase
+import kotlinx.coroutines.runBlocking
+
 
 class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase
@@ -59,7 +63,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         var column: Array<out String?>? = projection
 
         if (projection == null) {
-            val columnNames = listOf<String>(
+            val columnNames = listOf(
                 DocumentsContract.Document.COLUMN_DOCUMENT_ID,
                 DocumentsContract.Document.COLUMN_DISPLAY_NAME,
                 DocumentsContract.Document.COLUMN_MIME_TYPE,
@@ -67,26 +71,45 @@ class CustomDocumentsProvider : DocumentsProvider() {
                 DocumentsContract.Document.COLUMN_SIZE,
                 DocumentsContract.Document.COLUMN_LAST_MODIFIED,
             )
-            column = Array<String>(columnNames.size, { index -> columnNames[index] })
+            column = Array(columnNames.size, { index -> columnNames[index] })
         }
-        return MatrixCursor(column).apply {
-            newRow().apply {
-                add("a")
-                add("a")
-                add("a")
-                add("a")
-                add(64)
-                add(1749484283000)
-            }
-            newRow().apply {
-                add("b")
-                add("b")
-                add("b")
-                add("b")
-                add(64)
-                add(1749484283000)
+
+        val cursor = MatrixCursor(column)
+
+        if (parentDocumentId == null) {
+            return cursor
+        }
+
+        val conId = parentDocumentId.substringBefore('/')
+        val path = parentDocumentId.substringAfter('/', ".")
+
+        var files: List<File> = emptyList()
+        runBlocking {
+            files = listFilesInDirectoryUseCase(conId, path)
+        }
+
+        files.filter { it.path.fileName.toString() != "." }.forEach { file ->
+            cursor.newRow().apply {
+                add(
+                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                    parentDocumentId + "/" + file.path.fileName.toString()
+                )
+                add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString())
+                add(
+                    DocumentsContract.Document.COLUMN_MIME_TYPE,
+                    when (file.type) {
+                        FileAttributesType.DIRECTORY -> DocumentsContract.Document.MIME_TYPE_DIR
+                        FileAttributesType.SYMLINK -> DocumentsContract.Document.MIME_TYPE_DIR
+                        else -> "application/octet-stream"
+                    }
+                )
+                add(DocumentsContract.Document.COLUMN_FLAGS, 0)
+                add(DocumentsContract.Document.COLUMN_SIZE, file.size)
+                add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
             }
         }
+
+        return cursor
     }
 
     override fun queryDocument(
@@ -96,7 +119,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         var column: Array<out String?>? = projection
 
         if (projection == null) {
-            val columnNames = listOf<String>(
+            val columnNames = listOf(
                 DocumentsContract.Document.COLUMN_DOCUMENT_ID,
                 DocumentsContract.Document.COLUMN_DISPLAY_NAME,
                 DocumentsContract.Document.COLUMN_MIME_TYPE,
@@ -104,23 +127,45 @@ class CustomDocumentsProvider : DocumentsProvider() {
                 DocumentsContract.Document.COLUMN_SIZE,
                 DocumentsContract.Document.COLUMN_LAST_MODIFIED,
             )
-            column = Array<String>(columnNames.size, { index -> columnNames[index] })
+            column = Array(columnNames.size, { index -> columnNames[index] })
         }
 
-        val arr = MatrixCursor(column).apply {
-            newRow().apply {
-                add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, "root")
-                add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, "root")
+        val cursor = MatrixCursor(column)
+
+        if (documentId == null) {
+            return cursor
+        }
+
+        val conId = documentId.substringBefore('/')
+        val path = documentId.substringAfter('/', ".")
+
+        var files: List<File> = emptyList()
+        runBlocking {
+            files = listFilesInDirectoryUseCase(conId, path)
+        }
+
+        files.filter { it.path.fileName.toString() == "." }.forEach { file ->
+            cursor.newRow().apply {
+                add(
+                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                    documentId
+                )
+                add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString())
                 add(
                     DocumentsContract.Document.COLUMN_MIME_TYPE,
-                    DocumentsContract.Document.MIME_TYPE_DIR
+                    when (file.type) {
+                        FileAttributesType.DIRECTORY -> DocumentsContract.Document.MIME_TYPE_DIR
+                        FileAttributesType.SYMLINK -> DocumentsContract.Document.MIME_TYPE_DIR
+                        else -> "application/octet-stream"
+                    }
                 )
-                add(DocumentsContract.Document.COLUMN_SIZE, null)
+                add(DocumentsContract.Document.COLUMN_FLAGS, 0)
+                add(DocumentsContract.Document.COLUMN_SIZE, file.size)
                 add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
             }
         }
 
-        return arr
+        return cursor
     }
 
     override fun queryRoots(projection: Array<out String?>?): Cursor? {
@@ -132,7 +177,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         var column: Array<out String?>? = projection
 
         if (projection == null) {
-            val columnNames = listOf<String>(
+            val columnNames = listOf(
                 DocumentsContract.Root.COLUMN_TITLE,
                 DocumentsContract.Root.COLUMN_ROOT_ID,
                 DocumentsContract.Root.COLUMN_FLAGS,
@@ -148,14 +193,14 @@ class CustomDocumentsProvider : DocumentsProvider() {
         // same app) -- just add multiple cursor rows.
         getEnabledConnectionsUseCase().forEach { con ->
             cursor.newRow().apply {
+                add(DocumentsContract.Root.COLUMN_ROOT_ID, con.id)
                 // Set SAF entry with connection name, or user@host otherwise
                 add(
                     DocumentsContract.Root.COLUMN_TITLE,
                     con.name.ifEmpty { con.user + "@" + con.host }
                 )
                 add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_launcher)
-                add(DocumentsContract.Root.COLUMN_ROOT_ID, con.id)
-                add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id + "/")
+                add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id)
                 add(
                     DocumentsContract.Root.COLUMN_FLAGS,
                     DocumentsContract.Root.FLAG_SUPPORTS_CREATE
