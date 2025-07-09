@@ -7,6 +7,7 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
+import android.webkit.MimeTypeMap
 import chiogros.etomer.R
 import chiogros.etomer.data.remote.File
 import chiogros.etomer.data.remote.FileAttributesType
@@ -43,22 +44,36 @@ class CustomDocumentsProvider : DocumentsProvider() {
         val remoteManager = RemoteManager(remoteSftpRepository)
 
         listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(connectionManager, remoteManager)
-        readFileUseCase = ReadFileUseCase()
+        readFileUseCase = ReadFileUseCase(connectionManager, remoteManager)
         getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(connectionManager)
     }
 
     override fun openDocument(
-        documentId: String?,
-        mode: String?,
-        signal: CancellationSignal?
+        documentId: String?, mode: String?, signal: CancellationSignal?
     ): ParcelFileDescriptor? {
-        TODO("Not yet implemented")
+        if (documentId == null) {
+            return null
+        }
+
+        val conId = documentId.substringBefore('/')
+        val path = documentId.substringAfter('/', ".")
+
+
+        val pipe = ParcelFileDescriptor.createReliablePipe()
+        val outPipe = pipe[0]
+        val inPipe = ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])
+
+        runBlocking {
+            inPipe.write(readFileUseCase(conId, path))
+        }
+        inPipe.flush()
+        inPipe.close()
+
+        return outPipe
     }
 
     override fun queryChildDocuments(
-        parentDocumentId: String?,
-        projection: Array<out String?>?,
-        sortOrder: String?
+        parentDocumentId: String?, projection: Array<out String?>?, sortOrder: String?
     ): Cursor? {
         var column: Array<out String?>? = projection
 
@@ -88,33 +103,50 @@ class CustomDocumentsProvider : DocumentsProvider() {
             files = listFilesInDirectoryUseCase(conId, path)
         }
 
-        files.filter { it.path.fileName.toString() != "." }.forEach { file ->
-            cursor.newRow().apply {
-                add(
-                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                    parentDocumentId + "/" + file.path.fileName.toString()
-                )
-                add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString())
-                add(
-                    DocumentsContract.Document.COLUMN_MIME_TYPE,
-                    when (file.type) {
-                        FileAttributesType.DIRECTORY -> DocumentsContract.Document.MIME_TYPE_DIR
-                        FileAttributesType.SYMLINK -> DocumentsContract.Document.MIME_TYPE_DIR
-                        else -> "application/octet-stream"
+        val hideDirectoriesRegex = Regex("^\\.{1,2}$")
+
+        files
+            // Do not list . and .. directories
+            .filter { it.path.fileName.toString().matches(hideDirectoriesRegex).not() }
+            // then handle each file
+            .forEach { file ->
+                val mimeType: String = when (file.type) {
+                    FileAttributesType.DIRECTORY -> DocumentsContract.Document.MIME_TYPE_DIR
+                    FileAttributesType.SYMLINK -> DocumentsContract.Document.MIME_TYPE_DIR
+                    FileAttributesType.REGULAR -> {
+                        // Resolve MIME type based on filename extension
+                        val resolved = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                            file.path.fileName.toString().substringAfterLast('.')
+                        )
+
+                        // Default MIME type if filename couldn't be used to resolve it
+                        resolved ?: "text/plain"
                     }
-                )
-                add(DocumentsContract.Document.COLUMN_FLAGS, 0)
-                add(DocumentsContract.Document.COLUMN_SIZE, file.size)
-                add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
+                    // Probably a bunch of bytes
+                    FileAttributesType.UNKNOWN -> "application/octet-stream"
+                }
+
+                cursor.newRow().apply {
+                    add(
+                        DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                        parentDocumentId + "/" + file.path.fileName.toString()
+                    )
+                    add(
+                        DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                        file.path.fileName.toString()
+                    )
+                    add(DocumentsContract.Document.COLUMN_MIME_TYPE, mimeType)
+                    add(DocumentsContract.Document.COLUMN_FLAGS, 0)
+                    add(DocumentsContract.Document.COLUMN_SIZE, file.size)
+                    add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
+                }
             }
-        }
 
         return cursor
     }
 
     override fun queryDocument(
-        documentId: String?,
-        projection: Array<out String?>?
+        documentId: String?, projection: Array<out String?>?
     ): Cursor? {
         var column: Array<out String?>? = projection
 
@@ -146,18 +178,11 @@ class CustomDocumentsProvider : DocumentsProvider() {
 
         files.filter { it.path.fileName.toString() == "." }.forEach { file ->
             cursor.newRow().apply {
-                add(
-                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                    documentId
-                )
+                add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, documentId)
                 add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString())
                 add(
                     DocumentsContract.Document.COLUMN_MIME_TYPE,
-                    when (file.type) {
-                        FileAttributesType.DIRECTORY -> DocumentsContract.Document.MIME_TYPE_DIR
-                        FileAttributesType.SYMLINK -> DocumentsContract.Document.MIME_TYPE_DIR
-                        else -> "application/octet-stream"
-                    }
+                    DocumentsContract.Document.MIME_TYPE_DIR
                 )
                 add(DocumentsContract.Document.COLUMN_FLAGS, 0)
                 add(DocumentsContract.Document.COLUMN_SIZE, file.size)
@@ -197,14 +222,12 @@ class CustomDocumentsProvider : DocumentsProvider() {
                 // Set SAF entry with connection name, or user@host otherwise
                 add(
                     DocumentsContract.Root.COLUMN_TITLE,
-                    con.name.ifEmpty { con.user + "@" + con.host }
-                )
+                    con.name.ifEmpty { con.user + "@" + con.host })
                 add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_launcher)
                 add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id)
                 add(
                     DocumentsContract.Root.COLUMN_FLAGS,
-                    DocumentsContract.Root.FLAG_SUPPORTS_CREATE
-                            or DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
+                    DocumentsContract.Root.FLAG_SUPPORTS_CREATE or DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
                 )
             }
         }

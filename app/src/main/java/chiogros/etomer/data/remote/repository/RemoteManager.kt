@@ -1,6 +1,7 @@
 package chiogros.etomer.data.remote.repository
 
 import chiogros.etomer.R
+import chiogros.etomer.data.remote.File
 import chiogros.etomer.data.remote.sftp.RemoteSftpRepository
 import chiogros.etomer.data.room.Connection
 import chiogros.etomer.data.room.sftp.ConnectionSftp
@@ -24,8 +25,7 @@ class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
         return getRepositoryForObject(con).listFiles(path)
     }
 
-    suspend fun readFile(path: String): ByteArray {
-        //getRepositoryForObject(con).readFile(path)
-        return ByteArray(0)
+    suspend fun readFile(con: Connection, path: String): ByteArray {
+        return getRepositoryForObject(con).readFile(path)
     }
 }
