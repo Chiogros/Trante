@@ -164,7 +164,7 @@ fun Item(
                             imageVector = Icons.Sharp.Check,
                             contentDescription = stringResource(R.string.connection_succeed),
                             modifier = modifier
-                    )
+                        )
 
                         ConnectionState.CONNECTING -> CircularProgressIndicator(
                             modifier = modifier

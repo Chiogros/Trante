@@ -37,12 +37,16 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
                     .clientSession
 
                 session.addPasswordIdentity(pwd)
-                session.auth().verify()
 
-                val factory: SftpClientFactory = SftpClientFactory.instance()
-                sftpClient = factory.createSftpClient(session)
+                if (session.auth().verify().isSuccess) {
+                    val factory: SftpClientFactory = SftpClientFactory.instance()
+                    sftpClient = factory.createSftpClient(session)
+                } else {
+                    session = null
+                }
 
             } catch (_: IOException) {
+                session = null
             }
         }
 
@@ -52,7 +56,7 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
     suspend fun listFiles(path: String): Iterable<SftpClient.DirEntry> =
         withContext(coroutineDispatcher) {
             sftpClient.readEntries(sftpClient.canonicalPath(path))
-    }
+        }
 
     suspend fun readFile(path: String): ByteArray {
         val canonicalPath = sftpClient.canonicalPath(path)
