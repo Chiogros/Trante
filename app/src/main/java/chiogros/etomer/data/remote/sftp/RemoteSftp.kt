@@ -59,14 +59,22 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
         }
 
     suspend fun readFile(path: String): ByteArray {
-        val canonicalPath = sftpClient.canonicalPath(path)
-
         var content: ByteArray
+
         try {
-            content = sftpClient.read(canonicalPath).readAllBytes()
+            val canonicalPath = sftpClient.canonicalPath(path)
+            val fileSize: Long = sftpClient.stat(canonicalPath).size
+
+            // ByteArray max size is integer max value. So at this time, truncate larger files
+            val bufSize: Int = if (fileSize <= Int.MAX_VALUE) fileSize.toInt() else Int.MAX_VALUE
+            content = ByteArray(bufSize)
+
+            sftpClient.read(canonicalPath).read(content)
+
         } catch (_: IOException) {
             content = ByteArray(0)
         }
+
         return content
     }
 }
