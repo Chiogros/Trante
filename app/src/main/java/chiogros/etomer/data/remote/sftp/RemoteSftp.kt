@@ -64,6 +64,7 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
         try {
             val canonicalPath = sftpClient.canonicalPath(path)
             val fileSize: Long = sftpClient.stat(canonicalPath).size
+            sftpClient.open(canonicalPath)
 
             // ByteArray max size is integer max value. So at this time, truncate larger files
             val bufSize: Int = if (fileSize <= Int.MAX_VALUE) fileSize.toInt() else Int.MAX_VALUE

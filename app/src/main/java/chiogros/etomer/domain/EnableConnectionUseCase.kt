@@ -29,7 +29,7 @@ class EnableConnectionUseCase(
         repository.update(con)
 
         // Notify ContentProvider about changes in enabled connections
-        val uri = buildRootsUri("chiogros.etomer.data.saf.documents")
+        val uri = buildRootsUri("chiogros.etomer.documents")
         context.contentResolver.notifyChange(uri, null)
     }
 }

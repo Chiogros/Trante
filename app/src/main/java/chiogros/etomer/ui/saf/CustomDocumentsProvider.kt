@@ -22,13 +22,16 @@ import chiogros.etomer.data.room.sftp.ConnectionSftpRoomDataSource
 import chiogros.etomer.domain.GetEnabledConnectionsUseCase
 import chiogros.etomer.domain.ListFilesInDirectoryUseCase
 import chiogros.etomer.domain.ReadFileUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-
 
 class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase
     lateinit var readFileUseCase: ReadFileUseCase
     lateinit var getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase
+    private val providerScope = CoroutineScope(Dispatchers.IO)
 
     fun initUseCases(context: Context) {
         // Room
@@ -58,16 +61,13 @@ class CustomDocumentsProvider : DocumentsProvider() {
         val conId = documentId.substringBefore('/')
         val path = documentId.substringAfter('/', ".")
 
+        val (outPipe, inPipe) = ParcelFileDescriptor.createReliablePipe()
 
-        val pipe = ParcelFileDescriptor.createReliablePipe()
-        val outPipe = pipe[0]
-        val inPipe = ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])
-
-        runBlocking {
-            inPipe.write(readFileUseCase(conId, path))
+        providerScope.launch {
+            ParcelFileDescriptor.AutoCloseOutputStream(inPipe).use { output ->
+                output.write(readFileUseCase(conId, path))
+            }
         }
-        inPipe.flush()
-        inPipe.close()
 
         return outPipe
     }
