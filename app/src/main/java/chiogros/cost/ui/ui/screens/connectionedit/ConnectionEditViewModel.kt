@@ -17,7 +17,8 @@ data class ConnectionEditFormState(
     val host: String = "",
     val name: String = "",
     val type: String = ConnectionSftp.toString(),
-    val user: String = ""
+    val user: String = "",
+    val password: String = ""
 )
 
 data class ConnectionEditUiState(
@@ -52,7 +53,8 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
                 host = con.host,
                 name = con.name,
                 type = con.toString(),
-                user = con.user
+                user = con.user,
+                password = con.password
             )
 
             refresh()
@@ -71,7 +73,8 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
                     ConnectionSftp.toString() -> ConnectionSftp(
                         host = uiState.value.formState.host,
                         name = uiState.value.formState.name,
-                        user = uiState.value.formState.user
+                        user = uiState.value.formState.user,
+                        password = uiState.value.formState.password
                     )
 
                     else -> error("Type ${uiState.value.formState.type} unknown!")
@@ -101,7 +104,8 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
                     id = uiState.value.deletedConnection.id,
                     host = uiState.value.deletedConnection.host,
                     name = uiState.value.deletedConnection.name,
-                    user = uiState.value.deletedConnection.user
+                    user = uiState.value.deletedConnection.user,
+                    password = uiState.value.deletedConnection.password
                 )
             )
         }
@@ -143,6 +147,14 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
         }
     }
 
+    fun setPassword(password: String) {
+        _uiState.update {
+            it.copy(
+                formState = uiState.value.formState.copy(password = password)
+            )
+        }
+    }
+
     fun setType(type: String) {
         _uiState.update {
             it.copy(
@@ -161,10 +173,11 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
 
     fun update() {
         viewModelScope.launch {
-            var con: Connection = repository.get(uiState.value.formState.id).first()
+            val con: Connection = repository.get(uiState.value.formState.id).first()
             con.host = uiState.value.formState.host
             con.name = uiState.value.formState.name
             con.user = uiState.value.formState.user
+            con.password = uiState.value.formState.password
             repository.update(con)
         }
     }

@@ -11,7 +11,7 @@ import kotlin.io.path.Path
 class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRepository() {
     override suspend fun connect(con: Connection): Boolean {
         if (con is ConnectionSftp) {
-            return remote.connect(con.host, 22, con.user, "testtest")
+            return remote.connect(con.host, 22, con.user, con.password)
         }
         return false
     }

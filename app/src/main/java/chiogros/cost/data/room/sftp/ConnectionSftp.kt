@@ -16,7 +16,8 @@ data class ConnectionSftp(
     override var enabled: Boolean = false,
     override var host: String = "",
     override var user: String = "",
-    override var state: ConnectionState = ConnectionState.NEVER_USED
+    override var state: ConnectionState = ConnectionState.NEVER_USED,
+    override var password: String = ""
 ) : Connection() {
     companion object {
         override fun toString(): String {

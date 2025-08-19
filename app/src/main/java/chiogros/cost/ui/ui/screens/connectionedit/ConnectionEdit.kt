@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.sharp.Check
 import androidx.compose.material.icons.sharp.Delete
@@ -36,6 +37,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import chiogros.cost.R
 import chiogros.cost.data.room.sftp.ConnectionSftp
@@ -186,6 +189,29 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences, autoCorrectEnabled = false
             ),
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            value = uiState.formState.password,
+            onValueChange = { viewModel.setPassword(it) },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(stringResource(R.string.password)) },
+            placeholder = { Text(uiState.formState.password) },
+            trailingIcon = {
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = stringResource(R.string.show_password)
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.None,
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Password
+            ),
+            visualTransformation = PasswordVisualTransformation(),
             singleLine = true
         )
     }
