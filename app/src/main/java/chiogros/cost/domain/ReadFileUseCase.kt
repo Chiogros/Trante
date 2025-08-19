@@ -10,7 +10,9 @@ class ReadFileUseCase(
 ) {
     suspend operator fun invoke(conId: String, path: String): ByteArray {
         val con = repository.get(conId).first()
-        remoteManager.connect(con)
+        if (!remoteManager.connect(con)) {
+            return ByteArray(0)
+        }
         return remoteManager.readFile(con, path)
     }
 }

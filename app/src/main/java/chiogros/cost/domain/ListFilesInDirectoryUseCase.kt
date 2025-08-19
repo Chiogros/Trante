@@ -11,7 +11,11 @@ class ListFilesInDirectoryUseCase(
 ) {
     suspend operator fun invoke(conId: String, path: String): List<File> {
         val con = repository.get(conId).first()
-        remoteManager.connect(con)
+
+        if (!remoteManager.connect(con)) {
+            return emptyList()
+        }
+
         return remoteManager.listFiles(con, path)
     }
 }
