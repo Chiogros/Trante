@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Etomer"
+rootProject.name = "Cost"
 include(":app")

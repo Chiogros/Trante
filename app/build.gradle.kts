@@ -9,17 +9,15 @@ plugins {
 
 
 android {
-    namespace = "chiogros.etomer"
+    namespace = "chiogros.cost"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "chiogros.etomer"
+        applicationId = android.namespace
         minSdk = 26
-        targetSdk = 36
+        targetSdk = android.compileSdk
         versionCode = 1
         versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {

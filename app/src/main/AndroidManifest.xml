@@ -24,8 +24,8 @@
             </intent-filter>
         </activity>
         <provider
-            android:name="chiogros.etomer.ui.saf.CustomDocumentsProvider"
-            android:authorities="chiogros.etomer.documents"
+            android:name="chiogros.cost.ui.saf.CustomDocumentsProvider"
+            android:authorities="chiogros.cost.documents"
             android:grantUriPermissions="true"
             android:exported="true"
             android:permission="android.permission.MANAGE_DOCUMENTS"
