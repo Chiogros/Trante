@@ -3,6 +3,7 @@ package chiogros.cost.ui.ui.screens.connectionedit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chiogros.cost.data.room.Connection
+import chiogros.cost.data.room.ConnectionState
 import chiogros.cost.data.room.repository.ConnectionManager
 import chiogros.cost.data.room.sftp.ConnectionSftp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -178,6 +179,8 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
             con.name = uiState.value.formState.name
             con.user = uiState.value.formState.user
             con.password = uiState.value.formState.password
+            con.state = ConnectionState.NEVER_USED
+            con.enabled = false
             repository.update(con)
         }
     }
