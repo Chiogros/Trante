@@ -194,7 +194,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
 @Composable
 fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val types = listOf<String>(ConnectionSftp.toString())
+    val types = listOf(ConnectionSftp.toString())
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         types.forEachIndexed { index, label ->

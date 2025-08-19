@@ -58,7 +58,7 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
             sftpClient.readEntries(sftpClient.canonicalPath(path))
         }
 
-    suspend fun readFile(path: String): ByteArray {
+    fun readFile(path: String): ByteArray {
         var content: ByteArray
 
         try {

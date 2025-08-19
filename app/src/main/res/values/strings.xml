@@ -2,12 +2,10 @@
     <string name="app_name" translatable="false">Etomer</string>
     <string name="create_connection">Create connection</string>
     <string name="connections_list">Connections list</string>
-    <string name="get_back_previous_screen">Get back to previous screen</string>
     <string name="host">Host</string>
     <string name="example_dot_net" translatable="false">example.net</string>
     <string name="save">Save</string>
     <string name="user">User</string>
-    <string name="sftp" translatable="false">SFTP</string>
     <string name="edit_connection">Edit connection</string>
     <string name="delete_connection">Delete connection</string>
     <string name="name">Friendly name</string>
