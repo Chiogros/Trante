@@ -15,7 +15,7 @@ class DisableConnectionUseCase(
         repository.update(con)
 
         // Notify ContentProvider about changes in enabled connections
-        val uri = buildRootsUri("chiogros.etomer.documents")
+        val uri = buildRootsUri("chiogros.cost.documents")
         context.contentResolver.notifyChange(uri, null)
     }
 }
