@@ -24,4 +24,6 @@
     <string name="connection_type_not_supported">Connection type isn\'t supported!</string>
     <string name="no_context">No context</string>
     <string name="password">Password</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
 </resources>

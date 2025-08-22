@@ -22,4 +22,6 @@
     <string name="connection_type_not_supported">Le type de connexion n\'est pas supporté</string>
     <string name="no_context">Pas de contexte</string>
     <string name="password">Mot de passe</string>
+    <string name="show_password">Montrer le mot de passe</string>
+    <string name="hide_password">Cacher le mot de passe</string>
 </resources>
