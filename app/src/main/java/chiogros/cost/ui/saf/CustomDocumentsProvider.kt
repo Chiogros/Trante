@@ -31,6 +31,8 @@ class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase
     lateinit var readFileUseCase: ReadFileUseCase
     lateinit var getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase
+    lateinit var viewModel: CustomDocumentProviderViewModel
+
     private val providerScope = CoroutineScope(Dispatchers.IO)
 
     fun initUseCases(context: Context): Boolean {
@@ -50,6 +52,8 @@ class CustomDocumentsProvider : DocumentsProvider() {
         listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(connectionManager, remoteManager)
         readFileUseCase = ReadFileUseCase(connectionManager, remoteManager)
         getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(connectionManager)
+
+        viewModel = CustomDocumentProviderViewModel(listFilesInDirectoryUseCase, readFileUseCase)
 
         return true
     }
