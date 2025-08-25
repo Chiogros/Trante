@@ -1,6 +1,6 @@
 # Cost
 
-> Co...nection li...st to remote storages.
+> Co...nections li...st to remote storages.
 
 ## Installation
 
