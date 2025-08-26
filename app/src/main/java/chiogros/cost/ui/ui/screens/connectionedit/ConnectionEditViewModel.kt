@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+
 data class ConnectionEditFormState(
     val id: String = "",
     val host: String = "",
@@ -68,6 +69,37 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
     }
 
     fun insert() {
+        /*
+        val keyId = "salut"
+        val provider = "AndroidKeyStore"
+        val keyGenAlg = "AES"
+        val cipherTransformation = "AES/GCM/NoPadding"
+        val plaintext: ByteArray = uiState.value.formState.password.toByteArray()
+
+        val keygen = KeyGenerator.getInstance(keyGenAlg, provider)
+        keygen.init(KeyGenParameterSpec.Builder(keyId,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setUserAuthenticationRequired(false)
+                .setRandomizedEncryptionRequired(true)
+                .setKeySize(32 * 8)
+                .build())
+        val encKey: SecretKey = keygen.generateKey()
+        val cipher = Cipher.getInstance(cipherTransformation)
+        cipher.init(Cipher.ENCRYPT_MODE, encKey)
+        val ciphertext: ByteArray = cipher.doFinal(plaintext)
+        val iv: ByteArray = cipher.iv
+
+        val keystore = KeyStore.getInstance(provider).apply { load(null) }
+        var cleartext: ByteArray
+        if (keystore.containsAlias(keyId)) {
+            val decKey = keystore.getKey(keyId, null)
+            cipher.init(Cipher.DECRYPT_MODE, decKey, GCMParameterSpec( 8 * 16 , iv))
+            cleartext = cipher.doFinal(ciphertext)
+        }
+         */
+
         viewModelScope.launch {
             repository.insert(
                 when (uiState.value.formState.type) {
