@@ -95,7 +95,8 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
         var cleartext: ByteArray
         if (keystore.containsAlias(keyId)) {
             val decKey = keystore.getKey(keyId, null)
-            cipher.init(Cipher.DECRYPT_MODE, decKey, GCMParameterSpec( 8 * 16 , iv))
+            val CRYPTO_AEAD_TAG_SIZE = 16
+            cipher.init(Cipher.DECRYPT_MODE, decKey, GCMParameterSpec( 8 * CRYPTO_AEAD_TAG_SIZE , iv))
             cleartext = cipher.doFinal(ciphertext)
         }
          */
