@@ -23,9 +23,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--
+        TODO
+        [grantUriPermissions]
+        If you enable this feature, either by setting this attribute to "true" or by defining
+        <grant-uri-permission> subelements, call Context.revokeUriPermission() when
+        a covered URI is deleted from the provider.
+        -->
         <provider
-            android:name="chiogros.cost.ui.saf.CustomDocumentsProvider"
-            android:authorities="chiogros.cost.documents"
+            android:name=".ui.saf.CustomDocumentsProvider"
+            android:authorities="chiogros.cost.ui.saf.CustomDocumentsProvider"
             android:grantUriPermissions="true"
             android:exported="true"
             android:permission="android.permission.MANAGE_DOCUMENTS"
