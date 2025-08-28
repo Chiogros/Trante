@@ -9,6 +9,7 @@ import org.apache.sshd.common.util.io.PathUtils.setUserHomeFolderResolver
 import org.apache.sshd.sftp.client.SftpClient
 import org.apache.sshd.sftp.client.SftpClientFactory
 import java.io.IOException
+import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.function.Supplier
@@ -63,22 +64,16 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
             sftpClient.readEntries(sftpClient.canonicalPath(path))
         }
 
-    fun readFile(path: String): ByteArray {
-        var content: ByteArray
+    suspend fun readFile(path: String): InputStream {
+        var content: InputStream
 
-        try {
-            val canonicalPath = sftpClient.canonicalPath(path)
-            val fileSize: Long = sftpClient.stat(canonicalPath).size
+        withContext(coroutineDispatcher) {
+            var canonicalPath: String
+
+            canonicalPath = sftpClient.canonicalPath(path)
             sftpClient.open(canonicalPath)
 
-            // ByteArray max size is integer max value. So at this time, truncate larger files
-            val bufSize: Int = if (fileSize <= Int.MAX_VALUE) fileSize.toInt() else Int.MAX_VALUE
-            content = ByteArray(bufSize)
-
-            sftpClient.read(canonicalPath).read(content)
-
-        } catch (_: IOException) {
-            content = ByteArray(0)
+            content = sftpClient.read(canonicalPath)
         }
 
         return content

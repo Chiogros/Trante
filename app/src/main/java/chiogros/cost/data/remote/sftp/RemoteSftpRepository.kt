@@ -6,6 +6,7 @@ import chiogros.cost.data.remote.repository.RemoteRepository
 import chiogros.cost.data.room.Connection
 import chiogros.cost.data.room.sftp.ConnectionSftp
 import org.apache.sshd.sftp.common.SftpConstants
+import java.io.InputStream
 import kotlin.io.path.Path
 
 class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRepository() {
@@ -45,7 +46,7 @@ class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRep
             }
         }
 
-    override suspend fun readFile(path: String): ByteArray {
+    override suspend fun readFile(path: String): InputStream {
         return remote.readFile(path)
     }
 }

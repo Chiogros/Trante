@@ -1,6 +1,7 @@
 package chiogros.cost.data.remote.sftp
 
 import org.apache.sshd.sftp.client.SftpClient
+import java.io.InputStream
 
 class RemoteSftpDataSource(private val remote: RemoteSftp) {
     suspend fun connect(host: String, port: Int, user: String, pwd: String): Boolean {
@@ -11,7 +12,7 @@ class RemoteSftpDataSource(private val remote: RemoteSftp) {
         return remote.listFiles(path)
     }
 
-    suspend fun readFile(path: String): ByteArray {
+    suspend fun readFile(path: String): InputStream {
         return remote.readFile(path)
     }
 
