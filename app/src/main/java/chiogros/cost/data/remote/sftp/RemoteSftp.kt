@@ -53,6 +53,11 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
         return (session != null)
     }
 
+    suspend fun getFileStat(path: String): SftpClient.Attributes =
+        withContext(coroutineDispatcher) {
+            sftpClient.stat(sftpClient.canonicalPath(path))
+        }
+
     suspend fun listFiles(path: String): Iterable<SftpClient.DirEntry> =
         withContext(coroutineDispatcher) {
             sftpClient.readEntries(sftpClient.canonicalPath(path))

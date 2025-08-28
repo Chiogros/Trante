@@ -20,20 +20,25 @@ import chiogros.cost.data.room.repository.ConnectionManager
 import chiogros.cost.data.room.sftp.ConnectionSftpRepository
 import chiogros.cost.data.room.sftp.ConnectionSftpRoomDataSource
 import chiogros.cost.domain.GetEnabledConnectionsUseCase
+import chiogros.cost.domain.GetFileStatUseCase
 import chiogros.cost.domain.ListFilesInDirectoryUseCase
 import chiogros.cost.domain.ReadFileUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlin.io.path.Path
 
 class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase
     lateinit var readFileUseCase: ReadFileUseCase
     lateinit var getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase
+    lateinit var getFileStatUseCase: GetFileStatUseCase
     lateinit var viewModel: CustomDocumentProviderViewModel
 
     private val providerScope = CoroutineScope(Dispatchers.IO)
+
+    lateinit var readPipe: ParcelFileDescriptor
+    lateinit var writePipe: ParcelFileDescriptor
 
     fun initUseCases(context: Context): Boolean {
         // Room
@@ -52,6 +57,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(connectionManager, remoteManager)
         readFileUseCase = ReadFileUseCase(connectionManager, remoteManager)
         getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(connectionManager)
+        getFileStatUseCase = GetFileStatUseCase(connectionManager, remoteManager)
 
         viewModel = CustomDocumentProviderViewModel(listFilesInDirectoryUseCase, readFileUseCase)
 
@@ -65,19 +71,10 @@ class CustomDocumentsProvider : DocumentsProvider() {
             return null
         }
 
-        val conId = getConnectionIdFromDocumentId(documentId)
-        val path = getPathFromDocumentId(documentId)
+        val (readPipe, writePipe) = ParcelFileDescriptor.createReliablePipe()
 
-        val (outPipe, inPipe) = ParcelFileDescriptor.createReliablePipe()
-
-        providerScope.launch {
-            ParcelFileDescriptor.AutoCloseOutputStream(inPipe).use { output ->
-                // Read remote file then hand it into the pipe
-                output.write(readFileUseCase(conId, path))
-            }
-        }
-
-        return outPipe
+        viewModel.openDocument(documentId, writePipe)
+        return readPipe
     }
 
     override fun queryChildDocuments(
@@ -118,10 +115,6 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return cursor
     }
 
-    /**
-     * It seems to be mostly called to get data about root folder,
-     * which is the reason why "." folder is hardcoded.
-     */
     override fun queryDocument(
         documentId: String?, projection: Array<out String?>?
     ): Cursor? {
@@ -132,15 +125,20 @@ class CustomDocumentsProvider : DocumentsProvider() {
             return cursor
         }
 
+        val conId = getConnectionIdFromDocumentId(documentId)
+        val path = getPathFromDocumentId(documentId)
+
+        var file: File = File(Path(""))
+        runBlocking {
+            file = getFileStatUseCase(conId, path)
+        }
+
         cursor.newRow().apply {
             add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, documentId)
-            add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, ".")
-            add(
-                DocumentsContract.Document.COLUMN_MIME_TYPE,
-                DocumentsContract.Document.MIME_TYPE_DIR
-            )
+            add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, path)
+            add(DocumentsContract.Document.COLUMN_MIME_TYPE, getMimetypeFromFile(file))
             add(DocumentsContract.Document.COLUMN_FLAGS, 0)
-            add(DocumentsContract.Document.COLUMN_SIZE, null)
+            add(DocumentsContract.Document.COLUMN_SIZE, file.size)
             add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
         }
 

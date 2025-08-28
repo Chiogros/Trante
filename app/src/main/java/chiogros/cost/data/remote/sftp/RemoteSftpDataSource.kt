@@ -14,4 +14,8 @@ class RemoteSftpDataSource(private val remote: RemoteSftp) {
     suspend fun readFile(path: String): ByteArray {
         return remote.readFile(path)
     }
+
+    suspend fun getFileStat(path: String): SftpClient.Attributes {
+        return remote.getFileStat(path)
+    }
 }

@@ -10,6 +10,14 @@ import chiogros.cost.data.room.sftp.ConnectionSftp
  * Aggregates all repositories to handle data requests from SAF.
  */
 class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
+    suspend fun connect(con: Connection): Boolean {
+        return getRepositoryForObject(con).connect(con)
+    }
+
+    suspend fun getFileStat(con: Connection, path: String): File {
+        return getRepositoryForObject(con).getFileStat(path)
+    }
+
     fun getRepositoryForObject(con: Connection): RemoteRepository {
         return when (con) {
             is ConnectionSftp -> remoteSftpRepository
