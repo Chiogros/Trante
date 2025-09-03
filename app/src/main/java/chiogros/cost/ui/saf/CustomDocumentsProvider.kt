@@ -47,7 +47,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         // Remote
         val remoteSftp = RemoteSftp.new(dispatcher)
         val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftp)
-        val localSftpDataSource = LocalSftpDataSource(remoteSftp)
+        val localSftpDataSource = LocalSftpDataSource()
         val remoteSftpRepository =
             RemoteSftpRepository(remoteSftpRoomDataSource, localSftpDataSource)
         val remoteManager = RemoteManager(remoteSftpRepository)
@@ -101,8 +101,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
                     parentDocumentId + "/" + file.path.fileName.toString()
                 )
                 add(
-                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-                    file.path.fileName.toString()
+                    DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString()
                 )
                 add(DocumentsContract.Document.COLUMN_MIME_TYPE, getMimetypeFromFile(file))
                 add(DocumentsContract.Document.COLUMN_FLAGS, 0)

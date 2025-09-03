@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
         // Remote
         val remoteSftpFactory = RemoteSftp.new(dispatcher)
         val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftpFactory)
-        val localSftpDataSource = LocalSftpDataSource(remoteSftpFactory)
+        val localSftpDataSource = LocalSftpDataSource()
         val remoteSftpRepository =
             RemoteSftpRepository(remoteSftpRoomDataSource, localSftpDataSource)
         val remoteManager = RemoteManager(remoteSftpRepository)

@@ -2,7 +2,7 @@ package chiogros.cost.data.remote.sftp
 
 import chiogros.cost.data.room.sftp.ConnectionSftp
 
-class LocalSftpDataSource(private val remote: RemoteSftp.Companion) {
+class LocalSftpDataSource {
     private val openConnections: MutableMap<String, RemoteSftp> = mutableMapOf()
 
     fun isStillConnected(con: ConnectionSftp): Boolean {
