@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import chiogros.cost.data.remote.repository.RemoteManager
+import chiogros.cost.data.remote.sftp.LocalSftpDataSource
 import chiogros.cost.data.remote.sftp.RemoteSftp
 import chiogros.cost.data.remote.sftp.RemoteSftpDataSource
 import chiogros.cost.data.remote.sftp.RemoteSftpRepository
@@ -21,12 +22,15 @@ import chiogros.cost.domain.InsertConnectionUseCase
 import chiogros.cost.ui.ui.screens.connectionedit.ConnectionEditViewModel
 import chiogros.cost.ui.ui.screens.connectionslist.ConnectionsListViewModel
 import chiogros.cost.ui.ui.theme.EtomerTheme
+import kotlinx.coroutines.Dispatchers
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
+
+        val dispatcher = Dispatchers.IO
 
         // Room
         val connectionSftpRoomDataSource =
@@ -35,9 +39,11 @@ class MainActivity : ComponentActivity() {
         val connectionManager = ConnectionManager(connectionSftpRepository)
 
         // Remote
-        val remoteSftp = RemoteSftp()
-        val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftp)
-        val remoteSftpRepository = RemoteSftpRepository(remoteSftpRoomDataSource)
+        val remoteSftpFactory = RemoteSftp.new(dispatcher)
+        val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftpFactory)
+        val localSftpDataSource = LocalSftpDataSource(remoteSftpFactory)
+        val remoteSftpRepository =
+            RemoteSftpRepository(remoteSftpRoomDataSource, localSftpDataSource)
         val remoteManager = RemoteManager(remoteSftpRepository)
 
         // Use cases

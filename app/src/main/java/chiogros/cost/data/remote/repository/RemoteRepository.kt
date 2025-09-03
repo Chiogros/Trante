@@ -6,7 +6,7 @@ import java.io.InputStream
 
 abstract class RemoteRepository() {
     abstract suspend fun connect(con: Connection): Boolean
-    abstract suspend fun getFileStat(path: String): File
-    abstract suspend fun listFiles(path: String): List<File>
-    abstract suspend fun readFile(path: String): InputStream
+    abstract suspend fun getFileStat(con: Connection, path: String): File
+    abstract suspend fun listFiles(con: Connection, path: String): List<File>
+    abstract suspend fun readFile(con: Connection, path: String): InputStream
 }

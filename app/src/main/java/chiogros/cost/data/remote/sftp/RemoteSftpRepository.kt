@@ -9,16 +9,37 @@ import org.apache.sshd.sftp.common.SftpConstants
 import java.io.InputStream
 import kotlin.io.path.Path
 
-class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRepository() {
+class RemoteSftpRepository(
+    private val remote: RemoteSftpDataSource,
+    private val cache: LocalSftpDataSource
+) : RemoteRepository() {
     override suspend fun connect(con: Connection): Boolean {
-        if (con is ConnectionSftp) {
-            return remote.connect(con.host, 22, con.user, con.password)
+        if (con !is ConnectionSftp) {
+            return false
         }
-        return false
+
+        if (cache.isStillConnected(con)) {
+            return true
+        }
+
+        try {
+            val handler = remote.connect(con.host, 22, con.user, con.password)
+            cache.set(con, handler)
+
+            return true
+        } catch (_: Throwable) {
+            return false
+        }
     }
 
-    override suspend fun getFileStat(path: String): File {
-        val stats = remote.getFileStat(path)
+    override suspend fun getFileStat(con: Connection, path: String): File {
+        if (con !is ConnectionSftp) {
+            throw ClassCastException()
+        }
+
+        val handler: RemoteSftp = cache.get(con)
+
+        val stats = handler.getFileStat(path)
         val f = File(Path(path))
 
         f.size = stats.size
@@ -27,8 +48,14 @@ class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRep
         return f
     }
 
-    override suspend fun listFiles(path: String): List<File> {
-        return remote.listFiles(path).map { it ->
+    override suspend fun listFiles(con: Connection, path: String): List<File> {
+        if (con !is ConnectionSftp) {
+            throw ClassCastException()
+        }
+
+        val handler: RemoteSftp = cache.get(con)
+
+        return handler.listFiles(path).map { it ->
             val f = File(Path(it.filename))
             f.type = mapProviderTypeToGeneric(it.attributes.type)
             f.size = it.attributes.size
@@ -46,7 +73,12 @@ class RemoteSftpRepository(private val remote: RemoteSftpDataSource) : RemoteRep
             }
         }
 
-    override suspend fun readFile(path: String): InputStream {
-        return remote.readFile(path)
+    override suspend fun readFile(con: Connection, path: String): InputStream {
+        if (con !is ConnectionSftp) {
+            throw ClassCastException()
+        }
+
+        val handler: RemoteSftp = cache.get(con)
+        return handler.readFile(path)
     }
 }

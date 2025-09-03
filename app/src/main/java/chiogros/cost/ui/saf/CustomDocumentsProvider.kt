@@ -12,6 +12,7 @@ import chiogros.cost.R
 import chiogros.cost.data.remote.File
 import chiogros.cost.data.remote.FileAttributesType
 import chiogros.cost.data.remote.repository.RemoteManager
+import chiogros.cost.data.remote.sftp.LocalSftpDataSource
 import chiogros.cost.data.remote.sftp.RemoteSftp
 import chiogros.cost.data.remote.sftp.RemoteSftpDataSource
 import chiogros.cost.data.remote.sftp.RemoteSftpRepository
@@ -23,7 +24,6 @@ import chiogros.cost.domain.GetEnabledConnectionsUseCase
 import chiogros.cost.domain.GetFileStatUseCase
 import chiogros.cost.domain.ListFilesInDirectoryUseCase
 import chiogros.cost.domain.ReadFileUseCase
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlin.io.path.Path
@@ -35,10 +35,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var getFileStatUseCase: GetFileStatUseCase
     lateinit var viewModel: CustomDocumentProviderViewModel
 
-    private val providerScope = CoroutineScope(Dispatchers.IO)
-
-    lateinit var readPipe: ParcelFileDescriptor
-    lateinit var writePipe: ParcelFileDescriptor
+    private val dispatcher = Dispatchers.IO
 
     fun initUseCases(context: Context): Boolean {
         // Room
@@ -48,9 +45,11 @@ class CustomDocumentsProvider : DocumentsProvider() {
         val connectionManager = ConnectionManager(connectionSftpRepository)
 
         // Remote
-        val remoteSftp = RemoteSftp()
+        val remoteSftp = RemoteSftp.new(dispatcher)
         val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftp)
-        val remoteSftpRepository = RemoteSftpRepository(remoteSftpRoomDataSource)
+        val localSftpDataSource = LocalSftpDataSource(remoteSftp)
+        val remoteSftpRepository =
+            RemoteSftpRepository(remoteSftpRoomDataSource, localSftpDataSource)
         val remoteManager = RemoteManager(remoteSftpRepository)
 
         // Domain layer
@@ -128,7 +127,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         val conId = getConnectionIdFromDocumentId(documentId)
         val path = getPathFromDocumentId(documentId)
 
-        var file: File = File(Path(""))
+        var file = File(Path(""))
         runBlocking {
             file = getFileStatUseCase(conId, path)
         }

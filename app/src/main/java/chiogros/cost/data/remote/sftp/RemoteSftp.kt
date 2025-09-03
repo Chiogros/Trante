@@ -5,53 +5,64 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.sshd.client.SshClient
 import org.apache.sshd.client.session.ClientSession
+import org.apache.sshd.common.util.buffer.Buffer
 import org.apache.sshd.common.util.io.PathUtils.setUserHomeFolderResolver
 import org.apache.sshd.sftp.client.SftpClient
-import org.apache.sshd.sftp.client.SftpClientFactory
-import java.io.IOException
+import org.apache.sshd.sftp.client.SftpVersionSelector
+import org.apache.sshd.sftp.client.impl.DefaultSftpClient
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
 import java.util.function.Supplier
 
-class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO) {
-    val client: SshClient
-    lateinit var sftpClient: SftpClient
 
-    init {
-        // Set Android's filesystem path
-        val path: Supplier<Path> = Supplier { Paths.get("") }
-        setUserHomeFolderResolver(path)
+class RemoteSftp {
+    val coroutineDispatcher: CoroutineDispatcher
+    val isConnected: Boolean
+        get() = sftpClient.isOpen
+    val sftpClient: SftpClient
 
-        client = SshClient.setUpDefaultClient()
-        client.start()
+    private constructor(coroutineDispatcher: CoroutineDispatcher, sftpClient: SftpClient) {
+        this.coroutineDispatcher = coroutineDispatcher
+        this.sftpClient = sftpClient
     }
 
-    suspend fun connect(host: String, port: Int, user: String, pwd: String): Boolean {
-        var session: ClientSession? = null
+    companion object {
+        var coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-        withContext(coroutineDispatcher) {
-            try {
+        /**
+         * Call new() before connect() to set dispatcher.
+         */
+        fun new(coroutineDispatcher: CoroutineDispatcher): Companion {
+            this.coroutineDispatcher = coroutineDispatcher
+            return this
+        }
+
+        suspend fun connect(host: String, port: Int, user: String, pwd: String): RemoteSftp {
+            // Set Android's filesystem path
+            val path: Supplier<Path> = Supplier { Paths.get("") }
+            setUserHomeFolderResolver(path)
+
+            val client: SshClient = SshClient.setUpDefaultClient()
+
+            client.start()
+
+            return withContext(coroutineDispatcher) {
                 // Connect to server
-                session = client.connect(user, host, port)
-                    .verify()
-                    .clientSession
+                val session = client.connect(user, host, port).verify().clientSession
 
                 session.addPasswordIdentity(pwd)
 
-                if (session.auth().verify().isSuccess) {
-                    val factory: SftpClientFactory = SftpClientFactory.instance()
-                    sftpClient = factory.createSftpClient(session)
-                } else {
-                    session = null
-                }
-
-            } catch (_: IOException) {
-                session = null
+                val authVerif = session.auth().verify()
+                if (authVerif.isSuccess) RemoteSftp(
+                    coroutineDispatcher,
+                    ConcurrentSftpClient(session)
+                )
+                else throw authVerif.exception
             }
         }
-
-        return (session != null)
     }
 
     suspend fun getFileStat(path: String): SftpClient.Attributes =
@@ -68,9 +79,7 @@ class RemoteSftp(private val coroutineDispatcher: CoroutineDispatcher = Dispatch
         var content: InputStream
 
         withContext(coroutineDispatcher) {
-            var canonicalPath: String
-
-            canonicalPath = sftpClient.canonicalPath(path)
+            val canonicalPath: String = sftpClient.canonicalPath(path)
             sftpClient.open(canonicalPath)
 
             content = sftpClient.read(canonicalPath)

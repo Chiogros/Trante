@@ -1,22 +1,7 @@
 package chiogros.cost.data.remote.sftp
 
-import org.apache.sshd.sftp.client.SftpClient
-import java.io.InputStream
-
-class RemoteSftpDataSource(private val remote: RemoteSftp) {
-    suspend fun connect(host: String, port: Int, user: String, pwd: String): Boolean {
+class RemoteSftpDataSource(private val remote: RemoteSftp.Companion) {
+    suspend fun connect(host: String, port: Int, user: String, pwd: String): RemoteSftp {
         return remote.connect(host, port, user, pwd)
-    }
-
-    suspend fun listFiles(path: String): Iterable<SftpClient.DirEntry> {
-        return remote.listFiles(path)
-    }
-
-    suspend fun readFile(path: String): InputStream {
-        return remote.readFile(path)
-    }
-
-    suspend fun getFileStat(path: String): SftpClient.Attributes {
-        return remote.getFileStat(path)
     }
 }

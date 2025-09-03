@@ -16,7 +16,7 @@ class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
     }
 
     suspend fun getFileStat(con: Connection, path: String): File {
-        return getRepositoryForObject(con).getFileStat(path)
+        return getRepositoryForObject(con).getFileStat(con, path)
     }
 
     fun getRepositoryForObject(con: Connection): RemoteRepository {
@@ -27,10 +27,10 @@ class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
     }
 
     suspend fun listFiles(con: Connection, path: String): List<File> {
-        return getRepositoryForObject(con).listFiles(path)
+        return getRepositoryForObject(con).listFiles(con, path)
     }
 
     suspend fun readFile(con: Connection, path: String): InputStream {
-        return getRepositoryForObject(con).readFile(path)
+        return getRepositoryForObject(con).readFile(con, path)
     }
 }
