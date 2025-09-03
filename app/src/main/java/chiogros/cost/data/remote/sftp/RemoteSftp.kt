@@ -87,4 +87,18 @@ class RemoteSftp {
 
         return content
     }
+
+    class ConcurrentSftpClient internal constructor(clientSession: ClientSession) :
+        DefaultSftpClient(clientSession, SftpVersionSelector.CURRENT, EMPTY) {
+        private val sendLock: Lock = ReentrantLock()
+
+        override fun send(cmd: Int, buffer: Buffer?): Int {
+            this.sendLock.lock()
+            try {
+                return super.send(cmd, buffer)
+            } finally {
+                this.sendLock.unlock()
+            }
+        }
+    }
 }
