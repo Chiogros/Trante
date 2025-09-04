@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import chiogros.cost.R
 import chiogros.cost.data.remote.File
 import chiogros.cost.data.remote.FileAttributesType
+import chiogros.cost.domain.CreateFileUseCase
 import chiogros.cost.domain.GetEnabledConnectionsUseCase
 import chiogros.cost.domain.GetFileStatUseCase
 import chiogros.cost.domain.ListFilesInDirectoryUseCase
@@ -28,6 +29,7 @@ data class CustomDocumentProviderUiState(
 )
 
 class CustomDocumentProviderViewModel(
+    val createFileUseCase: CreateFileUseCase,
     val getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase,
     val getFileStatUseCase: GetFileStatUseCase,
     val listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase,
@@ -35,6 +37,21 @@ class CustomDocumentProviderViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CustomDocumentProviderUiState())
     val uiState: StateFlow<CustomDocumentProviderUiState> = _uiState.asStateFlow()
+
+    fun createDocument(parentDocumentId: String, mimeType: String, displayName: String): String? {
+        val conId = getConnectionIdFromDocumentId(parentDocumentId)
+        val path = getPathFromDocumentId(parentDocumentId)
+        val newDocumentPath = path + "/" + displayName
+        val newDocumentId = conId + "/" + path
+
+        var isFileCreated = false
+
+        runBlocking {
+            isFileCreated = createFileUseCase(id = conId, path = newDocumentPath)
+        }
+
+        return if (isFileCreated) newDocumentId else null
+    }
 
     fun openDocument(documentId: String, writePipe: ParcelFileDescriptor) {
         val conId = getConnectionIdFromDocumentId(documentId)
@@ -85,7 +102,10 @@ class CustomDocumentProviderViewModel(
                     DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString()
                 )
                 add(DocumentsContract.Document.COLUMN_MIME_TYPE, getMimetypeFromFile(file))
-                add(DocumentsContract.Document.COLUMN_FLAGS, 0)
+                add(
+                    DocumentsContract.Document.COLUMN_FLAGS,
+                    DocumentsContract.Document.FLAG_SUPPORTS_WRITE or DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE
+                )
                 add(DocumentsContract.Document.COLUMN_SIZE, file.size)
                 add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
             }
@@ -107,7 +127,10 @@ class CustomDocumentProviderViewModel(
             add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, documentId)
             add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, path)
             add(DocumentsContract.Document.COLUMN_MIME_TYPE, getMimetypeFromFile(file))
-            add(DocumentsContract.Document.COLUMN_FLAGS, 0)
+            add(
+                DocumentsContract.Document.COLUMN_FLAGS,
+                DocumentsContract.Document.FLAG_SUPPORTS_WRITE or DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE
+            )
             add(DocumentsContract.Document.COLUMN_SIZE, file.size)
             add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
         }
@@ -126,8 +149,7 @@ class CustomDocumentProviderViewModel(
                 add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_launcher)
                 add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id)
                 add(
-                    DocumentsContract.Root.COLUMN_FLAGS,
-                    DocumentsContract.Root.FLAG_SUPPORTS_CREATE or DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
+                    DocumentsContract.Root.COLUMN_FLAGS, DocumentsContract.Root.FLAG_SUPPORTS_CREATE
                 )
             }
         }

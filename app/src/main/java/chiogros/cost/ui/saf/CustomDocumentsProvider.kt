@@ -16,6 +16,7 @@ import chiogros.cost.data.room.AppDatabase
 import chiogros.cost.data.room.repository.ConnectionManager
 import chiogros.cost.data.room.sftp.ConnectionSftpRepository
 import chiogros.cost.data.room.sftp.ConnectionSftpRoomDataSource
+import chiogros.cost.domain.CreateFileUseCase
 import chiogros.cost.domain.GetEnabledConnectionsUseCase
 import chiogros.cost.domain.GetFileStatUseCase
 import chiogros.cost.domain.ListFilesInDirectoryUseCase
@@ -23,10 +24,11 @@ import chiogros.cost.domain.ReadFileUseCase
 import kotlinx.coroutines.Dispatchers
 
 class CustomDocumentsProvider : DocumentsProvider() {
-    lateinit var listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase
-    lateinit var readFileUseCase: ReadFileUseCase
+    lateinit var createFileUseCase: CreateFileUseCase
     lateinit var getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase
     lateinit var getFileStatUseCase: GetFileStatUseCase
+    lateinit var listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase
+    lateinit var readFileUseCase: ReadFileUseCase
     lateinit var viewModel: CustomDocumentProviderViewModel
     private val dispatcher = Dispatchers.IO
 
@@ -46,12 +48,14 @@ class CustomDocumentsProvider : DocumentsProvider() {
         val remoteManager = RemoteManager(remoteSftpRepository)
 
         // Domain layer
-        listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(connectionManager, remoteManager)
-        readFileUseCase = ReadFileUseCase(connectionManager, remoteManager)
+        createFileUseCase = CreateFileUseCase(connectionManager, remoteManager)
         getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(connectionManager)
         getFileStatUseCase = GetFileStatUseCase(connectionManager, remoteManager)
+        listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(connectionManager, remoteManager)
+        readFileUseCase = ReadFileUseCase(connectionManager, remoteManager)
 
         viewModel = CustomDocumentProviderViewModel(
+            createFileUseCase = createFileUseCase,
             getEnabledConnectionsUseCase = getEnabledConnectionsUseCase,
             getFileStatUseCase = getFileStatUseCase,
             listFilesInDirectoryUseCase = listFilesInDirectoryUseCase,
@@ -59,6 +63,34 @@ class CustomDocumentsProvider : DocumentsProvider() {
         )
 
         return true
+    }
+
+    /**
+     * Only called when doing remote-to-remote copy. Remote-to-device and vice-versa do not trigger
+     * this function.
+     */
+    override fun copyDocument(sourceDocumentId: String?, targetParentDocumentId: String?): String? {
+        if (sourceDocumentId.isNullOrEmpty() or targetParentDocumentId.isNullOrEmpty()) {
+            return null
+        }
+
+        return null
+    }
+
+    override fun createDocument(
+        parentDocumentId: String?,
+        mimeType: String?,
+        displayName: String?
+    ): String? {
+        if (parentDocumentId.isNullOrEmpty() or displayName.isNullOrEmpty()) {
+            return null
+        }
+
+        return viewModel.createDocument(
+            parentDocumentId = parentDocumentId.orEmpty(),
+            mimeType = mimeType.orEmpty(),
+            displayName = displayName.orEmpty()
+        )
     }
 
     override fun openDocument(

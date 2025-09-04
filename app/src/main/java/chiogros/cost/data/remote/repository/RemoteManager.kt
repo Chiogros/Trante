@@ -11,6 +11,10 @@ import java.io.InputStream
  * Aggregates all repositories to handle data requests from SAF.
  */
 class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
+    suspend fun createFile(con: Connection, path: String): Boolean {
+        return getRepositoryForObject(con).createFile(con, path)
+    }
+
     suspend fun connect(con: Connection): Boolean {
         return getRepositoryForObject(con).connect(con)
     }

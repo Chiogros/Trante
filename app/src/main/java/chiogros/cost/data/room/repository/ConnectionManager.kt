@@ -10,13 +10,6 @@ import kotlinx.coroutines.flow.merge
  * Aggregates all repositories to handle data requests from UI.
  */
 class ConnectionManager(private val connectionSftpRepository: ConnectionSftpRepository) {
-    fun getRepositoryForObject(con: Connection): ConnectionRepository {
-        return when (con) {
-            is ConnectionSftp -> connectionSftpRepository
-            else -> error("Connection type isn't supported yet!")
-        }
-    }
-
     suspend fun delete(con: Connection) {
         getRepositoryForObject(con).delete(con)
     }
@@ -27,6 +20,13 @@ class ConnectionManager(private val connectionSftpRepository: ConnectionSftpRepo
 
     fun getAll(): Flow<List<Connection>> {
         return merge(connectionSftpRepository.getAll())
+    }
+
+    fun getRepositoryForObject(con: Connection): ConnectionRepository {
+        return when (con) {
+            is ConnectionSftp -> connectionSftpRepository
+            else -> error("Connection type isn't supported yet!")
+        }
     }
 
     suspend fun insert(con: Connection) {

@@ -32,6 +32,15 @@ class RemoteSftpRepository(
         }
     }
 
+    override suspend fun createFile(con: Connection, path: String): Boolean {
+        if (con !is ConnectionSftp) {
+            throw ClassCastException()
+        }
+
+        val handler: RemoteSftp = local.get(con)
+        return handler.createFile(path)
+    }
+
     override suspend fun getFileStat(con: Connection, path: String): File {
         if (con !is ConnectionSftp) {
             throw ClassCastException()

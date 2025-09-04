@@ -10,6 +10,7 @@ import org.apache.sshd.common.util.io.PathUtils.setUserHomeFolderResolver
 import org.apache.sshd.sftp.client.SftpClient
 import org.apache.sshd.sftp.client.SftpVersionSelector
 import org.apache.sshd.sftp.client.impl.DefaultSftpClient
+import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -63,6 +64,21 @@ class RemoteSftp {
                 else throw authVerif.exception
             }
         }
+    }
+
+    suspend fun createFile(path: String): Boolean {
+        var ret: Boolean
+
+        withContext(coroutineDispatcher) {
+            try {
+                sftpClient.write(path, SftpClient.OpenMode.Create)
+                ret = true
+            } catch (_: IOException) {
+                ret = false
+            }
+        }
+
+        return ret
     }
 
     suspend fun getFileStat(path: String): SftpClient.Attributes =
