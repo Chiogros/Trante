@@ -11,20 +11,20 @@ import kotlin.io.path.Path
 
 class RemoteSftpRepository(
     private val remote: RemoteSftpDataSource,
-    private val cache: LocalSftpDataSource
+    private val local: LocalSftpDataSource
 ) : RemoteRepository() {
     override suspend fun connect(con: Connection): Boolean {
         if (con !is ConnectionSftp) {
             return false
         }
 
-        if (cache.isStillConnected(con)) {
+        if (local.isStillConnected(con)) {
             return true
         }
 
         try {
             val handler = remote.connect(con.host, 22, con.user, con.password)
-            cache.set(con, handler)
+            local.set(con, handler)
 
             return true
         } catch (_: Throwable) {
@@ -37,7 +37,7 @@ class RemoteSftpRepository(
             throw ClassCastException()
         }
 
-        val handler: RemoteSftp = cache.get(con)
+        val handler: RemoteSftp = local.get(con)
 
         val stats = handler.getFileStat(path)
         val f = File(Path(path))
@@ -53,7 +53,7 @@ class RemoteSftpRepository(
             throw ClassCastException()
         }
 
-        val handler: RemoteSftp = cache.get(con)
+        val handler: RemoteSftp = local.get(con)
 
         return handler.listFiles(path).map { it ->
             val f = File(Path(it.filename))
@@ -78,7 +78,7 @@ class RemoteSftpRepository(
             throw ClassCastException()
         }
 
-        val handler: RemoteSftp = cache.get(con)
+        val handler: RemoteSftp = local.get(con)
         return handler.readFile(path)
     }
 }
