@@ -7,8 +7,8 @@ import android.webkit.MimeTypeMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chiogros.cost.R
-import chiogros.cost.data.remote.File
-import chiogros.cost.data.remote.FileAttributesType
+import chiogros.cost.data.network.File
+import chiogros.cost.data.network.FileAttributesType
 import chiogros.cost.domain.CreateFileUseCase
 import chiogros.cost.domain.GetEnabledConnectionsUseCase
 import chiogros.cost.domain.GetFileStatUseCase

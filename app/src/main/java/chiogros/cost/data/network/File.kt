@@ -1,4 +1,4 @@
-package chiogros.cost.data.remote
+package chiogros.cost.data.network
 
 import java.nio.file.Path
 

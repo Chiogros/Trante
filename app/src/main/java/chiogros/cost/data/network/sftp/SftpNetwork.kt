@@ -1,4 +1,4 @@
-package chiogros.cost.data.remote.sftp
+package chiogros.cost.data.network.sftp
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock
 import java.util.function.Supplier
 
 
-class RemoteSftp {
+class SftpNetwork {
     val coroutineDispatcher: CoroutineDispatcher
     val isConnected: Boolean
         get() = sftpClient.isOpen
@@ -41,11 +41,10 @@ class RemoteSftp {
             return this
         }
 
-        suspend fun connect(host: String, port: Int, user: String, pwd: String): RemoteSftp {
+        suspend fun connect(host: String, port: Int, user: String, pwd: String): SftpNetwork {
             // Set Android's filesystem path
             val path: Supplier<Path> = Supplier { Paths.get("") }
             setUserHomeFolderResolver(path)
-
             val client: SshClient = SshClient.setUpDefaultClient()
 
             client.start()
@@ -55,9 +54,8 @@ class RemoteSftp {
                 val session = client.connect(user, host, port).verify().clientSession
 
                 session.addPasswordIdentity(pwd)
-
                 val authVerif = session.auth().verify()
-                if (authVerif.isSuccess) RemoteSftp(
+                if (authVerif.isSuccess) SftpNetwork(
                     coroutineDispatcher,
                     ConcurrentSftpClient(session)
                 )

@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chiogros.cost.data.room.Connection
 import chiogros.cost.data.room.ConnectionState
-import chiogros.cost.data.room.repository.ConnectionManager
-import chiogros.cost.data.room.sftp.ConnectionSftp
+import chiogros.cost.data.room.repository.RoomManager
+import chiogros.cost.data.room.sftp.SftpRoom
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,7 @@ data class ConnectionEditFormState(
     val id: String = "",
     val host: String = "",
     val name: String = "",
-    val type: String = ConnectionSftp.toString(),
+    val type: String = SftpRoom.toString(),
     val user: String = "",
     val password: String = ""
 )
@@ -29,20 +29,20 @@ data class ConnectionEditUiState(
     val originalFormState: ConnectionEditFormState = ConnectionEditFormState(),
     val isEditing: Boolean = false,
     val isDialogShown: Boolean = false,
-    var deletedConnection: Connection = ConnectionSftp()
+    var deletedConnection: Connection = SftpRoom()
 ) {
     val isEdited: Boolean
         get() = formState != originalFormState
 }
 
-class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewModel() {
+class ConnectionEditViewModel(private val repository: RoomManager) : ViewModel() {
     private val _uiState = MutableStateFlow(ConnectionEditUiState())
     val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
 
     fun delete() {
         save()
         viewModelScope.launch {
-            repository.delete(ConnectionSftp(id = uiState.value.formState.id))
+            repository.delete(SftpRoom(id = uiState.value.formState.id))
         }
     }
 
@@ -104,14 +104,14 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
         viewModelScope.launch {
             repository.insert(
                 when (uiState.value.formState.type) {
-                    ConnectionSftp.toString() -> ConnectionSftp(
+                    SftpRoom.toString() -> SftpRoom(
                         host = uiState.value.formState.host,
                         name = uiState.value.formState.name,
                         user = uiState.value.formState.user,
                         password = uiState.value.formState.password
                     )
 
-                    else -> error("Type ${uiState.value.formState.type} unknown!")
+                    else                -> error("Type ${uiState.value.formState.type} unknown!")
                 }
             )
         }
@@ -125,7 +125,7 @@ class ConnectionEditViewModel(private val repository: ConnectionManager) : ViewM
                 originalFormState = ConnectionEditFormState(),
                 isEditing = false,
                 isDialogShown = false,
-                deletedConnection = ConnectionSftp()
+                deletedConnection = SftpRoom()
             )
         }
     }

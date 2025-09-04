@@ -1,16 +1,16 @@
-package chiogros.cost.data.remote.repository
+package chiogros.cost.data.network.repository
 
 import chiogros.cost.R
-import chiogros.cost.data.remote.File
-import chiogros.cost.data.remote.sftp.RemoteSftpRepository
+import chiogros.cost.data.network.File
+import chiogros.cost.data.network.sftp.SftpNetworkRepository
 import chiogros.cost.data.room.Connection
-import chiogros.cost.data.room.sftp.ConnectionSftp
+import chiogros.cost.data.room.sftp.SftpRoom
 import java.io.InputStream
 
 /**
  * Aggregates all repositories to handle data requests from SAF.
  */
-class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
+class NetworkManager(private val sftpNetworkRepository: SftpNetworkRepository) {
     suspend fun createFile(con: Connection, path: String): Boolean {
         return getRepositoryForObject(con).createFile(con, path)
     }
@@ -23,10 +23,10 @@ class RemoteManager(private val remoteSftpRepository: RemoteSftpRepository) {
         return getRepositoryForObject(con).getFileStat(con, path)
     }
 
-    fun getRepositoryForObject(con: Connection): RemoteRepository {
+    fun getRepositoryForObject(con: Connection): NetworkRepository {
         return when (con) {
-            is ConnectionSftp -> remoteSftpRepository
-            else -> error(R.string.connection_type_not_supported)
+            is SftpRoom -> sftpNetworkRepository
+            else        -> error(R.string.connection_type_not_supported)
         }
     }
 

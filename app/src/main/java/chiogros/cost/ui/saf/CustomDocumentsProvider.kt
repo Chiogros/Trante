@@ -7,15 +7,15 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
-import chiogros.cost.data.remote.repository.RemoteManager
-import chiogros.cost.data.remote.sftp.LocalSftpDataSource
-import chiogros.cost.data.remote.sftp.RemoteSftp
-import chiogros.cost.data.remote.sftp.RemoteSftpDataSource
-import chiogros.cost.data.remote.sftp.RemoteSftpRepository
+import chiogros.cost.data.network.repository.NetworkManager
+import chiogros.cost.data.network.sftp.LocalSftpNetworkDataSource
+import chiogros.cost.data.network.sftp.RemoteSftpNetworkDataSource
+import chiogros.cost.data.network.sftp.SftpNetwork
+import chiogros.cost.data.network.sftp.SftpNetworkRepository
 import chiogros.cost.data.room.AppDatabase
-import chiogros.cost.data.room.repository.ConnectionManager
-import chiogros.cost.data.room.sftp.ConnectionSftpRepository
-import chiogros.cost.data.room.sftp.ConnectionSftpRoomDataSource
+import chiogros.cost.data.room.repository.RoomManager
+import chiogros.cost.data.room.sftp.SftpRoomDataSource
+import chiogros.cost.data.room.sftp.SftpRoomRepository
 import chiogros.cost.domain.CreateFileUseCase
 import chiogros.cost.domain.GetEnabledConnectionsUseCase
 import chiogros.cost.domain.GetFileStatUseCase
@@ -34,25 +34,23 @@ class CustomDocumentsProvider : DocumentsProvider() {
 
     fun init(context: Context): Boolean {
         // Room
-        val connectionSftpRoomDataSource =
-            ConnectionSftpRoomDataSource(AppDatabase.getDatabase(context).ConnectionSftpDao())
-        val connectionSftpRepository = ConnectionSftpRepository(connectionSftpRoomDataSource)
-        val connectionManager = ConnectionManager(connectionSftpRepository)
-
+        val sftpRoomDataSource =
+            SftpRoomDataSource(AppDatabase.getDatabase(context).ConnectionSftpDao())
+        val sftpRoomRepository = SftpRoomRepository(sftpRoomDataSource)
+        val roomManager = RoomManager(sftpRoomRepository)
         // Remote
-        val remoteSftp = RemoteSftp.new(dispatcher)
-        val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftp)
-        val localSftpDataSource = LocalSftpDataSource()
-        val remoteSftpRepository =
-            RemoteSftpRepository(remoteSftpRoomDataSource, localSftpDataSource)
-        val remoteManager = RemoteManager(remoteSftpRepository)
-
+        val sftpNetwork = SftpNetwork.new(dispatcher)
+        val remoteSftpRoomDataSource = RemoteSftpNetworkDataSource(sftpNetwork)
+        val localSftpNetworkDataSource = LocalSftpNetworkDataSource()
+        val sftpNetworkRepository =
+            SftpNetworkRepository(remoteSftpRoomDataSource, localSftpNetworkDataSource)
+        val networkManager = NetworkManager(sftpNetworkRepository)
         // Domain layer
-        createFileUseCase = CreateFileUseCase(connectionManager, remoteManager)
-        getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(connectionManager)
-        getFileStatUseCase = GetFileStatUseCase(connectionManager, remoteManager)
-        listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(connectionManager, remoteManager)
-        readFileUseCase = ReadFileUseCase(connectionManager, remoteManager)
+        createFileUseCase = CreateFileUseCase(roomManager, networkManager)
+        getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(roomManager)
+        getFileStatUseCase = GetFileStatUseCase(roomManager, networkManager)
+        listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(roomManager, networkManager)
+        readFileUseCase = ReadFileUseCase(roomManager, networkManager)
 
         viewModel = CustomDocumentProviderViewModel(
             createFileUseCase = createFileUseCase,

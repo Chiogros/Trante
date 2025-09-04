@@ -5,15 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import chiogros.cost.data.remote.repository.RemoteManager
-import chiogros.cost.data.remote.sftp.LocalSftpDataSource
-import chiogros.cost.data.remote.sftp.RemoteSftp
-import chiogros.cost.data.remote.sftp.RemoteSftpDataSource
-import chiogros.cost.data.remote.sftp.RemoteSftpRepository
+import chiogros.cost.data.network.repository.NetworkManager
+import chiogros.cost.data.network.sftp.LocalSftpNetworkDataSource
+import chiogros.cost.data.network.sftp.RemoteSftpNetworkDataSource
+import chiogros.cost.data.network.sftp.SftpNetwork
+import chiogros.cost.data.network.sftp.SftpNetworkRepository
 import chiogros.cost.data.room.AppDatabase
-import chiogros.cost.data.room.repository.ConnectionManager
-import chiogros.cost.data.room.sftp.ConnectionSftpRepository
-import chiogros.cost.data.room.sftp.ConnectionSftpRoomDataSource
+import chiogros.cost.data.room.repository.RoomManager
+import chiogros.cost.data.room.sftp.SftpRoomDataSource
+import chiogros.cost.data.room.sftp.SftpRoomRepository
 import chiogros.cost.domain.DeleteConnectionUseCase
 import chiogros.cost.domain.DisableConnectionUseCase
 import chiogros.cost.domain.EnableConnectionUseCase
@@ -29,32 +29,27 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
-
         val dispatcher = Dispatchers.IO
-
         // Room
-        val connectionSftpRoomDataSource =
-            ConnectionSftpRoomDataSource(AppDatabase.getDatabase(this).ConnectionSftpDao())
-        val connectionSftpRepository = ConnectionSftpRepository(connectionSftpRoomDataSource)
-        val connectionManager = ConnectionManager(connectionSftpRepository)
-
+        val sftpRoomDataSource =
+            SftpRoomDataSource(AppDatabase.getDatabase(this).ConnectionSftpDao())
+        val sftpRoomRepository = SftpRoomRepository(sftpRoomDataSource)
+        val roomManager = RoomManager(sftpRoomRepository)
         // Remote
-        val remoteSftpFactory = RemoteSftp.new(dispatcher)
-        val remoteSftpRoomDataSource = RemoteSftpDataSource(remoteSftpFactory)
-        val localSftpDataSource = LocalSftpDataSource()
-        val remoteSftpRepository =
-            RemoteSftpRepository(remoteSftpRoomDataSource, localSftpDataSource)
-        val remoteManager = RemoteManager(remoteSftpRepository)
-
+        val sftpNetworkFactory = SftpNetwork.new(dispatcher)
+        val remoteSftpRoomDataSource = RemoteSftpNetworkDataSource(sftpNetworkFactory)
+        val localSftpNetworkDataSource = LocalSftpNetworkDataSource()
+        val sftpNetworkRepository =
+            SftpNetworkRepository(remoteSftpRoomDataSource, localSftpNetworkDataSource)
+        val networkManager = NetworkManager(sftpNetworkRepository)
         // Use cases
         val enableConnectionUseCase =
-            EnableConnectionUseCase(connectionManager, remoteManager, this.applicationContext)
+            EnableConnectionUseCase(roomManager, networkManager, this.applicationContext)
         val disableConnectionUseCase =
-            DisableConnectionUseCase(connectionManager, this.applicationContext)
+            DisableConnectionUseCase(roomManager, this.applicationContext)
         val deleteConnectionUseCase = DeleteConnectionUseCase()
         val insertConnectionUseCase = InsertConnectionUseCase()
-        val getConnectionsUseCase = GetConnectionsUseCase(connectionManager)
-
+        val getConnectionsUseCase = GetConnectionsUseCase(roomManager)
         // View models
         val connectionsListViewModel = ConnectionsListViewModel(
             enableConnectionUseCase,
@@ -63,7 +58,7 @@ class MainActivity : ComponentActivity() {
             insertConnectionUseCase,
             getConnectionsUseCase
         )
-        val connectionEditViewModel = ConnectionEditViewModel(connectionManager)
+        val connectionEditViewModel = ConnectionEditViewModel(roomManager)
 
         enableEdgeToEdge()
         setContent {

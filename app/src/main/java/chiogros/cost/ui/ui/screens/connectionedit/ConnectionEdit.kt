@@ -41,7 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import chiogros.cost.R
-import chiogros.cost.data.room.sftp.ConnectionSftp
+import chiogros.cost.data.room.sftp.SftpRoom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -120,7 +120,7 @@ fun ConnectionEditTopBar(
                                     viewModel.restore()
                                 }
 
-                                SnackbarResult.Dismissed -> {}
+                                SnackbarResult.Dismissed       -> {}
                             }
                         }
                         // Go back to previous screen
@@ -220,7 +220,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
 @Composable
 fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val types = listOf(ConnectionSftp.toString())
+    val types = listOf(SftpRoom.toString())
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         types.forEachIndexed { index, label ->
@@ -238,7 +238,6 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
 @Composable
 fun ConnectionEditDialog(viewModel: ConnectionEditViewModel, onSave: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
-
     // If data is modified, when back button is pressed set dialog state
     BackHandler(enabled = uiState.isEdited, onBack = {
         viewModel.setIsDialogShown(true)

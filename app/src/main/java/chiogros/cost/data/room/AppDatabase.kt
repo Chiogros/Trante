@@ -5,16 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import chiogros.cost.R
-import chiogros.cost.data.room.sftp.ConnectionSftp
-import chiogros.cost.data.room.sftp.ConnectionSftpDao
+import chiogros.cost.data.room.sftp.SftpRoom
+import chiogros.cost.data.room.sftp.SftpRoomDao
 
-@Database(entities = [ConnectionSftp::class], version = 1)
+@Database(entities = [SftpRoom::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-
-    abstract fun ConnectionSftpDao(): ConnectionSftpDao
+    abstract fun ConnectionSftpDao(): SftpRoomDao
 
     companion object {
-
         @Volatile
         private var db: AppDatabase? = null // Holds a single instance of the database.
 

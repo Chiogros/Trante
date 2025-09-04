@@ -1,20 +1,19 @@
-package chiogros.cost.data.remote.sftp
+package chiogros.cost.data.network.sftp
 
-import chiogros.cost.data.room.sftp.ConnectionSftp
+import chiogros.cost.data.room.sftp.SftpRoom
 
-class LocalSftpDataSource {
-    private val openConnections: MutableMap<String, RemoteSftp> = mutableMapOf()
+class LocalSftpNetworkDataSource {
+    private val openConnections: MutableMap<String, SftpNetwork> = mutableMapOf()
 
-    fun isStillConnected(con: ConnectionSftp): Boolean {
+    fun isStillConnected(con: SftpRoom): Boolean {
         val handler = openConnections[con.id]
         return (handler != null && handler.isConnected)
     }
 
-    fun get(con: ConnectionSftp): RemoteSftp {
+    fun get(con: SftpRoom): SftpNetwork {
         if (!isStillConnected(con)) {
             throw Exception("")
         }
-
         val handler = openConnections[con.id]
         if (handler != null) {
             return handler
@@ -23,7 +22,7 @@ class LocalSftpDataSource {
         }
     }
 
-    fun set(con: ConnectionSftp, handler: RemoteSftp) {
+    fun set(con: SftpRoom, handler: SftpNetwork) {
         openConnections[con.id] = handler
     }
 }

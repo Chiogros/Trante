@@ -1,31 +1,31 @@
 package chiogros.cost.data.room.repository
 
 import chiogros.cost.data.room.Connection
-import chiogros.cost.data.room.sftp.ConnectionSftp
-import chiogros.cost.data.room.sftp.ConnectionSftpRepository
+import chiogros.cost.data.room.sftp.SftpRoom
+import chiogros.cost.data.room.sftp.SftpRoomRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.merge
 
 /**
  * Aggregates all repositories to handle data requests from UI.
  */
-class ConnectionManager(private val connectionSftpRepository: ConnectionSftpRepository) {
+class RoomManager(private val sftpRoomRepository: SftpRoomRepository) {
     suspend fun delete(con: Connection) {
         getRepositoryForObject(con).delete(con)
     }
 
     fun get(id: String): Flow<Connection> {
-        return connectionSftpRepository.get(id)
+        return sftpRoomRepository.get(id)
     }
 
     fun getAll(): Flow<List<Connection>> {
-        return merge(connectionSftpRepository.getAll())
+        return merge(sftpRoomRepository.getAll())
     }
 
-    fun getRepositoryForObject(con: Connection): ConnectionRepository {
+    fun getRepositoryForObject(con: Connection): RoomRepository {
         return when (con) {
-            is ConnectionSftp -> connectionSftpRepository
-            else -> error("Connection type isn't supported yet!")
+            is SftpRoom -> sftpRoomRepository
+            else        -> error("Connection type isn't supported yet!")
         }
     }
 

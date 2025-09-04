@@ -1,20 +1,20 @@
-package chiogros.cost.data.remote.sftp
+package chiogros.cost.data.network.sftp
 
-import chiogros.cost.data.remote.File
-import chiogros.cost.data.remote.FileAttributesType
-import chiogros.cost.data.remote.repository.RemoteRepository
+import chiogros.cost.data.network.File
+import chiogros.cost.data.network.FileAttributesType
+import chiogros.cost.data.network.repository.NetworkRepository
 import chiogros.cost.data.room.Connection
-import chiogros.cost.data.room.sftp.ConnectionSftp
+import chiogros.cost.data.room.sftp.SftpRoom
 import org.apache.sshd.sftp.common.SftpConstants
 import java.io.InputStream
 import kotlin.io.path.Path
 
-class RemoteSftpRepository(
-    private val remote: RemoteSftpDataSource,
-    private val local: LocalSftpDataSource
-) : RemoteRepository() {
+class SftpNetworkRepository(
+    private val remote: RemoteSftpNetworkDataSource,
+    private val local: LocalSftpNetworkDataSource
+) : NetworkRepository() {
     override suspend fun connect(con: Connection): Boolean {
-        if (con !is ConnectionSftp) {
+        if (con !is SftpRoom) {
             return false
         }
 
@@ -33,21 +33,18 @@ class RemoteSftpRepository(
     }
 
     override suspend fun createFile(con: Connection, path: String): Boolean {
-        if (con !is ConnectionSftp) {
+        if (con !is SftpRoom) {
             throw ClassCastException()
         }
-
-        val handler: RemoteSftp = local.get(con)
+        val handler: SftpNetwork = local.get(con)
         return handler.createFile(path)
     }
 
     override suspend fun getFileStat(con: Connection, path: String): File {
-        if (con !is ConnectionSftp) {
+        if (con !is SftpRoom) {
             throw ClassCastException()
         }
-
-        val handler: RemoteSftp = local.get(con)
-
+        val handler: SftpNetwork = local.get(con)
         val stats = handler.getFileStat(path)
         val f = File(Path(path))
 
@@ -58,11 +55,10 @@ class RemoteSftpRepository(
     }
 
     override suspend fun listFiles(con: Connection, path: String): List<File> {
-        if (con !is ConnectionSftp) {
+        if (con !is SftpRoom) {
             throw ClassCastException()
         }
-
-        val handler: RemoteSftp = local.get(con)
+        val handler: SftpNetwork = local.get(con)
 
         return handler.listFiles(path).map { it ->
             val f = File(Path(it.filename))
@@ -74,20 +70,17 @@ class RemoteSftpRepository(
 
     fun mapProviderTypeToGeneric(type: Int): FileAttributesType =
         when (type) {
-            SftpConstants.SSH_FILEXFER_TYPE_REGULAR -> FileAttributesType.REGULAR
+            SftpConstants.SSH_FILEXFER_TYPE_REGULAR   -> FileAttributesType.REGULAR
             SftpConstants.SSH_FILEXFER_TYPE_DIRECTORY -> FileAttributesType.DIRECTORY
-            SftpConstants.SSH_FILEXFER_TYPE_SYMLINK -> FileAttributesType.SYMLINK
-            else -> {
-                FileAttributesType.UNKNOWN
-            }
+            SftpConstants.SSH_FILEXFER_TYPE_SYMLINK   -> FileAttributesType.SYMLINK
+            else                                      -> FileAttributesType.UNKNOWN
         }
 
     override suspend fun readFile(con: Connection, path: String): InputStream {
-        if (con !is ConnectionSftp) {
+        if (con !is SftpRoom) {
             throw ClassCastException()
         }
-
-        val handler: RemoteSftp = local.get(con)
+        val handler: SftpNetwork = local.get(con)
         return handler.readFile(path)
     }
 }

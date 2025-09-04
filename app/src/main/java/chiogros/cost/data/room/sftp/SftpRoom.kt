@@ -9,7 +9,7 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 @Entity()
-data class ConnectionSftp(
+data class SftpRoom(
     @PrimaryKey
     override val id: String = Uuid.random().toString(),
     override var name: String = "",
@@ -26,6 +26,6 @@ data class ConnectionSftp(
     }
 
     override fun toString(): String {
-        return ConnectionSftp.toString()
+        return SftpRoom.toString()
     }
 }
