@@ -4,6 +4,8 @@ Hi, welcome in this guide. I'm glad you are willing to help make this app better
 
 ## Guidelines
 
+### Architecture
+
 Contributors may read
 Android [Excellent Experiences](https://developer.android.com/quality/excellent) guide to provide
 great features:
@@ -15,6 +17,11 @@ great features:
 
 In addition, contributors must do their best to
 follow [Android Architecture Best Practices](https://developer.android.com/topic/architecture/recommendations).
+
+### Coding style and practices
+
+Make sure you have [EditorConfig](https://www.jetbrains.com/help/idea/editorconfig.html) plugin
+enabled, so you can directly benefit from the coding style [config file](.editorconfig).
 
 Here are some additional practices which I'd like you to follow:
 
