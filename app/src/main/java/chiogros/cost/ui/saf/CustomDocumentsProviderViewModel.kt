@@ -15,18 +15,11 @@ import chiogros.cost.domain.GetFileStatUseCase
 import chiogros.cost.domain.ListFilesInDirectoryUseCase
 import chiogros.cost.domain.ReadFileUseCase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import kotlin.io.path.Path
-
-data class CustomDocumentProviderUiState(
-    val userConnected: Boolean = false
-)
 
 class CustomDocumentProviderViewModel(
     val createFileUseCase: CreateFileUseCase,
@@ -35,15 +28,12 @@ class CustomDocumentProviderViewModel(
     val listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase,
     val readFileUseCase: ReadFileUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(CustomDocumentProviderUiState())
-    val uiState: StateFlow<CustomDocumentProviderUiState> = _uiState.asStateFlow()
-
+    val pathDelimiter = '/'
     fun createDocument(parentDocumentId: String, mimeType: String, displayName: String): String? {
         val conId = getConnectionIdFromDocumentId(parentDocumentId)
         val path = getPathFromDocumentId(parentDocumentId)
-        val newDocumentPath = path + "/" + displayName
-        val newDocumentId = conId + "/" + path
-
+        val newDocumentPath = path + pathDelimiter + displayName
+        val newDocumentId = conId + pathDelimiter + path
         var isFileCreated = false
 
         runBlocking {
@@ -56,9 +46,7 @@ class CustomDocumentProviderViewModel(
     fun openDocument(documentId: String, writePipe: ParcelFileDescriptor) {
         val conId = getConnectionIdFromDocumentId(documentId)
         val path = getPathFromDocumentId(documentId)
-
         var fileStream: InputStream
-
         // Read remote file then hand it into the pipe
         viewModelScope.launch {
             fileStream = readFileUseCase(conId, path)
@@ -86,7 +74,6 @@ class CustomDocumentProviderViewModel(
     ) {
         val conId = getConnectionIdFromDocumentId(parentDocumentId)
         val path = getPathFromDocumentId(parentDocumentId)
-
         var files: List<File> = emptyList()
         runBlocking {
             files = listFilesInDirectoryUseCase(conId, path)
@@ -96,7 +83,7 @@ class CustomDocumentProviderViewModel(
             cursor.newRow().apply {
                 add(
                     DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                    parentDocumentId + "/" + file.path.fileName.toString()
+                    parentDocumentId + pathDelimiter + file.path.fileName.toString()
                 )
                 add(
                     DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString()
@@ -117,8 +104,7 @@ class CustomDocumentProviderViewModel(
     ) {
         val conId = getConnectionIdFromDocumentId(documentId)
         val path = getPathFromDocumentId(documentId)
-
-        var file = File(Path(""))
+        var file = File(Path(String()))
         runBlocking {
             file = getFileStatUseCase(conId, path)
         }
@@ -168,15 +154,15 @@ class CustomDocumentProviderViewModel(
     }
 
     fun getConnectionIdFromDocumentId(documentId: String): String {
-        return documentId.substringBefore('/')
+        return documentId.substringBefore(pathDelimiter)
     }
 
     fun getMimetypeFromFile(file: File): String {
         return when (file.type) {
             FileAttributesType.DIRECTORY -> DocumentsContract.Document.MIME_TYPE_DIR
-            FileAttributesType.SYMLINK -> DocumentsContract.Document.MIME_TYPE_DIR
-            FileAttributesType.REGULAR -> getMimetypeFromFilename(file.path.fileName.toString())
-            FileAttributesType.UNKNOWN -> "application/octet-stream"
+            FileAttributesType.SYMLINK   -> DocumentsContract.Document.MIME_TYPE_DIR
+            FileAttributesType.REGULAR   -> getMimetypeFromFilename(file.path.fileName.toString())
+            FileAttributesType.UNKNOWN   -> "application/octet-stream"
         }
     }
 
@@ -185,12 +171,11 @@ class CustomDocumentProviderViewModel(
         val resolved = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
             filename.substringAfterLast('.')
         )
-
         // Default MIME type if filename couldn't be used to resolve it
         return resolved ?: "application/octet-stream"
     }
 
     fun getPathFromDocumentId(documentId: String): String {
-        return documentId.substringAfter('/', ".")
+        return documentId.substringAfter(pathDelimiter, ".")
     }
 }
