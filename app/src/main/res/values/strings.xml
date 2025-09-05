@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Cost</string>
     <string name="create_connection">Create connection</string>
     <string name="connections_list">Connections list</string>
     <string name="host">Host</string>

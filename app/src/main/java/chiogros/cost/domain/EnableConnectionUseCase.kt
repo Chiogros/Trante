@@ -5,6 +5,7 @@ import android.provider.DocumentsContract.buildRootsUri
 import chiogros.cost.data.network.repository.NetworkManager
 import chiogros.cost.data.room.ConnectionState
 import chiogros.cost.data.room.repository.RoomManager
+import chiogros.cost.ui.saf.CustomDocumentsProvider
 import kotlinx.coroutines.flow.first
 
 class EnableConnectionUseCase(
@@ -26,7 +27,7 @@ class EnableConnectionUseCase(
         }
         repository.update(con)
         // Notify ContentProvider about changes in enabled connections
-        val uri = buildRootsUri("chiogros.cost.ui.saf.CustomDocumentsProvider")
+        val uri = buildRootsUri(CustomDocumentsProvider().javaClass.name)
         context.contentResolver.notifyChange(uri, null)
     }
 }

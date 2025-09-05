@@ -1,15 +1,9 @@
-plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.androidx.room)
-    alias(libs.plugins.com.google.devtools.ksp)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    kotlin(libs.plugins.plugin.serialization.get().pluginId).version(libs.versions.serialization)
-}
-
+val appName = "Cost"
+val packageName = "chiogros." + appName.lowercase()
+val providerName = ".ui.saf.CustomDocumentsProvider"
 
 android {
-    namespace = "chiogros.cost"
+    namespace = packageName
     compileSdk = 36
 
     defaultConfig {
@@ -18,6 +12,10 @@ android {
         targetSdk = android.compileSdk
         versionCode = 1
         versionName = "1.0"
+
+        manifestPlaceholders["app_name"] = appName
+        manifestPlaceholders["package_name"] = packageName
+        manifestPlaceholders["provider_name"] = providerName
     }
 
     buildTypes {
@@ -51,12 +49,22 @@ android {
     }
 }
 
+// Plugins are only used to parse Gradle configuration.
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.androidx.room)
+    alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    kotlin(libs.plugins.plugin.serialization.get().pluginId).version(libs.versions.serialization)
+}
+
 dependencies {
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.room.runtime)
-    implementation(platform(libs.androidx.compose.bom))
     ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
     implementation(libs.sshd.sftp)
 }

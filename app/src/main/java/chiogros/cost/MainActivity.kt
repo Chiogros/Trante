@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         val dispatcher = Dispatchers.IO
         // Room
         val sftpRoomDataSource =
-            SftpRoomDataSource(AppDatabase.getDatabase(this).ConnectionSftpDao())
+            SftpRoomDataSource(AppDatabase.getDatabase(this).connectionSftpDao())
         val sftpRoomRepository = SftpRoomRepository(sftpRoomDataSource)
         val roomManager = RoomManager(sftpRoomRepository)
         // Remote

@@ -35,7 +35,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
     fun init(context: Context): Boolean {
         // Room
         val sftpRoomDataSource =
-            SftpRoomDataSource(AppDatabase.getDatabase(context).ConnectionSftpDao())
+            SftpRoomDataSource(AppDatabase.getDatabase(context).connectionSftpDao())
         val sftpRoomRepository = SftpRoomRepository(sftpRoomDataSource)
         val roomManager = RoomManager(sftpRoomRepository)
         // Remote

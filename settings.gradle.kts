@@ -19,5 +19,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Cost"
 include(":app")
