@@ -6,10 +6,14 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import chiogros.cost.data.room.crypto.CryptoRoom
+import chiogros.cost.data.room.crypto.EncryptedDataTypeConverter
 import chiogros.cost.data.room.sftp.SftpRoom
 import chiogros.cost.data.room.sftp.SftpRoomDao
 
-@Database(entities = [SftpRoom::class], version = 1)
+@Database(entities = [SftpRoom::class, CryptoRoom::class], version = 1)
+@TypeConverters(EncryptedDataTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun connectionSftpDao(): SftpRoomDao
 

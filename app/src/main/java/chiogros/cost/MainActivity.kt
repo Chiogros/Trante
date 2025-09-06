@@ -14,11 +14,9 @@ import chiogros.cost.data.room.AppDatabase
 import chiogros.cost.data.room.repository.RoomManager
 import chiogros.cost.data.room.sftp.SftpRoomDataSource
 import chiogros.cost.data.room.sftp.SftpRoomRepository
-import chiogros.cost.domain.DeleteConnectionUseCase
 import chiogros.cost.domain.DisableConnectionUseCase
 import chiogros.cost.domain.EnableConnectionUseCase
 import chiogros.cost.domain.GetConnectionsUseCase
-import chiogros.cost.domain.InsertConnectionUseCase
 import chiogros.cost.ui.ui.screens.connectionedit.ConnectionEditViewModel
 import chiogros.cost.ui.ui.screens.connectionslist.ConnectionsListViewModel
 import chiogros.cost.ui.ui.theme.EtomerTheme
@@ -47,15 +45,11 @@ class MainActivity : ComponentActivity() {
             EnableConnectionUseCase(roomManager, networkManager, this.applicationContext)
         val disableConnectionUseCase =
             DisableConnectionUseCase(roomManager, this.applicationContext)
-        val deleteConnectionUseCase = DeleteConnectionUseCase()
-        val insertConnectionUseCase = InsertConnectionUseCase()
         val getConnectionsUseCase = GetConnectionsUseCase(roomManager)
         // View models
         val connectionsListViewModel = ConnectionsListViewModel(
             enableConnectionUseCase,
             disableConnectionUseCase,
-            deleteConnectionUseCase,
-            insertConnectionUseCase,
             getConnectionsUseCase
         )
         val connectionEditViewModel = ConnectionEditViewModel(roomManager)

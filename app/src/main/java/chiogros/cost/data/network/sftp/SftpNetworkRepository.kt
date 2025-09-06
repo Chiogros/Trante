@@ -4,6 +4,7 @@ import chiogros.cost.data.network.File
 import chiogros.cost.data.network.FileAttributesType
 import chiogros.cost.data.network.repository.NetworkRepository
 import chiogros.cost.data.room.Connection
+import chiogros.cost.data.room.crypto.CryptoUtils
 import chiogros.cost.data.room.sftp.SftpRoom
 import org.apache.sshd.sftp.common.SftpConstants
 import java.io.InputStream
@@ -23,7 +24,12 @@ class SftpNetworkRepository(
         }
 
         try {
-            val handler = remote.connect(con.host, 22, con.user, con.password)
+            val handler = remote.connect(
+                host = con.host,
+                port = 22,
+                user = con.user,
+                pwd = String(CryptoUtils().decrypt(con.password))
+            )
             local.set(con, handler)
 
             return true

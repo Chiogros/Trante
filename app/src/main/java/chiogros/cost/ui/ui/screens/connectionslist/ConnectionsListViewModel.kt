@@ -3,11 +3,9 @@ package chiogros.cost.ui.ui.screens.connectionslist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chiogros.cost.data.room.Connection
-import chiogros.cost.domain.DeleteConnectionUseCase
 import chiogros.cost.domain.DisableConnectionUseCase
 import chiogros.cost.domain.EnableConnectionUseCase
 import chiogros.cost.domain.GetConnectionsUseCase
-import chiogros.cost.domain.InsertConnectionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +21,6 @@ data class ConnectionsListUiState(
 class ConnectionsListViewModel(
     private val enableConnectionUseCase: EnableConnectionUseCase,
     private val disableConnectionUseCase: DisableConnectionUseCase,
-    private val deleteConnectionUseCase: DeleteConnectionUseCase,
-    private val insertConnectionUseCase: InsertConnectionUseCase,
     private val getConnectionsUseCase: GetConnectionsUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
@@ -34,18 +30,6 @@ class ConnectionsListViewModel(
 
     init {
         loadConnections()
-    }
-
-    fun delete(con: Connection) {
-        viewModelScope.launch {
-            deleteConnectionUseCase(con.id)
-        }
-    }
-
-    fun insert(con: Connection) {
-        viewModelScope.launch {
-            insertConnectionUseCase(con)
-        }
     }
 
     fun loadConnections() {
