@@ -36,6 +36,11 @@ class CustomDocumentProviderViewModel(
         val newDocumentId = conId + pathDelimiter + path
         var isFileCreated = false
 
+        // Create new folders is not supported yet
+        if (mimeType == "vnd.android.document/directory") {
+            return null
+        }
+
         runBlocking {
             isFileCreated = createFileUseCase(id = conId, path = newDocumentPath)
         }
@@ -89,10 +94,7 @@ class CustomDocumentProviderViewModel(
                     DocumentsContract.Document.COLUMN_DISPLAY_NAME, file.path.fileName.toString()
                 )
                 add(DocumentsContract.Document.COLUMN_MIME_TYPE, getMimetypeFromFile(file))
-                add(
-                    DocumentsContract.Document.COLUMN_FLAGS,
-                    DocumentsContract.Document.FLAG_SUPPORTS_WRITE or DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE
-                )
+                add(DocumentsContract.Document.COLUMN_FLAGS, null)
                 add(DocumentsContract.Document.COLUMN_SIZE, file.size)
                 add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
             }
@@ -113,10 +115,7 @@ class CustomDocumentProviderViewModel(
             add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, documentId)
             add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, path)
             add(DocumentsContract.Document.COLUMN_MIME_TYPE, getMimetypeFromFile(file))
-            add(
-                DocumentsContract.Document.COLUMN_FLAGS,
-                DocumentsContract.Document.FLAG_SUPPORTS_WRITE or DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE
-            )
+            add(DocumentsContract.Document.COLUMN_FLAGS, null)
             add(DocumentsContract.Document.COLUMN_SIZE, file.size)
             add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, null)
         }
@@ -134,9 +133,7 @@ class CustomDocumentProviderViewModel(
                     con.name.ifEmpty { getConnectionFriendlyName(con.user, con.host) })
                 add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_launcher)
                 add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id)
-                add(
-                    DocumentsContract.Root.COLUMN_FLAGS, DocumentsContract.Root.FLAG_SUPPORTS_CREATE
-                )
+                add(DocumentsContract.Root.COLUMN_FLAGS, null)
             }
         }
     }
