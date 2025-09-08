@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.2"
+agp = "8.13.0"
 comGoogleDevtoolsKsp = "2.2.10-2.0.2"
 composeBom = "2025.08.00"
 coreSplashscreen = "1.0.1"
