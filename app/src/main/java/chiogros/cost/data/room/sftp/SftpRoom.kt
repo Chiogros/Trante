@@ -1,5 +1,6 @@
 package chiogros.cost.data.room.sftp
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import chiogros.cost.data.room.Connection
@@ -19,6 +20,7 @@ data class SftpRoom(
     override var host: String = "",
     override var user: String = "",
     override var state: ConnectionState = ConnectionState.NEVER_USED,
+    @Embedded("password_")
     override var password: EncryptedData = EncryptedData()
 ) : Connection() {
 
