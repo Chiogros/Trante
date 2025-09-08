@@ -21,6 +21,7 @@ class CryptoUtils {
         const val CRYPTO_AEAD: String = "$KEY_GEN_ALG/$BLOCK_MODE/$PADDING"
         const val CRYPTO_AEAD_KEY_SIZE = 32
         const val CRYPTO_AEAD_TAG_SIZE = 16
+        const val KEY_SIZE = 256
     }
 
     init {
@@ -29,6 +30,7 @@ class CryptoUtils {
                 keyId,
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             )
+                .setKeySize(KEY_SIZE)
                 .setBlockModes(BLOCK_MODE)
                 .setEncryptionPaddings(PADDING)
                 .setUserAuthenticationRequired(false)
