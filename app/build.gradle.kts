@@ -13,6 +13,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        // Values to be used from manifest file
         manifestPlaceholders["app_name"] = appName
         manifestPlaceholders["package_name"] = packageName
         manifestPlaceholders["provider_name"] = providerName
@@ -30,6 +31,7 @@ android {
         }
         debug {
             isDebuggable = true
+            applicationIdSuffix = ".debug"
         }
     }
     compileOptions {
