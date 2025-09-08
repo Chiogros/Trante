@@ -26,12 +26,14 @@ abstract class AppDatabase : RoomDatabase() {
             if (db == null) {
                 init(context)
             }
+
             // !! since it got initialized, or it raised an exception
             return db!!
         }
 
         private fun init(context: Context) {
             val appName = context.packageName.split('.').last().capitalize(Locale("en-GB"))
+
             // Ensures thread safety during instance creation.
             synchronized(this) {
                 db = Room.databaseBuilder(context, AppDatabase::class.java, appName).build()

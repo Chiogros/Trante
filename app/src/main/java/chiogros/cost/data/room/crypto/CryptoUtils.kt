@@ -35,18 +35,6 @@ class CryptoUtils {
                 .setKeySize(CRYPTO_AEAD_KEY_SIZE * 8)
                 .build()
         )
-
-        /*
-        val sec: SecretKey = keygen.generateKey()
-        val cipher = Cipher.getInstance(cipherTransformation)
-        cipher.init(Cipher.ENCRYPT_MODE, sec)
-
-        val result: ByteArray = cipher.doFinal(data)
-        val tag: ByteArray =
-            result.copyOfRange(result.size - CRYPTO_AEAD_TAG_SIZE, result.size);
-        val encrypted: ByteArray =
-            result.copyOfRange(0, result.size - CRYPTO_AEAD_TAG_SIZE)
-        */
     }
 
     fun decrypt(encData: EncryptedData): ByteArray {

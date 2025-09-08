@@ -12,6 +12,7 @@ import kotlin.uuid.Uuid
 @Entity
 data class SftpRoom(
     @PrimaryKey
+    // UUID is used to avoid content guessing (ex: content://chiogros.cost/<id>/document.txt)
     override val id: String = Uuid.random().toString(),
     override var name: String = "",
     override var enabled: Boolean = false,
