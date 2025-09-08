@@ -9,17 +9,18 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 class CryptoUtils {
-    val keyId = "salut"
-    var keygen: KeyGenerator = KeyGenerator.getInstance(keyGenAlg, provider)
-    val cipher = Cipher.getInstance(cipherTransformation)
+    val keyId = "keyId"
+    var keygen: KeyGenerator = KeyGenerator.getInstance(KEY_GEN_ALG, PROVIDER)
+    val cipher: Cipher = Cipher.getInstance(CRYPTO_AEAD)
 
     companion object {
-        val provider = "AndroidKeyStore"
-        val keyGenAlg = KeyProperties.KEY_ALGORITHM_AES
-        val cipherTransformation = "AES/GCM/NoPadding"
-        val CRYPTO_AEAD: String = "AES/GCM/NoPadding"
-        val CRYPTO_AEAD_KEY_SIZE = 32
-        val CRYPTO_AEAD_TAG_SIZE = 16
+        const val PROVIDER = "AndroidKeyStore"
+        const val KEY_GEN_ALG = KeyProperties.KEY_ALGORITHM_AES
+        const val BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
+        const val PADDING = KeyProperties.ENCRYPTION_PADDING_NONE
+        const val CRYPTO_AEAD: String = "$KEY_GEN_ALG/$BLOCK_MODE/$PADDING"
+        const val CRYPTO_AEAD_KEY_SIZE = 32
+        const val CRYPTO_AEAD_TAG_SIZE = 16
     }
 
     init {
@@ -28,8 +29,8 @@ class CryptoUtils {
                 keyId,
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setBlockModes(BLOCK_MODE)
+                .setEncryptionPaddings(PADDING)
                 .setUserAuthenticationRequired(false)
                 .setRandomizedEncryptionRequired(true)
                 .setKeySize(CRYPTO_AEAD_KEY_SIZE * 8)
@@ -45,7 +46,7 @@ class CryptoUtils {
     }
 
     fun decrypt(ciphertext: ByteArray, iv: ByteArray): ByteArray {
-        val keystore = KeyStore.getInstance(provider).apply { load(null) }
+        val keystore = KeyStore.getInstance(PROVIDER).apply { load(null) }
 
         if (!keystore.containsAlias(keyId)) {
             throw NoSuchElementException("Missing key \"$keyId\" in KeyStore for decryption.")
@@ -61,21 +62,12 @@ class CryptoUtils {
         return cipher.doFinal(ciphertext)
     }
 
-    fun getEncryptedObj(ciphertext: ByteArray, iv: ByteArray): EncryptedData {
-        return EncryptedData(
-            ciphertext = ciphertext,
-            iv = iv
-        )
-    }
-
     fun encrypt(plaintext: ByteArray): EncryptedData {
         val encKey: SecretKey = keygen.generateKey()
 
         cipher.init(Cipher.ENCRYPT_MODE, encKey)
 
         val res: ByteArray = cipher.doFinal(plaintext)
-        val tag = res.copyOfRange(res.size - CRYPTO_AEAD_TAG_SIZE, res.size)
-        val ciphertext = res.copyOfRange(0, res.size - CRYPTO_AEAD_TAG_SIZE)
 
         return EncryptedData(res, cipher.iv)
     }
