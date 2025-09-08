@@ -11,7 +11,7 @@ room = "2.7.2"
 roomCompiler = "2.7.2"
 roomRuntime = "2.7.2"
 serialization = "2.1.21"
-sshd-sftp = "2.15.0"
+sshd-sftp = "2.16.0"
 
 [libraries]
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
