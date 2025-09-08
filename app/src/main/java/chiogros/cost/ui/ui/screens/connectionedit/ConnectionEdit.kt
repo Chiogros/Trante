@@ -9,7 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.sharp.Check
 import androidx.compose.material.icons.sharp.Delete
@@ -39,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import chiogros.cost.R
 import chiogros.cost.data.room.sftp.SftpRoom
@@ -199,9 +201,9 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
             label = { Text(stringResource(R.string.password)) },
             placeholder = { Text(uiState.formState.password) },
             trailingIcon = {
-                IconButton(onClick = {}) {
+                IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
                     Icon(
-                        imageVector = Icons.Default.Lock,
+                        imageVector = if (uiState.showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = stringResource(R.string.show_password)
                     )
                 }
@@ -211,7 +213,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Password
             ),
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (uiState.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             singleLine = true
         )
     }

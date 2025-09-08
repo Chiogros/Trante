@@ -29,7 +29,8 @@ data class ConnectionEditUiState(
     val originalFormState: ConnectionEditFormState = ConnectionEditFormState(),
     val isEditing: Boolean = false,
     val isDialogShown: Boolean = false,
-    var deletedConnection: Connection = SftpRoom()
+    var deletedConnection: Connection = SftpRoom(),
+    val showPassword: Boolean = false
 ) {
     val isEdited: Boolean
         get() = formState != originalFormState
@@ -125,7 +126,8 @@ class ConnectionEditViewModel(private val repository: RoomManager) : ViewModel()
                 originalFormState = ConnectionEditFormState(),
                 isEditing = false,
                 isDialogShown = false,
-                deletedConnection = SftpRoom()
+                deletedConnection = SftpRoom(),
+                showPassword = false
             )
         }
     }
@@ -158,51 +160,31 @@ class ConnectionEditViewModel(private val repository: RoomManager) : ViewModel()
     }
 
     fun setIsDialogShown(state: Boolean) {
-        _uiState.update {
-            it.copy(
-                isDialogShown = state
-            )
-        }
+        _uiState.update { it.copy(isDialogShown = state) }
     }
 
     fun setHost(host: String) {
-        _uiState.update {
-            it.copy(
-                formState = uiState.value.formState.copy(host = host)
-            )
-        }
+        _uiState.update { it.copy(formState = uiState.value.formState.copy(host = host)) }
     }
 
     fun setName(name: String) {
-        _uiState.update {
-            it.copy(
-                formState = uiState.value.formState.copy(name = name)
-            )
-        }
+        _uiState.update { it.copy(formState = uiState.value.formState.copy(name = name)) }
     }
 
     fun setPassword(password: String) {
-        _uiState.update {
-            it.copy(
-                formState = uiState.value.formState.copy(password = password)
-            )
-        }
+        _uiState.update { it.copy(formState = uiState.value.formState.copy(password = password)) }
     }
 
     fun setType(type: String) {
-        _uiState.update {
-            it.copy(
-                formState = uiState.value.formState.copy(type = type)
-            )
-        }
+        _uiState.update { it.copy(formState = uiState.value.formState.copy(type = type)) }
     }
 
     fun setUser(user: String) {
-        _uiState.update {
-            it.copy(
-                formState = uiState.value.formState.copy(user = user)
-            )
-        }
+        _uiState.update { it.copy(formState = uiState.value.formState.copy(user = user)) }
+    }
+
+    fun togglePasswordVisibility() {
+        _uiState.update { it.copy(showPassword = !uiState.value.showPassword) }
     }
 
     fun update() {
