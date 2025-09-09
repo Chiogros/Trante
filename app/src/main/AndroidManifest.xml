@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Etomer.SplashScreen"
+        android:memtagMode="async"
         tools:targetApi="36">
         <activity
             android:name=".MainActivity"
