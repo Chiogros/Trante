@@ -1,4 +1,5 @@
 [versions]
+aboutLibraries = "13.0.0-b01"
 agp = "8.13.0"
 comGoogleDevtoolsKsp = "2.2.10-2.0.2"
 composeBom = "2025.08.01"
@@ -14,6 +15,8 @@ serialization = "2.1.21"
 sshd-sftp = "2.16.0"
 
 [libraries]
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
@@ -24,6 +27,7 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 sshd-sftp = { group = "org.apache.sshd", name = "sshd-sftp", version.ref = "sshd-sftp" }
 
 [plugins]
+aboutlibraries-plugin-android = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "comGoogleDevtoolsKsp" }

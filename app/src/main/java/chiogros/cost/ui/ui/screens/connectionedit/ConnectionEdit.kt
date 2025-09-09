@@ -60,11 +60,15 @@ fun ConnectionEdit(
 
     ConnectionEditDialog(viewModel, onBack)
 
-    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        ConnectionEditTopBar(
-            onBack, onBack, viewModel, onBack, snackbarHostState, coroutineScope
-        )
-    }, snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            ConnectionEditTopBar(
+                onBack, onBack, viewModel, onBack, snackbarHostState, coroutineScope
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -94,17 +98,20 @@ fun ConnectionEditTopBar(
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = MaterialTheme.colorScheme.onBackground,
-        ), title = {
+        ),
+        title = {
             if (uiState.isEditing) Text(stringResource(R.string.edit_connection))
             else Text(stringResource(R.string.create_connection))
-        }, navigationIcon = {
+        },
+        navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.cancel)
                 )
             }
-        }, actions = {
+        },
+        actions = {
             if (uiState.isEditing) {
                 IconButton(
                     onClick = {
@@ -142,7 +149,8 @@ fun ConnectionEditTopBar(
                     else viewModel.insert()
 
                     onSave()
-                }, enabled = (!uiState.isEditing || uiState.isEdited)
+                },
+                enabled = (!uiState.isEditing || uiState.isEdited)
             ) {
                 Icon(
                     imageVector = Icons.Sharp.Check,

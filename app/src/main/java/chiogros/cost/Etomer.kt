@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import chiogros.cost.ui.ui.screens.about.About
 import chiogros.cost.ui.ui.screens.connectionedit.ConnectionEdit
 import chiogros.cost.ui.ui.screens.connectionedit.ConnectionEditViewModel
 import chiogros.cost.ui.ui.screens.connectionslist.ConnectionsList
@@ -20,6 +21,9 @@ object ConnectionsList
 
 @Serializable
 data class ConnectionEdit(val connectionId: String = "")
+
+@Serializable
+object About
 
 @Composable
 fun Etomer(
@@ -35,9 +39,20 @@ fun Etomer(
         startDestination = ConnectionsList,
         enterTransition = { EnterTransition.None },
     ) {
+        composable<ConnectionsList> {
+            ConnectionsList(
+                onAboutClick = { navController.navigate(About) },
+                onFabClick = { navController.navigate(ConnectionEdit()) },
+                viewModel = connectionsListViewModel,
+                onItemClick = { id: String -> navController.navigate(ConnectionEdit(id)) },
+                snackbarHostState = snackbarHostState
+            )
+        }
+
         composable<ConnectionEdit>(
             enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Start) },
-            popExitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End) }) { backStackEntry ->
+            popExitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End) }
+        ) { backStackEntry ->
             ConnectionEdit(
                 onBack = { navController.popBackStack() },
                 viewModel = connectionEditViewModel,
@@ -47,12 +62,12 @@ fun Etomer(
             )
         }
 
-        composable<ConnectionsList> {
-            ConnectionsList(
-                onFabClick = { navController.navigate(ConnectionEdit()) },
-                viewModel = connectionsListViewModel,
-                onItemClick = { id: String -> navController.navigate(ConnectionEdit(id)) },
-                snackbarHostState = snackbarHostState
+        composable<About>(
+            enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Start) },
+            popExitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End) }
+        ) { backStackEntry ->
+            About(
+                onBack = { navController.popBackStack() }
             )
         }
     }

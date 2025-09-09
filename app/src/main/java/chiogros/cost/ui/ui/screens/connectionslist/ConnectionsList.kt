@@ -35,7 +35,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +46,7 @@ import chiogros.cost.data.room.ConnectionState
 
 @Composable
 fun ConnectionsList(
+    onAboutClick: () -> Unit,
     onFabClick: () -> Unit,
     viewModel: ConnectionsListViewModel,
     onItemClick: (String) -> Unit,
@@ -57,7 +57,7 @@ fun ConnectionsList(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { ConnectionsListTopBar() },
+        topBar = { ConnectionsListTopBar(onAboutClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = { Fab(onFabClick) },
     ) { innerPadding ->
@@ -81,24 +81,22 @@ fun ConnectionsList(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectionsListTopBar() {
-    val uriHandler = LocalUriHandler.current
-    val repositoryUrl = stringResource(R.string.repository_url)
-
+fun ConnectionsListTopBar(onAboutClick: () -> Unit) {
     TopAppBar(
         colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
             titleContentColor = MaterialTheme.colorScheme.primary,
-        ), title = {
+        ),
+        title = {
             Text(stringResource(R.string.connections_list))
-        }, actions = {
-            IconButton(onClick = { uriHandler.openUri(repositoryUrl) }) {
+        },
+        actions = {
+            IconButton(onClick = onAboutClick) {
                 Icon(
                     imageVector = Icons.Outlined.Info,
-                    contentDescription = stringResource(R.string.app_info)
+                    contentDescription = stringResource(R.string.about)
                 )
             }
         })
@@ -130,7 +128,8 @@ fun Item(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(onClick = { onItemClick(con.id) })
-            .padding(16.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = con.toString(), modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal
