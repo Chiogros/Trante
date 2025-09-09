@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -43,14 +42,13 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.createBitmap
 import chiogros.cost.BuildConfig
 import chiogros.cost.R
-import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
 
 @Composable
 fun About(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onProjectLicenseClick: () -> Unit,
+    onThirdPartyLicensesClick: () -> Unit
 ) {
-    val libraries by rememberLibraries(R.raw.aboutlibraries)
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { AboutTopBar(onBack) }
@@ -62,9 +60,8 @@ fun About(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AboutContent()
+            AboutContent(onProjectLicenseClick, onThirdPartyLicensesClick)
         }
-        // LibrariesContainer(libraries, Modifier.fillMaxSize(), contentPadding = innerPadding)
     }
 }
 
@@ -91,7 +88,10 @@ fun AboutTopBar(onBack: () -> Unit) {
 }
 
 @Composable
-fun AboutContent() {
+fun AboutContent(
+    onLicenceClick: () -> Unit,
+    onThirdPartyLicencesClick: () -> Unit
+) {
     val uriHandler = LocalUriHandler.current
     val repositoryUrl = stringResource(R.string.repository_url)
     val changelogUrl =
@@ -147,7 +147,7 @@ fun AboutContent() {
     )
 
     AboutItem(
-        onClick = { },
+        onClick = onLicenceClick,
         icon = Icons.Outlined.Description,
         iconDescription = stringResource(R.string.license),
         title = stringResource(R.string.license),
@@ -155,7 +155,7 @@ fun AboutContent() {
     )
 
     AboutItem(
-        onClick = { },
+        onClick = onThirdPartyLicencesClick,
         icon = Icons.Outlined.Description,
         iconDescription = stringResource(R.string.third_party_licenses),
         title = stringResource(R.string.third_party_licenses),
