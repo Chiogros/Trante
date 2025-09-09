@@ -1,6 +1,6 @@
-# Cost
+# Trante
 
-> Co...nections li...st to remote storages.
+> Tran...sfer from remo...te storages.
 
 <div style="display: flex; justify-content: space-between;">
   <img src="docs/app.png" alt="List of connections in the app. The first is disabled, while the second is enabled." width="200"/>
@@ -12,7 +12,7 @@
 
 - Google Play
 - F-Droid
-- [GitHub release](https://github.com/Chiogros/Cost/releases)
+- [GitHub release](https://github.com/Chiogros/Trante/releases)
 
 ## Usage
 

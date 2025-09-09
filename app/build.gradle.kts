@@ -1,4 +1,4 @@
-val appName = "Cost"
+val appName = "Trante"
 val packageName = "chiogros." + appName.lowercase()
 val providerName = ".ui.saf.CustomDocumentsProvider"
 

@@ -15,7 +15,7 @@
     <string name="you_may_lost_your_changes">You may lost your changes.</string>
     <string name="no_connection">No connection</string>
     <string name="app_info">Application information</string>
-    <string name="repository_url" translatable="false">https://github.com/Chiogros/Cost</string>
+    <string name="repository_url" translatable="false">https://github.com/Chiogros/Trante</string>
     <string name="connection_deleted">Connection deleted</string>
     <string name="undo">Undo</string>
     <string name="connection_failed">Connection failed</string>

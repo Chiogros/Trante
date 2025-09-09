@@ -2,10 +2,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Allows us to override night specific attributes in the values-night folder. -->
-    <style name="NightAdjusted.Theme.Etomer" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="NightAdjusted.Theme.App" parent="android:Theme.Material.Light.NoActionBar" />
 
     <!-- The final theme we use -->
-    <style name="Theme.Etomer" parent="NightAdjusted.Theme.Etomer">
+    <style name="Theme.App" parent="NightAdjusted.Theme.App">
         <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
     </style>
 
@@ -14,8 +14,8 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 
-    <style name="Theme.Etomer.SplashScreen" parent="NightAdjusted.Theme.Splash">
-        <item name="postSplashScreenTheme">@style/Theme.Etomer</item>
+    <style name="Theme.App.SplashScreen" parent="NightAdjusted.Theme.Splash">
+        <item name="postSplashScreenTheme">@style/Theme.App</item>
     </style>
 
 </resources>
