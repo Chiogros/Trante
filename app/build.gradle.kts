@@ -20,6 +20,8 @@ android {
 
         // Values to be used from code
         buildConfigField("String", "APP_NAME", "\"$appName\"")
+        buildConfigField("String", "PACKAGE_NAME", "\"$packageName\"")
+        buildConfigField("String", "PROVIDER_NAME", "\"$providerName\"")
         buildConfigField("String", "VERSION_NAME", "\"$versionName\"")
     }
 
@@ -36,19 +38,27 @@ android {
         debug {
             isDebuggable = true
             applicationIdSuffix = ".debug"
+
+            val debugPackageName: String = packageName + applicationIdSuffix
+            manifestPlaceholders["package_name"] = debugPackageName
+            buildConfigField("String", "PACKAGE_NAME", "\"$debugPackageName\"")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     room {
         schemaDirectory("$projectDir/schemas")
     }
+
     packaging {
         resources {
             pickFirsts += "META-INF/DEPENDENCIES"
