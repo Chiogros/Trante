@@ -1,6 +1,8 @@
 # Trante
 
-> Tran...sfer from remo...te storages.
+> Tran...sfer from remo...te
+
+_An Android app to easily access your files hosted on a remote storage through SFTP (for now...)._
 
 <div style="display: flex; justify-content: space-between;">
   <img src="docs/app.png" alt="List of connections in the app. The first is disabled, while the second is enabled." width="200"/>
