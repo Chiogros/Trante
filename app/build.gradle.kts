@@ -15,6 +15,7 @@ android {
 
         // Values to be used from manifest file
         manifestPlaceholders["app_name"] = appName
+        manifestPlaceholders["logo"] = ""
         manifestPlaceholders["package_name"] = packageName
         manifestPlaceholders["provider_name"] = providerName
 
@@ -38,6 +39,7 @@ android {
         debug {
             isDebuggable = true
             applicationIdSuffix = ".debug"
+            manifestPlaceholders["logo"] = "_debug"
 
             val debugPackageName: String = packageName + applicationIdSuffix
             manifestPlaceholders["package_name"] = debugPackageName
@@ -77,6 +79,17 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
     implementation(libs.sshd.sftp)
+
+    // Those following are for optimizations to work, although
+    // I don't understand why they need to be referenced.
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
+    //implementation("org.bouncycastle:bcpg-jdk18on:1.81")
+    //implementation("org.bouncycastle:bcpkix-jdk18on:1.81")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.81")
+    //implementation("org.bouncycastle:bcutil-jdk18on:1.81")
+    //implementation("javax.naming:jndi:1.2.1")
+    //implementation("javax.management:jmx:1.2.1")
 }
 
 // Plugins are only used to parse Gradle configuration.
