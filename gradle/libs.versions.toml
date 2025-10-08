@@ -2,7 +2,7 @@
 aboutLibraries = "13.0.0-rc01"
 agp = "8.13.0"
 comGoogleDevtoolsKsp = "2.2.20-2.0.3"
-composeBom = "2025.08.01"
+composeBom = "2025.09.01"
 coreSplashscreen = "1.0.1"
 kotlin = "2.2.20"
 material3 = "1.3.2"
