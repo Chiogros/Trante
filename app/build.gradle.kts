@@ -85,7 +85,7 @@ dependencies {
     runtimeOnly("org.slf4j:slf4j-api:2.0.17")
     runtimeOnly("org.slf4j:slf4j-nop:2.0.17")
     implementation("net.i2p.crypto:eddsa:0.3.0")
-    implementation("org.apache.tomcat:tomcat-jni:11.0.11")
+    implementation("org.apache.tomcat:tomcat-jni:11.0.13")
 }
 
 // Plugins are only used to parse Gradle configuration.
