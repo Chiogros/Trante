@@ -20,7 +20,9 @@ class CryptoUtils {
         const val PADDING = KeyProperties.ENCRYPTION_PADDING_NONE
         const val CRYPTO_AEAD: String = "$KEY_GEN_ALG/$BLOCK_MODE/$PADDING"
         const val CRYPTO_AEAD_KEY_SIZE = 32
+        const val CRYPTO_AEAD_KEY_SIZE_BITS = CRYPTO_AEAD_KEY_SIZE * 8
         const val CRYPTO_AEAD_TAG_SIZE = 16
+        const val CRYPTO_AEAD_TAG_SIZE_BITS = CRYPTO_AEAD_TAG_SIZE * 8
         const val KEY_SIZE = 256
     }
 
@@ -35,7 +37,7 @@ class CryptoUtils {
                 .setEncryptionPaddings(PADDING)
                 .setUserAuthenticationRequired(false)
                 .setRandomizedEncryptionRequired(true)
-                .setKeySize(CRYPTO_AEAD_KEY_SIZE * 8)
+                .setKeySize(CRYPTO_AEAD_KEY_SIZE_BITS)
                 .build()
         )
     }
@@ -58,7 +60,7 @@ class CryptoUtils {
         cipher.init(
             Cipher.DECRYPT_MODE,
             decKey,
-            GCMParameterSpec(8 * CRYPTO_AEAD_TAG_SIZE, iv)
+            GCMParameterSpec(CRYPTO_AEAD_TAG_SIZE_BITS, iv)
         )
 
         return cipher.doFinal(ciphertext)
