@@ -52,9 +52,15 @@ class SftpNetwork {
             return withContext(coroutineDispatcher) {
                 // Connect to server
                 val session = client.connect(user, host, port).verify().clientSession
-
                 session.addPasswordIdentity(pwd)
-                val authVerif = session.auth().verify()
+
+                val authVerif = session.auth()
+
+                // TODO: verify() doesn't work, timeout skips time
+                // and reaches time limit
+                while (!authVerif.isDone) {
+                }
+
                 if (authVerif.isSuccess) SftpNetwork(
                     coroutineDispatcher,
                     ConcurrentSftpClient(session)

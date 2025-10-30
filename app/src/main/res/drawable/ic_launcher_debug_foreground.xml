@@ -11,7 +11,7 @@
         <path
             android:pathData="M8.99,20.3 L0,29.29V70.71L29.29,100h41.42l8.99,-8.99z"
             android:strokeWidth="0.11082"
-            android:fillColor="#aa6c39" />
+            android:fillColor="#727272" />
         <path
             android:pathData="M16.06,13.23l70.71,70.71l-7.07,7.07l-70.71,-70.71z"
             android:strokeWidth="0.186824"
@@ -19,7 +19,7 @@
         <path
             android:pathData="M29.29,-0L16.06,13.23L86.77,83.94L100,70.71L100,29.29L70.71,-0L29.29,-0z"
             android:strokeWidth="0.118"
-            android:fillColor="#226666"
+            android:fillColor="#444444"
             android:strokeColor="#00000000" />
     </group>
 </vector>

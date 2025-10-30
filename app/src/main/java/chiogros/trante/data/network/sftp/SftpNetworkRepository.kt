@@ -33,7 +33,8 @@ class SftpNetworkRepository(
             local.set(con, handler)
 
             return true
-        } catch (_: Throwable) {
+        } catch (e: Throwable) {
+            e
             return false
         }
     }
