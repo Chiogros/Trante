@@ -6,11 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.sharp.Check
 import androidx.compose.material.icons.sharp.Delete
@@ -19,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -37,13 +33,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import chiogros.trante.R
-import chiogros.trante.data.room.sftp.SftpRoom
+import chiogros.trante.protocols.Protocol
+import chiogros.trante.protocols.ProtocolFactoryManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -51,12 +44,13 @@ import kotlinx.coroutines.launch
 fun ConnectionEdit(
     onBack: () -> Unit,
     viewModel: ConnectionEditViewModel,
-    id: String = "",
+    id: String = String(),
     snackbarHostState: SnackbarHostState,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
+    protocolFactoryManager: ProtocolFactoryManager
 ) {
-    if (id.isEmpty()) viewModel.refresh()
-    else viewModel.initFrom(id)
+    if (id.isEmpty()) viewModel.reset()
+    else viewModel.load(id)
 
     ConnectionEditDialog(viewModel, onBack)
 
@@ -75,7 +69,7 @@ fun ConnectionEdit(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ConnectionEditForm(viewModel)
+            ConnectionEditBody(viewModel, protocolFactoryManager)
         }
     }
 }
@@ -150,7 +144,7 @@ fun ConnectionEditTopBar(
 
                     onSave()
                 },
-                enabled = (!uiState.isEditing || uiState.isEdited)
+                enabled = (!uiState.isEditing || uiState.isModified)
             ) {
                 Icon(
                     imageVector = Icons.Sharp.Check,
@@ -161,86 +155,32 @@ fun ConnectionEditTopBar(
 }
 
 @Composable
-fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
+fun ConnectionEditBody(
+    viewModel: ConnectionEditViewModel,
+    protocolFactoryManager: ProtocolFactoryManager
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     ConnectionEditTypePicker(viewModel)
 
-    if (!uiState.formState.type.isEmpty()) {
-        OutlinedTextField(
-            value = uiState.formState.host,
-            onValueChange = { viewModel.setHost(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.host)) },
-            placeholder = { Text(stringResource(R.string.example_dot_net)) },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None, autoCorrectEnabled = false
-            ),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = uiState.formState.user,
-            onValueChange = { viewModel.setUser(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.user)) },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None, autoCorrectEnabled = false
-            ),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = uiState.formState.name,
-            onValueChange = { viewModel.setName(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.name)) },
-            placeholder = { Text(uiState.formState.host) },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences, autoCorrectEnabled = false
-            ),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = uiState.formState.password,
-            onValueChange = { viewModel.setPassword(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.password)) },
-            placeholder = { Text(uiState.formState.password) },
-            trailingIcon = {
-                IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
-                    Icon(
-                        imageVector = if (uiState.showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = stringResource(R.string.show_password)
-                    )
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                autoCorrectEnabled = false,
-                keyboardType = KeyboardType.Password
-            ),
-            visualTransformation = if (uiState.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-            singleLine = true
-        )
-    }
+    // Show inputs form
+    (protocolFactoryManager.getFactory(uiState.protocol).screensConnectionEditForm)()
 }
 
 @Composable
 fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val types = listOf(SftpRoom.toString())
+    val protocols = Protocol.entries.filter { protocol -> protocol != Protocol.UNKNOWN }
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-        types.forEachIndexed { index, label ->
+        protocols.forEachIndexed { index, protocol ->
             SegmentedButton(
-                selected = (uiState.formState.type == label),
-                onClick = { viewModel.setType(label) },
+                selected = (uiState.protocol == protocol),
+                onClick = { viewModel.setProtocol(protocol) },
                 shape = SegmentedButtonDefaults.itemShape(
-                    index = index, count = types.size
+                    index = index, count = protocols.size
                 ),
-                label = { Text(label) })
+                label = { Text(protocol.toString()) })
         }
     }
 }
@@ -248,14 +188,15 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
 @Composable
 fun ConnectionEditDialog(viewModel: ConnectionEditViewModel, onSave: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
+
     // If data is modified, when back button is pressed set dialog state
-    BackHandler(enabled = uiState.isEdited, onBack = {
-        viewModel.setIsDialogShown(true)
+    BackHandler(enabled = uiState.isModified, onBack = {
+        viewModel.showDialog(true)
     })
 
     if (uiState.isDialogShown) {
         AlertDialog(
-            onDismissRequest = { viewModel.setIsDialogShown(false) },
+            onDismissRequest = { viewModel.showDialog(false) },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Warning,
@@ -266,7 +207,7 @@ fun ConnectionEditDialog(viewModel: ConnectionEditViewModel, onSave: () -> Unit)
             text = { Text(stringResource(R.string.you_may_lost_your_changes)) },
             confirmButton = { TextButton(onClick = onSave) { Text(stringResource(R.string.continue_)) } },
             dismissButton = {
-                TextButton(onClick = { viewModel.setIsDialogShown(false) }) {
+                TextButton(onClick = { viewModel.showDialog(false) }) {
                     Text(
                         stringResource(R.string.cancel)
                     )

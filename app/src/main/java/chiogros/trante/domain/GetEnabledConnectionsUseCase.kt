@@ -1,18 +1,24 @@
 package chiogros.trante.domain
 
 import chiogros.trante.data.room.Connection
-import chiogros.trante.data.room.repository.RoomManager
+import chiogros.trante.protocols.Protocol
+import chiogros.trante.protocols.ProtocolFactoryManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
-class GetEnabledConnectionsUseCase(private val repository: RoomManager) {
+class GetEnabledConnectionsUseCase(private val protocolFactoryManager: ProtocolFactoryManager) {
     operator fun invoke(): List<Connection> {
-        var enabledConnections: List<Connection> = emptyList()
+        val connections: MutableList<Connection> = mutableListOf()
 
-        runBlocking {
-            enabledConnections = repository.getAll().first()
+        Protocol.entries.filter { protocol -> protocol != Protocol.UNKNOWN }.forEach { protocol ->
+            val factory = protocolFactoryManager.getFactory(protocol)
+            val room = factory.roomRepository
+
+            runBlocking {
+                connections.addAll(room.getAll().first())
+            }
         }
 
-        return enabledConnections.filter { it.enabled }
+        return connections.filter { it.enabled }
     }
 }

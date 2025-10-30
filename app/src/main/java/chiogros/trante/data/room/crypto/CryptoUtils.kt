@@ -5,13 +5,13 @@ import android.security.keystore.KeyProperties
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 class CryptoUtils {
     val keyId = "keyId"
     var keygen: KeyGenerator = KeyGenerator.getInstance(KEY_GEN_ALG, PROVIDER)
     val cipher: Cipher = Cipher.getInstance(CRYPTO_AEAD)
+    val keystore: KeyStore = KeyStore.getInstance(PROVIDER).apply { load(null) }
 
     companion object {
         const val PROVIDER = "AndroidKeyStore"
@@ -27,19 +27,23 @@ class CryptoUtils {
     }
 
     init {
-        keygen.init(
-            KeyGenParameterSpec.Builder(
-                keyId,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        // Generate a key if it doesn't exist
+        if (!keystore.containsAlias(keyId)) {
+            keygen.init(
+                KeyGenParameterSpec.Builder(
+                    keyId,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                )
+                    .setKeySize(KEY_SIZE)
+                    .setBlockModes(BLOCK_MODE)
+                    .setEncryptionPaddings(PADDING)
+                    .setUserAuthenticationRequired(false)
+                    .setRandomizedEncryptionRequired(true)
+                    .setKeySize(CRYPTO_AEAD_KEY_SIZE_BITS)
+                    .build()
             )
-                .setKeySize(KEY_SIZE)
-                .setBlockModes(BLOCK_MODE)
-                .setEncryptionPaddings(PADDING)
-                .setUserAuthenticationRequired(false)
-                .setRandomizedEncryptionRequired(true)
-                .setKeySize(CRYPTO_AEAD_KEY_SIZE_BITS)
-                .build()
-        )
+            keygen.generateKey()
+        }
     }
 
     fun decrypt(encData: EncryptedData): ByteArray {
@@ -50,12 +54,6 @@ class CryptoUtils {
     }
 
     fun decrypt(ciphertext: ByteArray, iv: ByteArray): ByteArray {
-        val keystore = KeyStore.getInstance(PROVIDER).apply { load(null) }
-
-        if (!keystore.containsAlias(keyId)) {
-            throw NoSuchElementException("Missing key \"$keyId\" in KeyStore for decryption.")
-        }
-
         val decKey = keystore.getKey(keyId, null)
         cipher.init(
             Cipher.DECRYPT_MODE,
@@ -67,8 +65,7 @@ class CryptoUtils {
     }
 
     fun encrypt(plaintext: ByteArray): EncryptedData {
-        val encKey: SecretKey = keygen.generateKey()
-
+        val encKey = keystore.getKey(keyId, null)
         cipher.init(Cipher.ENCRYPT_MODE, encKey)
 
         val res: ByteArray = cipher.doFinal(plaintext)

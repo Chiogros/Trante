@@ -6,8 +6,8 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import chiogros.trante.data.room.sftp.SftpRoom
-import chiogros.trante.data.room.sftp.SftpRoomDao
+import chiogros.trante.protocols.sftp.data.room.SftpRoom
+import chiogros.trante.protocols.sftp.data.room.SftpRoomDao
 
 @Database(entities = [SftpRoom::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

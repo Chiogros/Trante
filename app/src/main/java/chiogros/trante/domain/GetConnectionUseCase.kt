@@ -1,11 +1,14 @@
 package chiogros.trante.domain
 
 import chiogros.trante.data.room.Connection
-import chiogros.trante.data.room.repository.RoomManager
+import chiogros.trante.protocols.ProtocolFactoryManager
 import kotlinx.coroutines.flow.Flow
 
-class GetConnectionUseCase(private val repository: RoomManager) {
-    operator fun invoke(id: String): Flow<Connection> {
-        return repository.get(id)
+class GetConnectionUseCase(private val protocolFactoryManager: ProtocolFactoryManager) {
+    operator fun invoke(con: Connection): Flow<Connection> {
+        val factory = protocolFactoryManager.getFactory(con)
+        val room = factory.roomRepository
+
+        return room.get(con.id)
     }
 }

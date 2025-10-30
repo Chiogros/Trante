@@ -128,9 +128,7 @@ class CustomDocumentProviderViewModel(
             cursor.newRow().apply {
                 add(DocumentsContract.Root.COLUMN_ROOT_ID, con.id)
                 // Set SAF entry with connection name, or user@host otherwise
-                add(
-                    DocumentsContract.Root.COLUMN_TITLE,
-                    con.name.ifEmpty { getConnectionFriendlyName(con.user, con.host) })
+                add(DocumentsContract.Root.COLUMN_TITLE, con.toString())
                 add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_launcher_foreground)
                 add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, con.id)
                 add(DocumentsContract.Root.COLUMN_FLAGS, null)

@@ -7,21 +7,29 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
-import chiogros.trante.data.network.repository.NetworkManager
-import chiogros.trante.data.network.sftp.LocalSftpNetworkDataSource
-import chiogros.trante.data.network.sftp.RemoteSftpNetworkDataSource
-import chiogros.trante.data.network.sftp.SftpNetwork
-import chiogros.trante.data.network.sftp.SftpNetworkRepository
+import androidx.compose.runtime.Composable
 import chiogros.trante.data.room.AppDatabase
-import chiogros.trante.data.room.repository.RoomManager
-import chiogros.trante.data.room.sftp.SftpRoomDataSource
-import chiogros.trante.data.room.sftp.SftpRoomRepository
 import chiogros.trante.domain.CreateFileUseCase
 import chiogros.trante.domain.GetEnabledConnectionsUseCase
 import chiogros.trante.domain.GetFileStatUseCase
+import chiogros.trante.domain.GetProtocolFromIdUseCase
 import chiogros.trante.domain.ListFilesInDirectoryUseCase
 import chiogros.trante.domain.ReadFileUseCase
+import chiogros.trante.protocols.ProtocolFactoryManager
+import chiogros.trante.protocols.common.CommonConnectionEditFormState
+import chiogros.trante.protocols.sftp.SftpFactory
+import chiogros.trante.protocols.sftp.data.network.SftpLocalNetworkDataSource
+import chiogros.trante.protocols.sftp.data.network.SftpNetwork
+import chiogros.trante.protocols.sftp.data.network.SftpNetworkRepository
+import chiogros.trante.protocols.sftp.data.network.SftpRemoteNetworkDataSource
+import chiogros.trante.protocols.sftp.data.room.SftpRoomDataSource
+import chiogros.trante.protocols.sftp.data.room.SftpRoomRepository
+import chiogros.trante.protocols.sftp.domain.SftpFormStateToRoomAdapter
+import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectionEditForm
+import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectionEditFormState
+import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectionEditViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var createFileUseCase: CreateFileUseCase
@@ -33,31 +41,49 @@ class CustomDocumentsProvider : DocumentsProvider() {
     private val dispatcher = Dispatchers.IO
 
     fun init(context: Context): Boolean {
-        // Room
-        val sftpRoomDataSource =
-            SftpRoomDataSource(AppDatabase.getDatabase(context).connectionSftpDao())
+        // Sftp
+        val connectionSftpDao = AppDatabase.getDatabase(context).connectionSftpDao()
+        val sftpRoomDataSource = SftpRoomDataSource(connectionSftpDao)
         val sftpRoomRepository = SftpRoomRepository(sftpRoomDataSource)
-        val roomManager = RoomManager(sftpRoomRepository)
         // Remote
         val sftpNetwork = SftpNetwork.new(dispatcher)
-        val remoteSftpRoomDataSource = RemoteSftpNetworkDataSource(sftpNetwork)
-        val localSftpNetworkDataSource = LocalSftpNetworkDataSource()
+        val remoteSftpRoomDataSource = SftpRemoteNetworkDataSource(sftpNetwork)
+        val sftpLocalNetworkDataSource = SftpLocalNetworkDataSource()
         val sftpNetworkRepository =
-            SftpNetworkRepository(remoteSftpRoomDataSource, localSftpNetworkDataSource)
-        val networkManager = NetworkManager(sftpNetworkRepository)
-        // Domain layer
-        createFileUseCase = CreateFileUseCase(roomManager, networkManager)
-        getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(roomManager)
-        getFileStatUseCase = GetFileStatUseCase(roomManager, networkManager)
-        listFilesInDirectoryUseCase = ListFilesInDirectoryUseCase(roomManager, networkManager)
-        readFileUseCase = ReadFileUseCase(roomManager, networkManager)
+            SftpNetworkRepository(remoteSftpRoomDataSource, sftpLocalNetworkDataSource)
+        // View model
+        val screenSftpConnectionEditFormState = MutableStateFlow(SftpConnectionEditFormState())
+        val screenConnectionEditViewModel =
+            SftpConnectionEditViewModel(screenSftpConnectionEditFormState)
+        val screenConnectionEditForm: @Composable () -> Unit =
+            { SftpConnectionEditForm(screenConnectionEditViewModel) }
+        val formStateAdapter = SftpFormStateToRoomAdapter()
+
+        // Protocols factories
+        val sftpFactory = SftpFactory(
+            networkRepository = sftpNetworkRepository,
+            roomRepository = sftpRoomRepository,
+            screensConnectionEditForm = screenConnectionEditForm,
+            screensConnectionEditFormState = screenSftpConnectionEditFormState as MutableStateFlow<CommonConnectionEditFormState>,
+            formStateRoomAdapter = formStateAdapter
+        )
+        val protocolFactoryManager = ProtocolFactoryManager(sftpFactory)
+
+        // Use cases
+        val getProtocolFromIdUseCase = GetProtocolFromIdUseCase(protocolFactoryManager)
+        createFileUseCase = CreateFileUseCase(protocolFactoryManager, getProtocolFromIdUseCase)
+        getEnabledConnectionsUseCase = GetEnabledConnectionsUseCase(protocolFactoryManager)
+        getFileStatUseCase = GetFileStatUseCase(protocolFactoryManager, getProtocolFromIdUseCase)
+        listFilesInDirectoryUseCase =
+            ListFilesInDirectoryUseCase(protocolFactoryManager, getProtocolFromIdUseCase)
+        readFileUseCase = ReadFileUseCase(protocolFactoryManager, getProtocolFromIdUseCase)
 
         viewModel = CustomDocumentProviderViewModel(
-            createFileUseCase = createFileUseCase,
-            getEnabledConnectionsUseCase = getEnabledConnectionsUseCase,
-            getFileStatUseCase = getFileStatUseCase,
-            listFilesInDirectoryUseCase = listFilesInDirectoryUseCase,
-            readFileUseCase = readFileUseCase
+            createFileUseCase,
+            getEnabledConnectionsUseCase,
+            getFileStatUseCase,
+            listFilesInDirectoryUseCase,
+            readFileUseCase
         )
 
         return true

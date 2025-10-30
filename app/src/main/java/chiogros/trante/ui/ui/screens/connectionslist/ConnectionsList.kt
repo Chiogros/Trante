@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import chiogros.trante.R
 import chiogros.trante.data.room.Connection
 import chiogros.trante.data.room.ConnectionState
+import chiogros.trante.protocols.Protocol
 
 @Composable
 fun ConnectionsList(
@@ -74,7 +75,7 @@ fun ConnectionsList(
         } else {
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
                 items(items = connections, contentType = { it }) { con ->
-                    Item(con, viewModel, onItemClick)
+                    Item(con.second, viewModel, onItemClick, con.first)
                 }
             }
         }
@@ -122,7 +123,10 @@ fun Fab(onClick: () -> Unit) {
 
 @Composable
 fun Item(
-    con: Connection, viewModel: ConnectionsListViewModel, onItemClick: (String) -> Unit
+    con: Connection,
+    viewModel: ConnectionsListViewModel,
+    onItemClick: (String) -> Unit,
+    protocol: Protocol
 ) {
     Row(
         modifier = Modifier
@@ -132,7 +136,9 @@ fun Item(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = con.toString(), modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal
+            text = protocol.name,
+            modifier = Modifier.weight(1F),
+            fontWeight = FontWeight.Normal
         )
 
         if (!con.name.isEmpty()) {
@@ -141,11 +147,10 @@ fun Item(
         } else {
             Column(modifier = Modifier.weight(3F)) {
                 Text(
-                    text = con.host,
+                    text = con.toString(),
                     fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Text(text = con.user, style = MaterialTheme.typography.bodyMedium)
             }
         }
 
