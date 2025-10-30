@@ -2,9 +2,9 @@ package chiogros.trante.data.network.repository
 
 import chiogros.trante.R
 import chiogros.trante.data.network.File
-import chiogros.trante.data.network.sftp.SftpNetworkRepository
 import chiogros.trante.data.room.Connection
-import chiogros.trante.data.room.sftp.SftpRoom
+import chiogros.trante.protocols.sftp.data.network.SftpNetworkRepository
+import chiogros.trante.protocols.sftp.data.room.SftpRoom
 import java.io.InputStream
 
 /**

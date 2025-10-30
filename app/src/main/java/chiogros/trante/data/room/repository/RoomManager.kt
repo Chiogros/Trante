@@ -1,8 +1,8 @@
 package chiogros.trante.data.room.repository
 
 import chiogros.trante.data.room.Connection
-import chiogros.trante.data.room.sftp.SftpRoom
-import chiogros.trante.data.room.sftp.SftpRoomRepository
+import chiogros.trante.protocols.sftp.data.room.SftpRoom
+import chiogros.trante.protocols.sftp.data.room.SftpRoomRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.merge
 

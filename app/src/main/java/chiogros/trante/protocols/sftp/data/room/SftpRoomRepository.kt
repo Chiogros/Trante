@@ -1,4 +1,4 @@
-package chiogros.trante.data.room.sftp
+package chiogros.trante.protocols.sftp.data.room
 
 import chiogros.trante.data.room.Connection
 import chiogros.trante.data.room.repository.RoomRepository

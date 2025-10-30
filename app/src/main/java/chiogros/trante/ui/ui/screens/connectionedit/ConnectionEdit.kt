@@ -6,11 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.sharp.Check
 import androidx.compose.material.icons.sharp.Delete
@@ -19,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -37,13 +33,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import chiogros.trante.R
-import chiogros.trante.data.room.sftp.SftpRoom
+import chiogros.trante.protocols.sftp.data.room.SftpRoom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -166,65 +158,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
 
     ConnectionEditTypePicker(viewModel)
 
-    if (!uiState.formState.type.isEmpty()) {
-        OutlinedTextField(
-            value = uiState.formState.host,
-            onValueChange = { viewModel.setHost(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.host)) },
-            placeholder = { Text(stringResource(R.string.example_dot_net)) },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None, autoCorrectEnabled = false
-            ),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = uiState.formState.user,
-            onValueChange = { viewModel.setUser(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.user)) },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None, autoCorrectEnabled = false
-            ),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = uiState.formState.name,
-            onValueChange = { viewModel.setName(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.name)) },
-            placeholder = { Text(uiState.formState.host) },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences, autoCorrectEnabled = false
-            ),
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = uiState.formState.password,
-            onValueChange = { viewModel.setPassword(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.password)) },
-            placeholder = { Text(uiState.formState.password) },
-            trailingIcon = {
-                IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
-                    Icon(
-                        imageVector = if (uiState.showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = stringResource(R.string.show_password)
-                    )
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                autoCorrectEnabled = false,
-                keyboardType = KeyboardType.Password
-            ),
-            visualTransformation = if (uiState.showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-            singleLine = true
-        )
-    }
+    uiState.
 }
 
 @Composable

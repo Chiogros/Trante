@@ -1,4 +1,4 @@
-package chiogros.trante.data.network.sftp
+package chiogros.trante.protocols.sftp.data.network
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

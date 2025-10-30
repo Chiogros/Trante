@@ -1,4 +1,4 @@
-package chiogros.trante.data.room.sftp
+package chiogros.trante.protocols.sftp.data.room
 
 import androidx.room.Dao
 import androidx.room.Delete

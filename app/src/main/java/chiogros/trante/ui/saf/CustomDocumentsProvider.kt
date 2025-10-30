@@ -8,19 +8,19 @@ import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
 import chiogros.trante.data.network.repository.NetworkManager
-import chiogros.trante.data.network.sftp.LocalSftpNetworkDataSource
-import chiogros.trante.data.network.sftp.RemoteSftpNetworkDataSource
-import chiogros.trante.data.network.sftp.SftpNetwork
-import chiogros.trante.data.network.sftp.SftpNetworkRepository
 import chiogros.trante.data.room.AppDatabase
 import chiogros.trante.data.room.repository.RoomManager
-import chiogros.trante.data.room.sftp.SftpRoomDataSource
-import chiogros.trante.data.room.sftp.SftpRoomRepository
 import chiogros.trante.domain.CreateFileUseCase
 import chiogros.trante.domain.GetEnabledConnectionsUseCase
 import chiogros.trante.domain.GetFileStatUseCase
 import chiogros.trante.domain.ListFilesInDirectoryUseCase
 import chiogros.trante.domain.ReadFileUseCase
+import chiogros.trante.protocols.sftp.data.network.LocalSftpNetworkDataSource
+import chiogros.trante.protocols.sftp.data.network.RemoteSftpNetworkDataSource
+import chiogros.trante.protocols.sftp.data.network.SftpNetwork
+import chiogros.trante.protocols.sftp.data.network.SftpNetworkRepository
+import chiogros.trante.protocols.sftp.data.room.SftpRoomDataSource
+import chiogros.trante.protocols.sftp.data.room.SftpRoomRepository
 import kotlinx.coroutines.Dispatchers
 
 class CustomDocumentsProvider : DocumentsProvider() {

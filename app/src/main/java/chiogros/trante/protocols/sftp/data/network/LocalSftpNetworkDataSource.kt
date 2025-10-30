@@ -1,6 +1,6 @@
-package chiogros.trante.data.network.sftp
+package chiogros.trante.protocols.sftp.data.network
 
-import chiogros.trante.data.room.sftp.SftpRoom
+import chiogros.trante.protocols.sftp.data.room.SftpRoom
 
 class LocalSftpNetworkDataSource {
     private val openConnections: MutableMap<String, SftpNetwork> = mutableMapOf()

@@ -1,11 +1,11 @@
-package chiogros.trante.data.network.sftp
+package chiogros.trante.protocols.sftp.data.network
 
 import chiogros.trante.data.network.File
 import chiogros.trante.data.network.FileAttributesType
 import chiogros.trante.data.network.repository.NetworkRepository
 import chiogros.trante.data.room.Connection
 import chiogros.trante.data.room.crypto.CryptoUtils
-import chiogros.trante.data.room.sftp.SftpRoom
+import chiogros.trante.protocols.sftp.data.room.SftpRoom
 import org.apache.sshd.sftp.common.SftpConstants
 import java.io.InputStream
 import kotlin.io.path.Path

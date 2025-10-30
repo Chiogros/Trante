@@ -1,4 +1,4 @@
-package chiogros.trante.data.network.sftp
+package chiogros.trante.protocols.sftp.data.network
 
 class RemoteSftpNetworkDataSource(private val remote: SftpNetwork.Companion) {
     suspend fun connect(host: String, port: Int, user: String, pwd: String): SftpNetwork {
