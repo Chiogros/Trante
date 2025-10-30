@@ -10,8 +10,8 @@ android {
         applicationId = android.namespace
         minSdk = 26
         targetSdk = android.compileSdk
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.1.1"
 
         // Values to be used from manifest file
         manifestPlaceholders["app_name"] = appName
@@ -80,15 +80,13 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.sshd.sftp)
 
-    // Those following are for optimizations to work, although
-    // I don't understand why they need to be referenced.
     runtimeOnly("org.slf4j:slf4j-api:2.0.17")
     runtimeOnly("org.slf4j:slf4j-nop:2.0.17")
     implementation("net.i2p.crypto:eddsa:0.3.0")
     implementation("org.apache.tomcat:tomcat-jni:11.0.13")
 }
 
-// Plugins are only used to parse Gradle configuration.
+// Plugins are used to parse Gradle configuration.
 plugins {
     alias(libs.plugins.aboutlibraries.plugin.android)
     alias(libs.plugins.android.application)
