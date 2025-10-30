@@ -16,12 +16,12 @@ import kotlinx.coroutines.launch
 
 
 data class ConnectionEditFormState(
-    val id: String = "",
-    val host: String = "",
-    val name: String = "",
+    val id: String = String(),
+    val host: String = String(),
+    val name: String = String(),
     val type: String = SftpRoom.toString(),
-    val user: String = "",
-    val password: String = ""
+    val user: String = String(),
+    val password: String = String()
 )
 
 data class ConnectionEditUiState(
@@ -42,9 +42,18 @@ class ConnectionEditViewModel(private val repository: RoomManager) : ViewModel()
     val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
 
     fun delete() {
-        save()
+        backup()
+
+        val con = when (uiState.value.formState.type) {
+            SftpRoom.toString() -> {
+                SftpRoom(id = uiState.value.formState.id)
+            }
+
+            else                -> error("Type ${uiState.value.formState.type} unknown!")
+        }
+
         viewModelScope.launch {
-            repository.delete(SftpRoom(id = uiState.value.formState.id))
+            repository.delete(con)
         }
     }
 
@@ -120,7 +129,7 @@ class ConnectionEditViewModel(private val repository: RoomManager) : ViewModel()
     }
 
     // Backup the deleted connection, useful in case of restore()
-    fun save() {
+    fun backup() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
