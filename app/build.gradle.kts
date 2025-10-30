@@ -80,10 +80,9 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.sshd.sftp)
 
-    runtimeOnly("org.slf4j:slf4j-api:2.0.17")
-    runtimeOnly("org.slf4j:slf4j-nop:2.0.17")
-    implementation("net.i2p.crypto:eddsa:0.3.0")
-    implementation("org.apache.tomcat:tomcat-jni:11.0.13")
+    // To avoid logging error
+    runtimeOnly(libs.slf4j.api)
+    runtimeOnly(libs.slf4j.nop)
 }
 
 // Plugins are used to parse Gradle configuration.

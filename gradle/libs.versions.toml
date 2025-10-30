@@ -12,6 +12,8 @@ room = "2.8.2"
 roomCompiler = "2.8.2"
 roomRuntime = "2.8.2"
 serialization = "2.1.21"
+slf4jApi = "2.0.17"
+slf4jNop = "2.0.17"
 sshd-sftp = "2.16.0"
 
 [libraries]
@@ -24,6 +26,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4jApi" }
+slf4j-nop = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4jNop" }
 sshd-sftp = { group = "org.apache.sshd", name = "sshd-sftp", version.ref = "sshd-sftp" }
 
 [plugins]
