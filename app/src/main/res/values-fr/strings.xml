@@ -2,7 +2,6 @@
 <resources>
     <string name="create_connection">Créer une connexion</string>
     <string name="connections_list">Liste des connexions</string>
-    <string name="get_back_previous_screen">Retourner à l\'écran précédent</string>
     <string name="host">Hôte</string>
     <string name="save">Enregistrer</string>
     <string name="user">Utilisateur</string>
@@ -18,4 +17,22 @@
     <string name="app_info">Informations sur l\'application</string>
     <string name="connection_deleted">Connexion supprimée</string>
     <string name="undo">Annuler</string>
+    <string name="connection_failed">Connexion échouée</string>
+    <string name="connection_succeed">Connexion réussie</string>
+    <string name="connection_type_not_supported">Le type de connexion n\'est pas supporté</string>
+    <string name="no_context">Pas de contexte</string>
+    <string name="password">Mot de passe</string>
+    <string name="show_password">Montrer le mot de passe</string>
+    <string name="hide_password">Cacher le mot de passe</string>
+    <string name="about">À propos</string>
+    <string name="version">Version</string>
+    <string name="repository">Dépôt</string>
+    <string name="license">Licence</string>
+    <string name="third_party_licenses">Licences tierces</string>
+    <string name="app_logo">Logo de l\'application</string>
+    <string name="changelog">Liste des changements</string>
+    <string name="what_s_new">Les nouveautés et les corrections de bogues</string>
+    <string name="license_description">Copie de la licence qui protège cette application</string>
+    <string name="third_party_licenses_description">Licences des bibliothèques tierces utilisées dans cette application</string>
+    <string name="repository_description">Code source, documentation et bogues</string>
 </resources>

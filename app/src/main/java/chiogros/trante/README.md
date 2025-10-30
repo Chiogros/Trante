@@ -1,0 +1,3 @@
+- ui: where data is brought to the user
+- domain: handle app logic as a gateway between ui and data layers
+- data: holds... data, in database or provide access to remote data
