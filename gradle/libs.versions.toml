@@ -1,0 +1,29 @@
+[versions]
+agp = "8.10.1"
+comGoogleDevtoolsKsp = "2.1.21-2.0.1"
+composeBom = "2025.06.00"
+coreSplashscreen = "1.0.1"
+kotlin = "2.1.21"
+material3 = "1.3.2"
+navigationCompose = "2.9.0"
+room = "2.7.1"
+roomCompiler = "2.7.1"
+roomRuntime = "2.7.1"
+serialization = "2.1.21"
+
+[libraries]
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen"}
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+androidx-room = { id = "androidx.room", version.ref = "room" }
+com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "comGoogleDevtoolsKsp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+plugin-serialization = { id = "plugin.serialization", version.ref = "serialization" }
+

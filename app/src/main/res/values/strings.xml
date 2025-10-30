@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name" translatable="false">Etomer</string>
+    <string name="create_connection">Create connection</string>
+    <string name="connections_list">Connections list</string>
+    <string name="get_back_previous_screen">Get back to previous screen</string>
+    <string name="host">Host</string>
+    <string name="example_dot_net" translatable="false">example.net</string>
+    <string name="save">Save</string>
+    <string name="user">User</string>
+    <string name="sftp" translatable="false">SFTP</string>
+    <string name="edit_connection">Edit connection</string>
+    <string name="delete_connection">Delete connection</string>
+    <string name="name">Friendly name</string>
+    <string name="warning">Warning</string>
+    <string name="continue_">Continue</string>
+    <string name="cancel">Cancel</string>
+    <string name="changes_not_saved">Changes not saved</string>
+    <string name="you_may_lost_your_changes">You may lost your changes.</string>
+    <string name="no_connection">No connection</string>
+    <string name="app_info">Application information</string>
+    <string name="repository_url" translatable="false">https://github.com/Chiogros/Etomer</string>
+    <string name="connection_deleted">Connection deleted</string>
+    <string name="undo">Undo</string>
+</resources>
