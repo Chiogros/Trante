@@ -1,7 +1,7 @@
 [versions]
 aboutLibraries = "13.0.0"
 agp = "8.13.0"
-comGoogleDevtoolsKsp = "2.2.20-2.0.4"
+comGoogleDevtoolsKsp = "2.3.0"
 composeBom = "2025.10.00"
 coreSplashscreen = "1.0.1"
 kotlin = "2.2.20"
