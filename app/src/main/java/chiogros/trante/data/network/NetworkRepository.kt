@@ -1,6 +1,5 @@
-package chiogros.trante.data.network.repository
+package chiogros.trante.data.network
 
-import chiogros.trante.data.network.File
 import chiogros.trante.data.room.Connection
 import java.io.InputStream
 

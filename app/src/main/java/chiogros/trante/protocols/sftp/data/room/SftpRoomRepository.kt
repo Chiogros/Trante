@@ -1,7 +1,7 @@
 package chiogros.trante.protocols.sftp.data.room
 
 import chiogros.trante.data.room.Connection
-import chiogros.trante.data.room.repository.RoomRepository
+import chiogros.trante.data.room.RoomRepository
 import kotlinx.coroutines.flow.Flow
 
 class SftpRoomRepository(private val localDataSource: SftpRoomDataSource) :

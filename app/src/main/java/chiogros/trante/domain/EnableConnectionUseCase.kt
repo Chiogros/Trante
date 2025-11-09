@@ -1,36 +1,31 @@
 package chiogros.trante.domain
 
-import android.content.Context
-import android.provider.DocumentsContract.buildRootsUri
-import chiogros.trante.BuildConfig
-import chiogros.trante.data.network.repository.NetworkManager
+import chiogros.trante.data.room.Connection
 import chiogros.trante.data.room.ConnectionState
-import chiogros.trante.data.room.repository.RoomManager
-import kotlinx.coroutines.flow.first
+import chiogros.trante.protocols.ProtocolFactoryManager
 
 class EnableConnectionUseCase(
-    private val repository: RoomManager,
-    private val remote: NetworkManager,
-    private val context: Context
+    private val protocolFactoryManager: ProtocolFactoryManager,
+    private val notifyContentResolverUseCase: NotifyContentResolverUseCase
 ) {
-    suspend operator fun invoke(id: String) {
-        val con = repository.get(id).first()
+    suspend operator fun invoke(con: Connection) {
+        val factory = protocolFactoryManager.getFactory(con)
+        val room = factory.roomRepository
+        val network = factory.networkRepository
 
         // Save ongoing action is room
         con.enabled = true
         con.state = ConnectionState.CONNECTING
-        repository.update(con)
+        room.update(con)
 
         // Try to connect and update state accordingly
-        if (remote.connect(con)) {
+        if (network.connect(con)) {
             con.state = ConnectionState.CONNECTED
         } else {
             con.state = ConnectionState.FAILED
         }
-        repository.update(con)
+        room.update(con)
 
-        // Notify ContentProvider about changes in enabled connections
-        val uri = buildRootsUri(BuildConfig.PACKAGE_NAME + BuildConfig.PROVIDER_NAME)
-        context.contentResolver.notifyChange(uri, null)
+        notifyContentResolverUseCase()
     }
 }

@@ -1,6 +1,5 @@
-package chiogros.trante.data.room.repository
+package chiogros.trante.data.room
 
-import chiogros.trante.data.room.Connection
 import kotlinx.coroutines.flow.Flow
 
 abstract class RoomRepository() {

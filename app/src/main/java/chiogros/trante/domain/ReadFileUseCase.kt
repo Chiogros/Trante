@@ -1,20 +1,25 @@
 package chiogros.trante.domain
 
-import chiogros.trante.data.network.repository.NetworkManager
-import chiogros.trante.data.room.repository.RoomManager
+import chiogros.trante.protocols.ProtocolFactoryManager
 import kotlinx.coroutines.flow.first
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
 class ReadFileUseCase(
-    private val repository: RoomManager,
-    private val networkManager: NetworkManager
+    private val protocolFactoryManager: ProtocolFactoryManager,
+    private val getProtocolFromIdUseCase: GetProtocolFromIdUseCase
 ) {
-    suspend operator fun invoke(conId: String, path: String): InputStream {
-        val con = repository.get(conId).first()
-        if (!networkManager.connect(con)) {
+    suspend operator fun invoke(id: String, path: String): InputStream {
+        val protocol = getProtocolFromIdUseCase(id)
+        val factory = protocolFactoryManager.getFactory(protocol)
+
+        val room = factory.roomRepository
+        val network = factory.networkRepository
+
+        val con = room.get(id).first()
+        if (!network.connect(con)) {
             return ByteArrayInputStream(ByteArray(0))
         }
-        return networkManager.readFile(con, path)
+        return network.readFile(con, path)
     }
 }

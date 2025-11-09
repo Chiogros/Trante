@@ -1,22 +1,19 @@
 package chiogros.trante.domain
 
-import android.content.Context
-import android.provider.DocumentsContract.buildRootsUri
-import chiogros.trante.BuildConfig
-import chiogros.trante.data.room.repository.RoomManager
-import kotlinx.coroutines.flow.first
+import chiogros.trante.data.room.Connection
+import chiogros.trante.protocols.ProtocolFactoryManager
 
 class DisableConnectionUseCase(
-    private val repository: RoomManager,
-    private val context: Context
+    private val protocolFactoryManager: ProtocolFactoryManager,
+    private val notifyContentResolverUseCase: NotifyContentResolverUseCase
 ) {
-    suspend operator fun invoke(id: String) {
-        val con = repository.get(id).first()
-        con.enabled = false
-        repository.update(con)
+    suspend operator fun invoke(con: Connection) {
+        val factory = protocolFactoryManager.getFactory(con)
+        val room = factory.roomRepository
 
-        // Notify ContentProvider about changes in enabled connections
-        val uri = buildRootsUri(BuildConfig.PACKAGE_NAME + BuildConfig.PROVIDER_NAME)
-        context.contentResolver.notifyChange(uri, null)
+        con.enabled = false
+        room.update(con)
+
+        notifyContentResolverUseCase()
     }
 }

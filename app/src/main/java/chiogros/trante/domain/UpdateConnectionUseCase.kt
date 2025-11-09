@@ -1,10 +1,13 @@
 package chiogros.trante.domain
 
 import chiogros.trante.data.room.Connection
-import chiogros.trante.data.room.repository.RoomManager
+import chiogros.trante.protocols.ProtocolFactoryManager
 
-class UpdateConnectionUseCase(private val repository: RoomManager) {
+class UpdateConnectionUseCase(private val protocolFactoryManager: ProtocolFactoryManager) {
     suspend operator fun invoke(con: Connection) {
-        return repository.update(con)
+        val factory = protocolFactoryManager.getFactory(con)
+        val room = factory.roomRepository
+
+        return room.update(con)
     }
 }

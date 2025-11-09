@@ -19,14 +19,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import chiogros.trante.R
-import chiogros.trante.ui.ui.screens.connectionedit.ConnectionEditViewModel
 
 @Composable
-fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
+fun ConnectionEditFormSftp(viewModel: ConnectionEditViewModelSftp) {
     val uiState by viewModel.uiState.collectAsState()
 
     OutlinedTextField(
-        value = uiState.formState.host,
+        value = uiState.host,
         onValueChange = { viewModel.setHost(it) },
         modifier = Modifier.fillMaxWidth(),
         label = { Text(stringResource(R.string.host)) },
@@ -38,7 +37,7 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
     )
 
     OutlinedTextField(
-        value = uiState.formState.user,
+        value = uiState.user,
         onValueChange = { viewModel.setUser(it) },
         modifier = Modifier.fillMaxWidth(),
         label = { Text(stringResource(R.string.user)) },
@@ -49,23 +48,11 @@ fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
     )
 
     OutlinedTextField(
-        value = uiState.formState.name,
-        onValueChange = { viewModel.setName(it) },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(stringResource(R.string.name)) },
-        placeholder = { Text(uiState.formState.host) },
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Sentences, autoCorrectEnabled = false
-        ),
-        singleLine = true
-    )
-
-    OutlinedTextField(
-        value = uiState.formState.password,
+        value = uiState.password,
         onValueChange = { viewModel.setPassword(it) },
         modifier = Modifier.fillMaxWidth(),
         label = { Text(stringResource(R.string.password)) },
-        placeholder = { Text(uiState.formState.password) },
+        placeholder = { Text(uiState.password) },
         trailingIcon = {
             IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
                 Icon(

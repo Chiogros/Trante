@@ -14,23 +14,23 @@ import kotlin.uuid.Uuid
 data class SftpRoom(
     @PrimaryKey
     // UUID is used to avoid content guessing (ex: content://chiogros.trante/<id>/document.txt)
-    override val id: String = Uuid.random().toString(),
-    override var name: String = "",
+    override var id: String = Uuid.random().toString(),
+    override var name: String = String(),
     override var enabled: Boolean = false,
-    override var host: String = "",
-    override var user: String = "",
     override var state: ConnectionState = ConnectionState.NEVER_USED,
+    var host: String = String(),
+    var user: String = String(),
     @Embedded("password_")
-    override var password: EncryptedData = EncryptedData()
+    var password: EncryptedData = EncryptedData()
 ) : Connection() {
 
-    companion object {
-        override fun toString(): String {
-            return "SFTP"
-        }
-    }
-
     override fun toString(): String {
-        return SftpRoom.toString()
+        var stringyfied = super.toString()
+
+        if (host.isNotEmpty() and user.isNotEmpty()) {
+            stringyfied = user + '@' + host
+        }
+
+        return stringyfied
     }
 }

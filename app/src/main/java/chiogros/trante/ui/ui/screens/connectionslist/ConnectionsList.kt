@@ -132,7 +132,9 @@ fun Item(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = con.toString(), modifier = Modifier.weight(1F), fontWeight = FontWeight.Normal
+            text = "Protocol",
+            modifier = Modifier.weight(1F),
+            fontWeight = FontWeight.Normal
         )
 
         if (!con.name.isEmpty()) {
@@ -141,11 +143,10 @@ fun Item(
         } else {
             Column(modifier = Modifier.weight(3F)) {
                 Text(
-                    text = con.host,
+                    text = con.toString(),
                     fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Text(text = con.user, style = MaterialTheme.typography.bodyMedium)
             }
         }
 

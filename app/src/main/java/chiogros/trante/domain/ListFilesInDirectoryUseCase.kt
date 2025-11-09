@@ -1,21 +1,26 @@
 package chiogros.trante.domain
 
 import chiogros.trante.data.network.File
-import chiogros.trante.data.network.repository.NetworkManager
-import chiogros.trante.data.room.repository.RoomManager
+import chiogros.trante.protocols.ProtocolFactoryManager
 import kotlinx.coroutines.flow.first
 
 class ListFilesInDirectoryUseCase(
-    private val repository: RoomManager,
-    private val networkManager: NetworkManager
+    private val protocolFactoryManager: ProtocolFactoryManager,
+    private val getProtocolFromIdUseCase: GetProtocolFromIdUseCase
 ) {
-    suspend operator fun invoke(conId: String, path: String): List<File> {
-        val con = repository.get(conId).first()
+    suspend operator fun invoke(id: String, path: String): List<File> {
+        val protocol = getProtocolFromIdUseCase(id)
+        val factory = protocolFactoryManager.getFactory(protocol)
 
-        if (!networkManager.connect(con)) {
+        val room = factory.roomRepository
+        val network = factory.networkRepository
+
+        val con = room.get(id).first()
+
+        if (!network.connect(con)) {
             return emptyList()
         }
 
-        return networkManager.listFiles(con, path)
+        return network.listFiles(con, path)
     }
 }

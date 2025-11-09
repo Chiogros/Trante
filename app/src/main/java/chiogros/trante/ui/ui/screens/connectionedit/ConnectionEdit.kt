@@ -35,7 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import chiogros.trante.R
-import chiogros.trante.protocols.sftp.data.room.SftpRoom
+import chiogros.trante.protocols.Protocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 fun ConnectionEdit(
     onBack: () -> Unit,
     viewModel: ConnectionEditViewModel,
-    id: String = "",
+    id: String = String(),
     snackbarHostState: SnackbarHostState,
     coroutineScope: CoroutineScope
 ) {
@@ -67,7 +67,7 @@ fun ConnectionEdit(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ConnectionEditForm(viewModel)
+            ConnectionEditBody(viewModel)
         }
     }
 }
@@ -153,28 +153,29 @@ fun ConnectionEditTopBar(
 }
 
 @Composable
-fun ConnectionEditForm(viewModel: ConnectionEditViewModel) {
+fun ConnectionEditBody(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
     ConnectionEditTypePicker(viewModel)
+    ConnectionEditCommonForm(viewModel)
 
-    uiState.
+    uiState.form()
 }
 
 @Composable
 fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val types = listOf(SftpRoom.toString())
+    val protocols = Protocol.entries.filter { protocol -> protocol != Protocol.UNKNOWN }
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-        types.forEachIndexed { index, label ->
+        protocols.forEachIndexed { index, protocol ->
             SegmentedButton(
-                selected = (uiState.formState.type == label),
-                onClick = { viewModel.setType(label) },
+                selected = (uiState.protocol == protocol),
+                onClick = { viewModel.setType(protocol) },
                 shape = SegmentedButtonDefaults.itemShape(
-                    index = index, count = types.size
+                    index = index, count = protocols.size
                 ),
-                label = { Text(label) })
+                label = { Text(protocol.toString()) })
         }
     }
 }

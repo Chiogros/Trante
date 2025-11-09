@@ -1,16 +1,16 @@
 package chiogros.trante.data.room
 
-import chiogros.trante.data.room.crypto.EncryptedData
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-abstract class Connection {
-    abstract val id: String
-    abstract var name: String
-    abstract var enabled: Boolean
-    abstract var host: String
-    abstract var user: String
-    abstract var state: ConnectionState
-    abstract var password: EncryptedData
+@OptIn(ExperimentalUuidApi::class)
+open class Connection {
+    open var id: String = Uuid.random().toString()
+    open var name: String = String()
+    open var enabled: Boolean = false
+    open var state: ConnectionState = ConnectionState.NEVER_USED
 
-    // Get the string name of the protocol: "SFTP", "FTP", ...
-    abstract override fun toString(): String
+    override fun toString(): String {
+        return name
+    }
 }

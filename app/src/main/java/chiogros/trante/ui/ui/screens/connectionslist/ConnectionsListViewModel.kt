@@ -45,9 +45,9 @@ class ConnectionsListViewModel(
     fun toggle(con: Connection) {
         viewModelScope.launch {
             if (con.enabled) {
-                disableConnectionUseCase(con.id)
+                disableConnectionUseCase(con)
             } else {
-                enableConnectionUseCase(con.id)
+                enableConnectionUseCase(con)
             }
         }
     }
