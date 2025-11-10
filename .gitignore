@@ -34,3 +34,4 @@ google-services.json
 
 # Custom
 app/schemas/*/*.json
+app/release/
