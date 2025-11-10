@@ -15,9 +15,10 @@ import chiogros.trante.R
 @Composable
 fun ConnectionEditCommonForm(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
+    val formState by uiState.formState.collectAsState()
 
     OutlinedTextField(
-        value = uiState.formState.name,
+        value = formState.name,
         onValueChange = { viewModel.setName(it) },
         modifier = Modifier.fillMaxWidth(),
         label = { Text(stringResource(R.string.name)) },

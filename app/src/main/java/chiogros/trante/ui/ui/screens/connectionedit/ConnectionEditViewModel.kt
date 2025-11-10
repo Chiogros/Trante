@@ -29,17 +29,20 @@ class ConnectionEditViewModel(
         MutableStateFlow(ConnectionEditUiState())
     val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
 
+    private
+
     // Backup the deleted connection, useful in case of restore()
     fun backup() {
 
         viewModelScope.launch {
-            val protocol = getProtocolFromIdUseCase(uiState.value.formState.id)
+            val protocol =
+                getProtocolFromIdUseCase(uiState.value.formState.value.id)
             val factory = protocolFactoryManager.getFactory(protocol)
             val room = factory.roomRepository
 
             _uiState.update {
                 it.copy(
-                    deletedConnection = room.get(uiState.value.formState.id).first()
+                    deletedConnection = room.get(uiState.value.formState.value.id).first()
                 )
             }
         }
@@ -49,10 +52,10 @@ class ConnectionEditViewModel(
         backup()
 
         viewModelScope.launch {
-            val protocol = getProtocolFromIdUseCase(uiState.value.formState.id)
+            val protocol = getProtocolFromIdUseCase(uiState.value.formState.value.id)
             val factory = protocolFactoryManager.getFactory(protocol)
             val room = factory.roomRepository
-            deleteConnectionUseCase(room.get(uiState.value.formState.id).first())
+            deleteConnectionUseCase(room.get(uiState.value.formState.value.id).first())
         }
     }
 
@@ -65,13 +68,15 @@ class ConnectionEditViewModel(
             val con = factory.roomRepository.get(id).first()
             val form = factory.screensConnectionEditForm
             val formState = factory.formStateRoomAdapter.convert(con)
+            val mutableFormState: MutableStateFlow<ConnectionEditCommonFormState> =
+                MutableStateFlow(formState)
 
             _uiState.update {
                 it.copy(
                     form = form,
-                    formState = formState,
+                    formState = mutableFormState,
                     isEditing = true,
-                    originalFormState = formState,
+                    originalFormState = mutableFormState.asStateFlow(),
                     protocol = protocol
                 )
             }
@@ -80,7 +85,7 @@ class ConnectionEditViewModel(
 
     fun insert() {
         val factory = protocolFactoryManager.getFactory(uiState.value.protocol)
-        val con = factory.formStateRoomAdapter.convert(uiState.value.formState)
+        val con = factory.formStateRoomAdapter.convert(uiState.value.formState.value)
 
         viewModelScope.launch {
             addConnectionUseCase(con)
@@ -97,9 +102,11 @@ class ConnectionEditViewModel(
     fun restore() {
         val factory = protocolFactoryManager.getFactory(uiState.value.protocol)
         val formState = factory.formStateRoomAdapter.convert(uiState.value.deletedConnection)
+        val mutableFormState: MutableStateFlow<ConnectionEditCommonFormState> =
+            MutableStateFlow(formState)
 
         _uiState.update {
-            it.copy(formState = formState)
+            it.copy(formState = mutableFormState)
         }
 
         insert()
@@ -110,9 +117,9 @@ class ConnectionEditViewModel(
     }
 
     fun setName(name: String) {
-        val newFormState = uiState.value.formState
-        newFormState.name = name
-        _uiState.update { it.copy(formState = newFormState) }
+        viewModelScope.launch {
+            uiState.value.formState.emit(uiState.value.formState.value.copy(name = name))
+        }
     }
 
     fun setType(type: Protocol) {
@@ -120,7 +127,7 @@ class ConnectionEditViewModel(
         _uiState.update {
             it.copy(
                 form = factory.screensConnectionEditForm,
-                formState = factory.screensConnectionEditCommonFormState,
+                formState = MutableStateFlow(factory.screensConnectionEditCommonFormState),
                 protocol = type
             )
         }
@@ -128,7 +135,7 @@ class ConnectionEditViewModel(
 
     fun update() {
         val factory = protocolFactoryManager.getFactory(uiState.value.protocol)
-        val con = factory.formStateRoomAdapter.convert(uiState.value.formState)
+        val con = factory.formStateRoomAdapter.convert(uiState.value.formState.value)
 
         con.state = ConnectionState.NEVER_USED
         con.enabled = false

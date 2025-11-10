@@ -1,28 +1,32 @@
 package chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class ConnectionEditViewModelSftp : ViewModel() {
     private val _uiState = MutableStateFlow(ConnectionEditFormStateSftp())
     val uiState: StateFlow<ConnectionEditFormStateSftp> = _uiState.asStateFlow()
 
     fun setHost(host: String) {
-        _uiState.update {
-            it.host = host
-            it
+        viewModelScope.launch {
+            _uiState.emit(uiState.value.copy(host = host))
         }
     }
 
     fun setPassword(password: String) {
-        _uiState.value.password = password
+        viewModelScope.launch {
+            _uiState.emit(uiState.value.copy(password = password))
+        }
     }
 
     fun setUser(user: String) {
-        _uiState.value.user = user
+        viewModelScope.launch {
+            _uiState.emit(uiState.value.copy(user = user))
+        }
     }
 
     fun togglePasswordVisibility() {
