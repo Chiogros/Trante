@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ConnectionEditViewModelSftp : ViewModel() {
-    private val _uiState = MutableStateFlow(ConnectionEditFormStateSftp())
-    val uiState: StateFlow<ConnectionEditFormStateSftp> = _uiState.asStateFlow()
+class SftpConnectionEditViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(SftpConnectionEditFormState())
+    val uiState: StateFlow<SftpConnectionEditFormState> = _uiState.asStateFlow()
 
     fun setHost(host: String) {
         viewModelScope.launch {

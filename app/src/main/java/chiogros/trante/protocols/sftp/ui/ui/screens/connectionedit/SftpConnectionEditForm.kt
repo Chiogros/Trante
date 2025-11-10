@@ -21,7 +21,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import chiogros.trante.R
 
 @Composable
-fun ConnectionEditFormSftp(viewModel: ConnectionEditViewModelSftp) {
+fun SftpConnectionEditForm(viewModel: SftpConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
     OutlinedTextField(

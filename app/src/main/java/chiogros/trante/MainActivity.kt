@@ -24,10 +24,10 @@ import chiogros.trante.protocols.sftp.data.network.SftpNetwork
 import chiogros.trante.protocols.sftp.data.network.SftpNetworkRepository
 import chiogros.trante.protocols.sftp.data.room.SftpRoomDataSource
 import chiogros.trante.protocols.sftp.data.room.SftpRoomRepository
-import chiogros.trante.protocols.sftp.domain.FormStateToRoomAdapterSftp
-import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.ConnectionEditFormSftp
-import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.ConnectionEditFormStateSftp
-import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.ConnectionEditViewModelSftp
+import chiogros.trante.protocols.sftp.domain.SftpFormStateToRoomAdapter
+import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectionEditForm
+import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectionEditFormState
+import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectionEditViewModel
 import chiogros.trante.ui.ui.screens.connectionedit.ConnectionEditViewModel
 import chiogros.trante.ui.ui.screens.connectionslist.ConnectionsListViewModel
 import chiogros.trante.ui.ui.theme.AppTheme
@@ -52,18 +52,18 @@ class MainActivity : ComponentActivity() {
         val sftpNetworkRepository =
             SftpNetworkRepository(remoteSftpRoomDataSource, localSftpNetworkDataSource)
         // View model
-        val screenConnectionEditViewModel = ConnectionEditViewModelSftp()
+        val screenConnectionEditViewModel = SftpConnectionEditViewModel()
         val screenConnectionEditForm: @Composable () -> Unit =
-            { ConnectionEditFormSftp(screenConnectionEditViewModel) }
-        val screenConnectionEditFormStateSftp = ConnectionEditFormStateSftp()
-        val formStateAdapter = FormStateToRoomAdapterSftp()
+            { SftpConnectionEditForm(screenConnectionEditViewModel) }
+        val screenSftpConnectionEditFormState = SftpConnectionEditFormState()
+        val formStateAdapter = SftpFormStateToRoomAdapter()
 
         // Protocols factories
         val sftpFactory = SftpFactory(
             networkRepository = sftpNetworkRepository,
             roomRepository = sftpRoomRepository,
             screensConnectionEditForm = screenConnectionEditForm,
-            screensConnectionEditCommonFormState = screenConnectionEditFormStateSftp,
+            screensConnectionEditFormState = screenSftpConnectionEditFormState,
             formStateRoomAdapter = formStateAdapter
         )
         val protocolFactoryManager = ProtocolFactoryManager(sftpFactory)

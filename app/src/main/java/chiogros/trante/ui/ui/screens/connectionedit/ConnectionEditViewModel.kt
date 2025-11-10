@@ -74,12 +74,14 @@ class ConnectionEditViewModel(
             _uiState.update {
                 it.copy(
                     form = form,
-                    formState = mutableFormState,
+                    //formState = mutableFormState,
                     isEditing = true,
                     originalFormState = mutableFormState.asStateFlow(),
                     protocol = protocol
                 )
             }
+
+            _uiState.value.formState.tryEmit(formState)
         }
     }
 
@@ -127,9 +129,12 @@ class ConnectionEditViewModel(
         _uiState.update {
             it.copy(
                 form = factory.screensConnectionEditForm,
-                formState = MutableStateFlow(factory.screensConnectionEditCommonFormState),
+                //formState = MutableStateFlow(factory.screensConnectionEditFormState),
                 protocol = type
             )
+        }
+        viewModelScope.launch {
+            uiState.value.formState.emit(factory.screensConnectionEditFormState)
         }
     }
 

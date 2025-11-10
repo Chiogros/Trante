@@ -2,7 +2,7 @@ package chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit
 
 import chiogros.trante.ui.ui.screens.connectionedit.ConnectionEditCommonFormState
 
-data class ConnectionEditFormStateSftp(
+data class SftpConnectionEditFormState(
     override val id: String = String(),
     override var name: String = String(),
     var host: String = String(),
@@ -16,13 +16,11 @@ data class ConnectionEditFormStateSftp(
         host: String = this.host,
         user: String = this.user,
         password: String = this.password
-    ): ConnectionEditFormStateSftp {
-        return ConnectionEditFormStateSftp(
-            id = id,
-            name = name,
-            host = host,
-            user = user,
-            password = password
-        )
-    }
+    ) = SftpConnectionEditFormState(
+        id = id,
+        name = name,
+        host = host,
+        user = user,
+        password = password
+    )
 }
