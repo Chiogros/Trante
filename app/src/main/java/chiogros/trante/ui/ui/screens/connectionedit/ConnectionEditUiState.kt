@@ -14,6 +14,7 @@ data class ConnectionEditUiState(
     // Holds initial form data, useful to check for changes
     val originalFormState: StateFlow<ConnectionEditCommonFormState> = formState,
     val form: @Composable () -> Unit = {},
+
     val isEditing: Boolean = false,
     val isDialogShown: Boolean = false,
     var deletedConnection: Connection = SftpRoom(),
