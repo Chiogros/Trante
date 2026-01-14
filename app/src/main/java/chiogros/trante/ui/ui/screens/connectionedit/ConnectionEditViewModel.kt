@@ -10,6 +10,7 @@ import chiogros.trante.domain.GetProtocolFromIdUseCase
 import chiogros.trante.domain.UpdateConnectionUseCase
 import chiogros.trante.protocols.Protocol
 import chiogros.trante.protocols.ProtocolFactoryManager
+import chiogros.trante.protocols.common.CommonConnectionEditFormState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,7 +37,7 @@ class ConnectionEditViewModel(
 
         viewModelScope.launch {
             val protocol =
-                getProtocolFromIdUseCase(uiState.value.formState.value.id)
+                getProtocolFromIdUseCase(uiState.value.commonForm.id)
             val factory = protocolFactoryManager.getFactory(protocol)
             val room = factory.roomRepository
 
@@ -68,7 +69,7 @@ class ConnectionEditViewModel(
             val con = factory.roomRepository.get(id).first()
             val form = factory.screensConnectionEditForm
             val formState = factory.formStateRoomAdapter.convert(con)
-            val mutableFormState: MutableStateFlow<ConnectionEditCommonFormState> =
+            val mutableFormState: MutableStateFlow<CommonConnectionEditFormState> =
                 MutableStateFlow(formState)
 
             _uiState.update {
@@ -104,7 +105,7 @@ class ConnectionEditViewModel(
     fun restore() {
         val factory = protocolFactoryManager.getFactory(uiState.value.protocol)
         val formState = factory.formStateRoomAdapter.convert(uiState.value.deletedConnection)
-        val mutableFormState: MutableStateFlow<ConnectionEditCommonFormState> =
+        val mutableFormState: MutableStateFlow<CommonConnectionEditFormState> =
             MutableStateFlow(formState)
 
         _uiState.update {
@@ -118,18 +119,11 @@ class ConnectionEditViewModel(
         _uiState.update { it.copy(isDialogShown = state) }
     }
 
-    fun setName(name: String) {
-        viewModelScope.launch {
-            uiState.value.formState.emit(uiState.value.formState.value.copy(name = name))
-        }
-    }
-
     fun setType(type: Protocol) {
         val factory = protocolFactoryManager.getFactory(type)
         _uiState.update {
             it.copy(
-                form = factory.screensConnectionEditForm,
-                //formState = MutableStateFlow(factory.screensConnectionEditFormState),
+                gui = factory.screensConnectionEditForm,
                 protocol = type
             )
         }

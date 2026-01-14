@@ -11,8 +11,8 @@ import java.io.InputStream
 import kotlin.io.path.Path
 
 class SftpNetworkRepository(
-    private val remote: RemoteSftpNetworkDataSource,
-    private val local: LocalSftpNetworkDataSource
+    private val remote: SftpRemoteNetworkDataSource,
+    private val local: SftpLocalNetworkDataSource
 ) : NetworkRepository() {
     override suspend fun connect(con: Connection): Boolean {
         if (con !is SftpRoom) {

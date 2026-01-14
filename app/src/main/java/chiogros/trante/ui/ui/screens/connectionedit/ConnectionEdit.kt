@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import chiogros.trante.R
 import chiogros.trante.protocols.Protocol
+import chiogros.trante.protocols.ProtocolFactoryManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -45,7 +46,8 @@ fun ConnectionEdit(
     viewModel: ConnectionEditViewModel,
     id: String = String(),
     snackbarHostState: SnackbarHostState,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
+    protocolFactoryManager: ProtocolFactoryManager
 ) {
     if (id.isEmpty()) viewModel.refresh()
     else viewModel.initFrom(id)
@@ -67,7 +69,7 @@ fun ConnectionEdit(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ConnectionEditBody(viewModel)
+            ConnectionEditBody(viewModel, protocolFactoryManager)
         }
     }
 }
@@ -142,7 +144,7 @@ fun ConnectionEditTopBar(
 
                     onSave()
                 },
-                enabled = (!uiState.isEditing || uiState.isEdited)
+                enabled = (!uiState.isEditing || uiState.isModified)
             ) {
                 Icon(
                     imageVector = Icons.Sharp.Check,
@@ -153,13 +155,16 @@ fun ConnectionEditTopBar(
 }
 
 @Composable
-fun ConnectionEditBody(viewModel: ConnectionEditViewModel) {
+fun ConnectionEditBody(
+    viewModel: ConnectionEditViewModel,
+    protocolFactoryManager: ProtocolFactoryManager
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     ConnectionEditTypePicker(viewModel)
-    ConnectionEditCommonForm(viewModel)
 
-    uiState.form()
+    // Show inputs form
+    protocolFactoryManager.getFactory(uiState.protocol).screensConnectionEditForm
 }
 
 @Composable
@@ -184,7 +189,7 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
 fun ConnectionEditDialog(viewModel: ConnectionEditViewModel, onSave: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
     // If data is modified, when back button is pressed set dialog state
-    BackHandler(enabled = uiState.isEdited, onBack = {
+    BackHandler(enabled = uiState.isModified, onBack = {
         viewModel.setIsDialogShown(true)
     })
 

@@ -17,10 +17,10 @@ import chiogros.trante.domain.ListFilesInDirectoryUseCase
 import chiogros.trante.domain.ReadFileUseCase
 import chiogros.trante.protocols.ProtocolFactoryManager
 import chiogros.trante.protocols.sftp.SftpFactory
-import chiogros.trante.protocols.sftp.data.network.LocalSftpNetworkDataSource
-import chiogros.trante.protocols.sftp.data.network.RemoteSftpNetworkDataSource
+import chiogros.trante.protocols.sftp.data.network.SftpLocalNetworkDataSource
 import chiogros.trante.protocols.sftp.data.network.SftpNetwork
 import chiogros.trante.protocols.sftp.data.network.SftpNetworkRepository
+import chiogros.trante.protocols.sftp.data.network.SftpRemoteNetworkDataSource
 import chiogros.trante.protocols.sftp.data.room.SftpRoomDataSource
 import chiogros.trante.protocols.sftp.data.room.SftpRoomRepository
 import chiogros.trante.protocols.sftp.domain.SftpFormStateToRoomAdapter
@@ -45,10 +45,10 @@ class CustomDocumentsProvider : DocumentsProvider() {
         val sftpRoomRepository = SftpRoomRepository(sftpRoomDataSource)
         // Remote
         val sftpNetwork = SftpNetwork.new(dispatcher)
-        val remoteSftpRoomDataSource = RemoteSftpNetworkDataSource(sftpNetwork)
-        val localSftpNetworkDataSource = LocalSftpNetworkDataSource()
+        val remoteSftpRoomDataSource = SftpRemoteNetworkDataSource(sftpNetwork)
+        val sftpLocalNetworkDataSource = SftpLocalNetworkDataSource()
         val sftpNetworkRepository =
-            SftpNetworkRepository(remoteSftpRoomDataSource, localSftpNetworkDataSource)
+            SftpNetworkRepository(remoteSftpRoomDataSource, sftpLocalNetworkDataSource)
         // View model
         val screenConnectionEditViewModel = SftpConnectionEditViewModel()
         val screenConnectionEditForm: @Composable () -> Unit =

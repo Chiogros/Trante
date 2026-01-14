@@ -4,23 +4,21 @@ import androidx.compose.runtime.Composable
 import chiogros.trante.data.room.Connection
 import chiogros.trante.protocols.Protocol
 import chiogros.trante.protocols.sftp.data.room.SftpRoom
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import chiogros.trante.ui.ui.screens.connectionedit.form.ConnectionEditFormState
 
+/**
+ * Screen level UI state
+ */
 data class ConnectionEditUiState(
-    var formState: MutableStateFlow<ConnectionEditCommonFormState> = MutableStateFlow(
-        ConnectionEditCommonFormState()
-    ),
-    // Holds initial form data, useful to check for changes
-    val originalFormState: StateFlow<ConnectionEditCommonFormState> = formState,
-    val form: @Composable () -> Unit = {},
-
+    var deletedConnection: Connection = SftpRoom(),
+    val gui: @Composable (() -> Unit) = {},
     val isEditing: Boolean = false,
     val isDialogShown: Boolean = false,
-    var deletedConnection: Connection = SftpRoom(),
+
     // Default protocol shown to the user
     val protocol: Protocol = Protocol.SFTP,
+    val protocolForm: ConnectionEditFormState
 ) {
-    val isEdited: Boolean
-        get() = formState != originalFormState
+    val isModified: Boolean
+        get() = protocolForm.isModified
 }

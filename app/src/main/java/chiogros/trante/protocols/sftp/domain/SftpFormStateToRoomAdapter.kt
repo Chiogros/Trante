@@ -3,9 +3,9 @@ package chiogros.trante.protocols.sftp.domain
 import chiogros.trante.data.room.Connection
 import chiogros.trante.data.room.crypto.CryptoUtils
 import chiogros.trante.domain.adapters.FormStateToRoomAdapter
+import chiogros.trante.protocols.common.CommonConnectionEditFormState
 import chiogros.trante.protocols.sftp.data.room.SftpRoom
 import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectionEditFormState
-import chiogros.trante.ui.ui.screens.connectionedit.ConnectionEditCommonFormState
 
 class SftpFormStateToRoomAdapter : FormStateToRoomAdapter() {
     fun convert(sftpConnectionEditFormState: SftpConnectionEditFormState): SftpRoom {
@@ -23,7 +23,7 @@ class SftpFormStateToRoomAdapter : FormStateToRoomAdapter() {
         return con
     }
 
-    override fun convert(formState: ConnectionEditCommonFormState): Connection {
+    override fun convert(formState: CommonConnectionEditFormState): Connection {
         if (formState !is SftpConnectionEditFormState) {
             throw ClassCastException()
         }

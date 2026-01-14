@@ -18,10 +18,10 @@ import chiogros.trante.domain.NotifyContentResolverUseCase
 import chiogros.trante.domain.UpdateConnectionUseCase
 import chiogros.trante.protocols.ProtocolFactoryManager
 import chiogros.trante.protocols.sftp.SftpFactory
-import chiogros.trante.protocols.sftp.data.network.LocalSftpNetworkDataSource
-import chiogros.trante.protocols.sftp.data.network.RemoteSftpNetworkDataSource
+import chiogros.trante.protocols.sftp.data.network.SftpLocalNetworkDataSource
 import chiogros.trante.protocols.sftp.data.network.SftpNetwork
 import chiogros.trante.protocols.sftp.data.network.SftpNetworkRepository
+import chiogros.trante.protocols.sftp.data.network.SftpRemoteNetworkDataSource
 import chiogros.trante.protocols.sftp.data.room.SftpRoomDataSource
 import chiogros.trante.protocols.sftp.data.room.SftpRoomRepository
 import chiogros.trante.protocols.sftp.domain.SftpFormStateToRoomAdapter
@@ -42,15 +42,15 @@ class MainActivity : ComponentActivity() {
         val context = this.applicationContext
 
         // Sftp
-        val connectionSftpDao = AppDatabase.getDatabase(context).connectionSftpDao()
-        val sftpRoomDataSource = SftpRoomDataSource(connectionSftpDao)
+        val sftpConnectionDao = AppDatabase.getDatabase(context).connectionSftpDao()
+        val sftpRoomDataSource = SftpRoomDataSource(sftpConnectionDao)
         val sftpRoomRepository = SftpRoomRepository(sftpRoomDataSource)
         // Remote
         val sftpNetwork = SftpNetwork.new(dispatcher)
-        val remoteSftpRoomDataSource = RemoteSftpNetworkDataSource(sftpNetwork)
-        val localSftpNetworkDataSource = LocalSftpNetworkDataSource()
+        val sftpRemoteRoomDataSource = SftpRemoteNetworkDataSource(sftpNetwork)
+        val sftpLocalNetworkDataSource = SftpLocalNetworkDataSource()
         val sftpNetworkRepository =
-            SftpNetworkRepository(remoteSftpRoomDataSource, localSftpNetworkDataSource)
+            SftpNetworkRepository(sftpRemoteRoomDataSource, sftpLocalNetworkDataSource)
         // View model
         val screenConnectionEditViewModel = SftpConnectionEditViewModel()
         val screenConnectionEditForm: @Composable () -> Unit =
@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                App(connectionsListViewModel, connectionEditViewModel)
+                App(connectionsListViewModel, connectionEditViewModel, protocolFactoryManager)
             }
         }
     }

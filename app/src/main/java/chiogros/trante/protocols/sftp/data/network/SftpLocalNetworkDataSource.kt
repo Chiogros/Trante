@@ -2,7 +2,7 @@ package chiogros.trante.protocols.sftp.data.network
 
 import chiogros.trante.protocols.sftp.data.room.SftpRoom
 
-class LocalSftpNetworkDataSource {
+class SftpLocalNetworkDataSource {
     private val openConnections: MutableMap<String, SftpNetwork> = mutableMapOf()
 
     fun isStillConnected(con: SftpRoom): Boolean {

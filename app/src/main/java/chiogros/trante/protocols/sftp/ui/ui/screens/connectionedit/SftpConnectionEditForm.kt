@@ -25,6 +25,18 @@ fun SftpConnectionEditForm(viewModel: SftpConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
     OutlinedTextField(
+        value = uiState.name,
+        onValueChange = { viewModel.setName(it) },
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(stringResource(R.string.name)) },
+        placeholder = { Text(String()) },
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Sentences, autoCorrectEnabled = false
+        ),
+        singleLine = true
+    )
+
+    OutlinedTextField(
         value = uiState.host,
         onValueChange = { viewModel.setHost(it) },
         modifier = Modifier.fillMaxWidth(),
