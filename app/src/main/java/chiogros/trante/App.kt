@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import chiogros.trante.protocols.ProtocolFactoryManager
 import chiogros.trante.ui.ui.screens.about.About
 import chiogros.trante.ui.ui.screens.connectionedit.ConnectionEdit
 import chiogros.trante.ui.ui.screens.connectionedit.ConnectionEditViewModel
@@ -43,7 +44,8 @@ object ThirdPartyLicense
 @Composable
 fun App(
     connectionsListViewModel: ConnectionsListViewModel,
-    connectionEditViewModel: ConnectionEditViewModel
+    connectionEditViewModel: ConnectionEditViewModel,
+    protocolFactoryManager: ProtocolFactoryManager
 ) {
     val navController = rememberNavController()
     val snackbarHostState = SnackbarHostState()
@@ -82,7 +84,8 @@ fun App(
                 viewModel = connectionEditViewModel,
                 id = backStackEntry.toRoute<ConnectionEdit>().connectionId,
                 snackbarHostState = snackbarHostState,
-                coroutineScope = coroutineScope
+                coroutineScope = coroutineScope,
+                protocolFactoryManager = protocolFactoryManager
             )
         }
 

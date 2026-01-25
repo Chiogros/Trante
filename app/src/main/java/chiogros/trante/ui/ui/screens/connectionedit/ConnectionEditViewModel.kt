@@ -2,172 +2,169 @@ package chiogros.trante.ui.ui.screens.connectionedit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import chiogros.trante.data.room.Connection
 import chiogros.trante.data.room.ConnectionState
-import chiogros.trante.data.room.crypto.CryptoUtils
-import chiogros.trante.data.room.repository.RoomManager
-import chiogros.trante.data.room.sftp.SftpRoom
+import chiogros.trante.domain.AddConnectionUseCase
+import chiogros.trante.domain.DeleteConnectionUseCase
+import chiogros.trante.domain.GetConnectionUseCase
+import chiogros.trante.domain.GetProtocolFromIdUseCase
+import chiogros.trante.domain.UpdateConnectionUseCase
+import chiogros.trante.protocols.Protocol
+import chiogros.trante.protocols.ProtocolFactory
+import chiogros.trante.protocols.ProtocolFactoryManager
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+class ConnectionEditViewModel(
+    private val protocolFactoryManager: ProtocolFactoryManager,
+    private val deleteConnectionUseCase: DeleteConnectionUseCase,
+    private val addConnectionUseCase: AddConnectionUseCase,
+    private val getConnectionUseCase: GetConnectionUseCase,
+    private val updateConnectionUseCase: UpdateConnectionUseCase,
+    private val getProtocolFromIdUseCase: GetProtocolFromIdUseCase
+) : ViewModel() {
+    val defaultProtocol = Protocol.SFTP
+    var factory: ProtocolFactory = protocolFactoryManager.getFactory(defaultProtocol)
 
-data class ConnectionEditFormState(
-    val id: String = "",
-    val host: String = "",
-    val name: String = "",
-    val type: String = SftpRoom.toString(),
-    val user: String = "",
-    val password: String = ""
-)
-
-data class ConnectionEditUiState(
-    val formState: ConnectionEditFormState = ConnectionEditFormState(),
-    // Holds initial form data, useful to check for changes
-    val originalFormState: ConnectionEditFormState = ConnectionEditFormState(),
-    val isEditing: Boolean = false,
-    val isDialogShown: Boolean = false,
-    var deletedConnection: Connection = SftpRoom(),
-    val showPassword: Boolean = false
-) {
-    val isEdited: Boolean
-        get() = formState != originalFormState
-}
-
-class ConnectionEditViewModel(private val repository: RoomManager) : ViewModel() {
-    private val _uiState = MutableStateFlow(ConnectionEditUiState())
-    val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
-
-    fun delete() {
-        save()
-        viewModelScope.launch {
-            repository.delete(SftpRoom(id = uiState.value.formState.id))
-        }
-    }
-
-    fun initFrom(id: String) {
-        viewModelScope.launch {
-            refresh()
-
-            // Fill out the form with connection data
-            val con: Connection = repository.get(id).first()
-            val conForm = ConnectionEditFormState(
-                id = con.id,
-                host = con.host,
-                name = con.name,
-                type = con.toString(),
-                user = con.user,
-                password = String(CryptoUtils().decrypt(con.password))
+    private val _uiState =
+        MutableStateFlow(
+            ConnectionEditUiState(
+                deletedConnection = factory.formStateRoomAdapter.convert(
+                    factory.screensConnectionEditFormState.value
+                ),
+                protocol = defaultProtocol,
+                unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode()
             )
+        )
+
+    val uiState: StateFlow<ConnectionEditUiState> = combine(
+        _uiState,
+        factory.screensConnectionEditFormState
+    ) { uiState, formState ->
+        uiState.copy(isModified = uiState.unmodifiedFormHash != formState.hashCode())
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ConnectionEditUiState(
+            deletedConnection = factory.formStateRoomAdapter.convert(
+                factory.screensConnectionEditFormState.value
+            ),
+            protocol = defaultProtocol,
+            unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode()
+        )
+    )
+
+    // Backup the deleted connection, useful in case of restore()
+    fun backup() {
+        viewModelScope.launch {
+            val room = factory.roomRepository
+
             _uiState.update {
                 it.copy(
-                    formState = conForm, originalFormState = conForm, isEditing = true
+                    deletedConnection = room.get(factory.screensConnectionEditFormState.value.id)
+                        .first()
                 )
             }
         }
     }
 
-    fun insert() {
-        viewModelScope.launch {
-            repository.insert(
-                when (uiState.value.formState.type) {
-                    SftpRoom.toString() -> {
-                        SftpRoom(
-                            host = uiState.value.formState.host,
-                            name = uiState.value.formState.name,
-                            user = uiState.value.formState.user,
-                            password = CryptoUtils().encrypt(uiState.value.formState.password.toByteArray())
-                        )
-                    }
+    fun delete() {
+        backup()
 
-                    else                -> error("Type ${uiState.value.formState.type} unknown!")
-                }
+        val room = factory.roomRepository
+
+        viewModelScope.launch {
+            deleteConnectionUseCase(
+                room.get(factory.screensConnectionEditFormState.value.id).first()
             )
         }
     }
 
+    fun insert() {
+        val con = factory.formStateRoomAdapter.convert(factory.screensConnectionEditFormState.value)
+
+        viewModelScope.launch {
+            addConnectionUseCase(con)
+        }
+    }
+
+    fun load(id: String) {
+        reset()
+
+        viewModelScope.launch {
+            val protocol = getProtocolFromIdUseCase(id)
+            setProtocol(protocol)
+
+            val con = factory.roomRepository.get(id).first()
+            factory.screensConnectionEditFormState.emit(factory.formStateRoomAdapter.convert(con))
+            val form = factory.screensConnectionEditFormState.value
+
+            _uiState.update {
+                it.copy(
+                    isEditing = true,
+                    unmodifiedFormHash = form.hashCode()
+                )
+            }
+        }
+    }
+
     // Initialize states
-    fun refresh() {
-        _uiState.update {
-            it.copy(
-                formState = ConnectionEditFormState(),
-                originalFormState = ConnectionEditFormState(),
-                isEditing = false,
-                isDialogShown = false,
-                deletedConnection = SftpRoom(),
-                showPassword = false
+    fun reset() {
+        setProtocol(defaultProtocol)
+
+        viewModelScope.launch {
+            factory.resetScreensConnectionEditFormState()
+
+            _uiState.emit(
+                ConnectionEditUiState(
+                    deletedConnection = factory.formStateRoomAdapter.convert(
+                        factory.screensConnectionEditFormState.value
+                    ),
+                    protocol = defaultProtocol,
+                    unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode(),
+                )
             )
         }
     }
 
     // Restore the last deleted connection
     fun restore() {
-        _uiState.update {
-            it.copy(
-                formState = ConnectionEditFormState(
-                    id = uiState.value.deletedConnection.id,
-                    host = uiState.value.deletedConnection.host,
-                    name = uiState.value.deletedConnection.name,
-                    user = uiState.value.deletedConnection.user,
-                    password = String(CryptoUtils().decrypt(uiState.value.deletedConnection.password))
-                )
-            )
+        val formState2 = factory.formStateRoomAdapter.convert(uiState.value.deletedConnection)
+
+        viewModelScope.launch {
+            factory.screensConnectionEditFormState.emit(formState2)
         }
+
         insert()
     }
 
-    // Backup the deleted connection, useful in case of restore()
-    fun save() {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    deletedConnection = repository.get(uiState.value.formState.id).first()
-                )
-            }
+    fun setProtocol(type: Protocol) {
+        factory = protocolFactoryManager.getFactory(type)
+
+        _uiState.update {
+            it.copy(
+                protocol = type
+            )
         }
     }
 
-    fun setIsDialogShown(state: Boolean) {
+    fun showDialog(state: Boolean) {
         _uiState.update { it.copy(isDialogShown = state) }
     }
 
-    fun setHost(host: String) {
-        _uiState.update { it.copy(formState = uiState.value.formState.copy(host = host)) }
-    }
-
-    fun setName(name: String) {
-        _uiState.update { it.copy(formState = uiState.value.formState.copy(name = name)) }
-    }
-
-    fun setPassword(password: String) {
-        _uiState.update { it.copy(formState = uiState.value.formState.copy(password = password)) }
-    }
-
-    fun setType(type: String) {
-        _uiState.update { it.copy(formState = uiState.value.formState.copy(type = type)) }
-    }
-
-    fun setUser(user: String) {
-        _uiState.update { it.copy(formState = uiState.value.formState.copy(user = user)) }
-    }
-
-    fun togglePasswordVisibility() {
-        _uiState.update { it.copy(showPassword = !uiState.value.showPassword) }
-    }
-
     fun update() {
+        val con = factory.formStateRoomAdapter.convert(factory.screensConnectionEditFormState.value)
+
+        con.state = ConnectionState.NEVER_USED
+        con.enabled = false
+
         viewModelScope.launch {
-            val con: Connection = repository.get(uiState.value.formState.id).first()
-            con.host = uiState.value.formState.host
-            con.name = uiState.value.formState.name
-            con.user = uiState.value.formState.user
-            con.password = CryptoUtils().encrypt(uiState.value.formState.password.toByteArray())
-            con.state = ConnectionState.NEVER_USED
-            con.enabled = false
-            repository.update(con)
+            updateConnectionUseCase(con)
         }
     }
 }
