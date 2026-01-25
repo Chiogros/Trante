@@ -1,5 +1,5 @@
 [versions]
-aboutLibraries = "13.2.1"
+aboutLibraries = "14.0.0-b02"
 agp = "9.0.0"
 comGoogleDevtoolsKsp = "2.3.2"
 composeBom = "2026.01.00"
