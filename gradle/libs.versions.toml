@@ -4,6 +4,7 @@ agp = "9.0.0"
 comGoogleDevtoolsKsp = "2.3.2"
 composeBom = "2026.01.00"
 coreSplashscreen = "1.2.0"
+# Remove android.disallowKotlinSourceSets in gradle.properties once kotlin gets >= 2.3.4
 kotlin = "2.3.0"
 material3 = "1.4.0"
 materialIconsExtended = "1.7.8"
