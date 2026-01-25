@@ -1,16 +1,16 @@
 [versions]
-aboutLibraries = "13.1.0"
-agp = "8.13.2"
-comGoogleDevtoolsKsp = "2.2.20-2.0.4"
-composeBom = "2025.10.01"
-coreSplashscreen = "1.0.1"
-kotlin = "2.2.21"
+aboutLibraries = "13.2.1"
+agp = "9.0.0"
+comGoogleDevtoolsKsp = "2.3.2"
+composeBom = "2026.01.00"
+coreSplashscreen = "1.2.0"
+kotlin = "2.3.0"
 material3 = "1.4.0"
 materialIconsExtended = "1.7.8"
-navigationCompose = "2.9.5"
-room = "2.8.3"
-roomCompiler = "2.8.3"
-roomRuntime = "2.8.3"
+navigationCompose = "2.9.6"
+room = "2.8.4"
+roomCompiler = "2.8.4"
+roomRuntime = "2.8.4"
 serialization = "2.1.21"
 slf4jApi = "2.0.17"
 slf4jNop = "2.0.17"
@@ -37,7 +37,6 @@ aboutlibraries-plugin-android = { id = "com.mikepenz.aboutlibraries.plugin.andro
 android-application = { id = "com.android.application", version.ref = "agp" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "comGoogleDevtoolsKsp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 # Used for kotlin() plugin directive in build.gradle.kts, although it may appear as unused
 plugin-serialization = { id = "plugin.serialization", version.ref = "serialization" }
