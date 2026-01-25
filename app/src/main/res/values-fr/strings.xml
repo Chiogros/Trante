@@ -35,4 +35,5 @@
     <string name="license_description">Copie de la licence qui protège cette application</string>
     <string name="third_party_licenses_description">Licences des bibliothèques tierces utilisées dans cette application</string>
     <string name="repository_description">Code source, documentation et bogues</string>
+    <string name="app_description">Accédez facilement à vos fichiers hébergés sur un stockage distant en SFTP.</string>
 </resources>
