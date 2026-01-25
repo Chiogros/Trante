@@ -10,8 +10,8 @@ android {
         applicationId = android.namespace
         minSdk = 26
         targetSdk = android.compileSdk
-        versionCode = 3
-        versionName = "1.1.1"
+        versionCode = 4
+        versionName = "1.2.0"
 
         // Values to be used from manifest file
         manifestPlaceholders["app_name"] = appName
