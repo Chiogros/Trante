@@ -12,7 +12,7 @@ navigationCompose = "2.9.6"
 room = "2.8.4"
 roomCompiler = "2.8.4"
 roomRuntime = "2.8.4"
-serialization = "2.1.21"
+serialization = "2.3.0"
 slf4jApi = "2.0.17"
 slf4jNop = "2.0.17"
 sshd-sftp = "2.16.0"
@@ -39,5 +39,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "comGoogleDevtoolsKsp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-# Used for kotlin() plugin directive in build.gradle.kts, although it may appear as unused
-plugin-serialization = { id = "plugin.serialization", version.ref = "serialization" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }

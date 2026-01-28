@@ -13,10 +13,10 @@
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:gwpAsanMode="always"
-        android:icon="@mipmap/ic_launcher${logo}"
-        android:label="${app_name}"
+        android:icon="${appLogo}"
+        android:label="${appName}"
         android:memtagMode="async"
-        android:roundIcon="@mipmap/ic_launcher${logo}_round"
+        android:roundIcon="${appLogo}"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.SplashScreen"
         tools:targetApi="36">
@@ -32,16 +32,15 @@
         TODO
         [grantUriPermissions]
         If you enable this feature, either by setting this attribute to "true" or by defining
-        <grant-uri-permission> subelements, call Context.revokeUriPermission() when
+        <grant-uri-permission> sub-elements, call Context.revokeUriPermission() when
         a covered URI is deleted from the provider.
         -->
         <provider
-            android:authorities="${package_name}${provider_name}"
+            android:authorities="${providerName}"
             android:exported="true"
             android:grantUriPermissions="true"
-            android:icon="@mipmap/ic_launcher${logo}"
-            android:label="${app_name}"
-            android:name="${provider_name}"
+            android:icon="${appLogo}"
+            android:name="chiogros.trante.ui.saf.CustomDocumentsProvider"
             android:permission="android.permission.MANAGE_DOCUMENTS">
             <intent-filter>
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />

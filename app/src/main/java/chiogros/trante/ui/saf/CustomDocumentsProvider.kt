@@ -40,7 +40,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var viewModel: CustomDocumentProviderViewModel
     private val dispatcher = Dispatchers.IO
 
-    fun init(context: Context): Boolean {
+    fun init(context: Context) {
         // Sftp
         val connectionSftpDao = AppDatabase.getDatabase(context).connectionSftpDao()
         val sftpRoomDataSource = SftpRoomDataSource(connectionSftpDao)
@@ -85,8 +85,6 @@ class CustomDocumentsProvider : DocumentsProvider() {
             listFilesInDirectoryUseCase,
             readFileUseCase
         )
-
-        return true
     }
 
     /**
@@ -132,7 +130,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
 
     override fun queryChildDocuments(
         parentDocumentId: String?, projection: Array<out String?>?, sortOrder: String?
-    ): Cursor? {
+    ): Cursor {
         val column: Array<out String?> = projection ?: getDefaultDocumentProjection()
         val cursor = MatrixCursor(column)
 
@@ -145,8 +143,8 @@ class CustomDocumentsProvider : DocumentsProvider() {
 
     override fun queryDocument(
         documentId: String?, projection: Array<out String?>?
-    ): Cursor? {
-        val column: Array<out String?>? = projection ?: getDefaultDocumentProjection()
+    ): Cursor {
+        val column: Array<out String?> = projection ?: getDefaultDocumentProjection()
         val cursor = MatrixCursor(column)
 
         if (documentId != null) {
@@ -156,8 +154,8 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return cursor
     }
 
-    override fun queryRoots(projection: Array<out String?>?): Cursor? {
-        val column: Array<out String?>? = projection ?: getDefaultRootProjection()
+    override fun queryRoots(projection: Array<out String?>?): Cursor {
+        val column: Array<out String?> = projection ?: getDefaultRootProjection()
         val cursor = MatrixCursor(column)
 
         viewModel.queryRoots(cursor)
@@ -166,12 +164,9 @@ class CustomDocumentsProvider : DocumentsProvider() {
     }
 
     override fun onCreate(): Boolean {
-        val context = this.context
-        if (context == null) {
-            return false
-        }
-
-        return init(context)
+        val context = this.context ?: return false
+        init(context)
+        return true
     }
 
     fun getDefaultDocumentProjection(): Array<out String?> {
@@ -183,10 +178,10 @@ class CustomDocumentsProvider : DocumentsProvider() {
             DocumentsContract.Document.COLUMN_SIZE,
             DocumentsContract.Document.COLUMN_LAST_MODIFIED,
         )
-        return Array(columnNames.size, { index -> columnNames[index] })
+        return Array(columnNames.size) { index -> columnNames[index] }
     }
 
-    fun getDefaultRootProjection(): Array<out String?>? {
+    fun getDefaultRootProjection(): Array<out String?> {
         val columnNames = listOf(
             DocumentsContract.Root.COLUMN_TITLE,
             DocumentsContract.Root.COLUMN_ROOT_ID,
@@ -194,6 +189,6 @@ class CustomDocumentsProvider : DocumentsProvider() {
             DocumentsContract.Root.COLUMN_DOCUMENT_ID,
             DocumentsContract.Root.COLUMN_ICON
         )
-        return Array(columnNames.size, { index -> columnNames[index] })
+        return Array(columnNames.size) { index -> columnNames[index] }
     }
 }

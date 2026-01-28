@@ -1,14 +1,10 @@
 # Trante
 
-> Tran...sfer from remo...te
+_Browse remote storages from Android through SFTP._
 
-_An Android app to easily access your files hosted on a remote storage through SFTP (for now...)._
-
-<div style="display: flex; justify-content: space-between;">
-  <img src="docs/app.png" alt="List of connections in the app. The first is disabled, while the second is enabled." width="200"/>
-  <img src="docs/saf.png" alt="Quick accesses in File manager app, where an entry for the remote storage can be found." width="200"/>
-  <img src="docs/files-list.png" alt="List of files hosted on the remote storage." width="200"/>
-</div>
+|                                             Home screen                                              |                                         Access from file manager                                         |                       Seamless files browsing                       |
+|:----------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------:|
+| ![List of connections in the app. The first is disabled, while the second is enabled.](docs/app.png) | ![Quick accesses in File manager app, where an entry for the remote storage can be found.](docs/saf.png) | ![List of files hosted on the remote storage.](docs/files-list.png) |
 
 ## Installation
 

@@ -97,7 +97,7 @@ fun AboutContent(
     val changelogUrl =
         stringResource(R.string.repository_url) + "/releases/tag/" + BuildConfig.VERSION_NAME
 
-    val logo = ResourcesCompat.getDrawable(LocalResources.current, R.mipmap.ic_launcher_round, null)
+    val logo = ResourcesCompat.getDrawable(LocalResources.current, R.mipmap.ic_launcher, null)
     val bitmap: Bitmap
 
     Spacer(Modifier.height(64.dp))

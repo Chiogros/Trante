@@ -33,8 +33,7 @@ class SftpNetworkRepository(
             local.set(con, handler)
 
             return true
-        } catch (e: Throwable) {
-            e
+        } catch (_: Throwable) {
             return false
         }
     }
@@ -67,7 +66,7 @@ class SftpNetworkRepository(
         }
         val handler: SftpNetwork = local.get(con)
 
-        return handler.listFiles(path).map { it ->
+        return handler.listFiles(path).map {
             val f = File(Path(it.filename))
             f.type = mapProviderTypeToGeneric(it.attributes.type)
             f.size = it.attributes.size

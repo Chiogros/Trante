@@ -98,7 +98,6 @@ class MainActivity : ComponentActivity() {
             protocolFactoryManager = protocolFactoryManager,
             deleteConnectionUseCase = deleteConnectionUseCase,
             addConnectionUseCase = addConnectionUseCase,
-            getConnectionUseCase = getConnectionUseCase,
             updateConnectionUseCase = updateConnectionUseCase,
             getProtocolFromIdUseCase = getProtocolFromIdUseCase
         )

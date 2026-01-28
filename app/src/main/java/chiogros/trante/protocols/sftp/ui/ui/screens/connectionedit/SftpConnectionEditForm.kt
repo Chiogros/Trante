@@ -68,10 +68,17 @@ fun SftpConnectionEditForm(viewModel: SftpConnectionEditViewModel) {
         placeholder = { Text(uiState.password) },
         trailingIcon = {
             IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
-                Icon(
-                    imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                    contentDescription = stringResource(R.string.show_password)
-                )
+                if (showPassword) {
+                    Icon(
+                        imageVector = Icons.Default.Visibility,
+                        contentDescription = stringResource(R.string.hide_password)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.VisibilityOff,
+                        contentDescription = stringResource(R.string.show_password)
+                    )
+                }
             }
         },
         keyboardOptions = KeyboardOptions(

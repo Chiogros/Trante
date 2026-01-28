@@ -55,17 +55,14 @@ class SftpNetwork {
                 session.addPasswordIdentity(pwd)
 
                 val authVerif = session.auth()
+                authVerif.verify()
 
-                // TODO: verify() doesn't work, timeout skips time
-                // and reaches time limit
-                while (!authVerif.isDone) {
-                }
-
-                if (authVerif.isSuccess) SftpNetwork(
-                    coroutineDispatcher,
-                    ConcurrentSftpClient(session)
-                )
-                else throw authVerif.exception
+                if (authVerif.isSuccess) {
+                    SftpNetwork(
+                        coroutineDispatcher,
+                        ConcurrentSftpClient(session)
+                    )
+                } else throw authVerif.exception
             }
         }
     }

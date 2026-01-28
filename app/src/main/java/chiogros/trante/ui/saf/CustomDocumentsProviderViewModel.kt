@@ -144,10 +144,6 @@ class CustomDocumentProviderViewModel(
         return files.filter { it.path.fileName.toString().matches(hideDirectoriesRegex).not() }
     }
 
-    fun getConnectionFriendlyName(user: String, host: String): String {
-        return "$user@$host"
-    }
-
     fun getConnectionIdFromDocumentId(documentId: String): String {
         return documentId.substringBefore(pathDelimiter)
     }

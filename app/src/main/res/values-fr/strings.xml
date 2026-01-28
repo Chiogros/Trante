@@ -14,13 +14,10 @@
     <string name="changes_not_saved">Modifications non sauvegardées</string>
     <string name="you_may_lost_your_changes">Vous risquez de perdre vos changements.</string>
     <string name="no_connection">Aucune connexion</string>
-    <string name="app_info">Informations sur l\'application</string>
     <string name="connection_deleted">Connexion supprimée</string>
     <string name="undo">Annuler</string>
     <string name="connection_failed">Connexion échouée</string>
     <string name="connection_succeed">Connexion réussie</string>
-    <string name="connection_type_not_supported">Le type de connexion n\'est pas supporté</string>
-    <string name="no_context">Pas de contexte</string>
     <string name="password">Mot de passe</string>
     <string name="show_password">Montrer le mot de passe</string>
     <string name="hide_password">Cacher le mot de passe</string>

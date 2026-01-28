@@ -164,7 +164,7 @@ fun ConnectionEditBody(
     ConnectionEditTypePicker(viewModel)
 
     // Show inputs form
-    (protocolFactoryManager.getFactory(uiState.protocol).screensConnectionEditForm)()
+    protocolFactoryManager.getFactory(uiState.protocol).screensConnectionEditForm()
 }
 
 @Composable

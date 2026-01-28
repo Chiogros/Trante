@@ -7,7 +7,7 @@ import chiogros.trante.BuildConfig
 class NotifyContentResolverUseCase(private val context: Context) {
     operator fun invoke() {
         // Notify ContentProvider about changes in enabled connections
-        val uri = buildRootsUri(BuildConfig.PACKAGE_NAME + BuildConfig.PROVIDER_NAME)
+        val uri = buildRootsUri(BuildConfig.PROVIDER_NAME)
         context.contentResolver.notifyChange(uri, null)
     }
 }

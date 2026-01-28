@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import chiogros.trante.data.room.ConnectionState
 import chiogros.trante.domain.AddConnectionUseCase
 import chiogros.trante.domain.DeleteConnectionUseCase
-import chiogros.trante.domain.GetConnectionUseCase
 import chiogros.trante.domain.GetProtocolFromIdUseCase
 import chiogros.trante.domain.UpdateConnectionUseCase
 import chiogros.trante.protocols.Protocol
@@ -24,7 +23,6 @@ class ConnectionEditViewModel(
     private val protocolFactoryManager: ProtocolFactoryManager,
     private val deleteConnectionUseCase: DeleteConnectionUseCase,
     private val addConnectionUseCase: AddConnectionUseCase,
-    private val getConnectionUseCase: GetConnectionUseCase,
     private val updateConnectionUseCase: UpdateConnectionUseCase,
     private val getProtocolFromIdUseCase: GetProtocolFromIdUseCase
 ) : ViewModel() {
