@@ -186,7 +186,8 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
         protocols.forEachIndexed { index, protocol ->
             SegmentedButton(
                 selected = (uiState.protocol == protocol),
-                onClick = { viewModel.setProtocol(protocol) },
+                onClick = { if (!uiState.isEditing) viewModel.setProtocol(protocol) },
+                enabled = !uiState.isEditing or (uiState.isEditing and (uiState.protocol == protocol)),
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index, count = protocols.size
                 ),
