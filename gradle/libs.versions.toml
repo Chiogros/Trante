@@ -1,6 +1,7 @@
 [versions]
 aboutLibraries = "14.0.0-b02"
 agp = "9.0.0"
+camelFtp = "4.17.0"
 comGoogleDevtoolsKsp = "2.3.2"
 composeBom = "2026.01.00"
 coreSplashscreen = "1.2.0"
@@ -28,6 +29,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+camel-ftp = { group = "org.apache.camel", name = "camel-ftp", version.ref = "camelFtp" }
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4jApi" }
 slf4j-nop = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4jNop" }
 sshd-sftp = { group = "org.apache.sshd", name = "sshd-sftp", version.ref = "sshd-sftp" }

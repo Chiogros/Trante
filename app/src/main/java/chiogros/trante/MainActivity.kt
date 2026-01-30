@@ -18,6 +18,17 @@ import chiogros.trante.domain.NotifyContentResolverUseCase
 import chiogros.trante.domain.UpdateConnectionUseCase
 import chiogros.trante.protocols.ProtocolFactoryManager
 import chiogros.trante.protocols.common.CommonConnectionEditFormState
+import chiogros.trante.protocols.ftp.FtpFactory
+import chiogros.trante.protocols.ftp.data.network.FtpLocalNetworkDataSource
+import chiogros.trante.protocols.ftp.data.network.FtpNetwork
+import chiogros.trante.protocols.ftp.data.network.FtpNetworkRepository
+import chiogros.trante.protocols.ftp.data.network.FtpRemoteNetworkDataSource
+import chiogros.trante.protocols.ftp.data.room.FtpRoomDataSource
+import chiogros.trante.protocols.ftp.data.room.FtpRoomRepository
+import chiogros.trante.protocols.ftp.domain.FtpFormStateToRoomAdapter
+import chiogros.trante.protocols.ftp.ui.ui.screens.connectionedit.FtpConnectionEditForm
+import chiogros.trante.protocols.ftp.ui.ui.screens.connectionedit.FtpConnectionEditFormState
+import chiogros.trante.protocols.ftp.ui.ui.screens.connectionedit.FtpConnectionEditViewModel
 import chiogros.trante.protocols.sftp.SftpFactory
 import chiogros.trante.protocols.sftp.data.network.SftpLocalNetworkDataSource
 import chiogros.trante.protocols.sftp.data.network.SftpNetwork
@@ -44,6 +55,35 @@ class MainActivity : ComponentActivity() {
         val context = this.applicationContext
 
         /**
+         * FTP
+         */
+        // Room
+        val ftpConnectionDao = AppDatabase.getDatabase(context).connectionFtpDao()
+        val ftpRoomDataSource = FtpRoomDataSource(ftpConnectionDao)
+        val ftpRoomRepository = FtpRoomRepository(ftpRoomDataSource)
+        // Remote
+        val ftpNetwork = FtpNetwork.new(dispatcher)
+        val ftpRemoteRoomDataSource = FtpRemoteNetworkDataSource(ftpNetwork)
+        val ftpLocalNetworkDataSource = FtpLocalNetworkDataSource()
+        val ftpNetworkRepository =
+            FtpNetworkRepository(ftpRemoteRoomDataSource, ftpLocalNetworkDataSource)
+        // View model
+        val ftpScreenConnectionEditFormState = MutableStateFlow(FtpConnectionEditFormState())
+        val ftpScreenConnectionEditViewModel =
+            FtpConnectionEditViewModel(ftpScreenConnectionEditFormState)
+        val ftpScreenConnectionEditForm: @Composable () -> Unit =
+            { FtpConnectionEditForm(ftpScreenConnectionEditViewModel) }
+        val ftpFormStateAdapter = FtpFormStateToRoomAdapter()
+        // Protocols factories
+        val ftpFactory = FtpFactory(
+            networkRepository = ftpNetworkRepository,
+            roomRepository = ftpRoomRepository,
+            screensConnectionEditForm = ftpScreenConnectionEditForm,
+            screensConnectionEditFormState = ftpScreenConnectionEditFormState as MutableStateFlow<CommonConnectionEditFormState>,
+            formStateRoomAdapter = ftpFormStateAdapter
+        )
+
+        /**
          * SFTP
          */
         // Room
@@ -57,22 +97,22 @@ class MainActivity : ComponentActivity() {
         val sftpNetworkRepository =
             SftpNetworkRepository(sftpRemoteRoomDataSource, sftpLocalNetworkDataSource)
         // View model
-        val screenSftpConnectionEditFormState = MutableStateFlow(SftpConnectionEditFormState())
-        val screenConnectionEditViewModel =
-            SftpConnectionEditViewModel(screenSftpConnectionEditFormState)
-        val screenConnectionEditForm: @Composable () -> Unit =
-            { SftpConnectionEditForm(screenConnectionEditViewModel) }
+        val sftpScreenConnectionEditFormState = MutableStateFlow(SftpConnectionEditFormState())
+        val sftpScreenConnectionEditViewModel =
+            SftpConnectionEditViewModel(sftpScreenConnectionEditFormState)
+        val sftpScreenConnectionEditForm: @Composable () -> Unit =
+            { SftpConnectionEditForm(sftpScreenConnectionEditViewModel) }
         val formStateAdapter = SftpFormStateToRoomAdapter()
-
         // Protocols factories
         val sftpFactory = SftpFactory(
             networkRepository = sftpNetworkRepository,
             roomRepository = sftpRoomRepository,
-            screensConnectionEditForm = screenConnectionEditForm,
-            screensConnectionEditFormState = screenSftpConnectionEditFormState as MutableStateFlow<CommonConnectionEditFormState>,
+            screensConnectionEditForm = sftpScreenConnectionEditForm,
+            screensConnectionEditFormState = sftpScreenConnectionEditFormState as MutableStateFlow<CommonConnectionEditFormState>,
             formStateRoomAdapter = formStateAdapter
         )
-        val protocolFactoryManager = ProtocolFactoryManager(sftpFactory)
+
+        val protocolFactoryManager = ProtocolFactoryManager(sftpFactory, ftpFactory)
 
         // Use cases
         val notifyContentResolverUseCase = NotifyContentResolverUseCase(context)

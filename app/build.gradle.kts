@@ -60,6 +60,14 @@ android {
     packaging {
         resources {
             pickFirsts += "META-INF/DEPENDENCIES"
+            pickFirsts += "META-INF/LICENSE.md"
+            pickFirsts += "META-INF/NOTICE.md"
+            pickFirsts += "META-INF/jandex.idx"
+            pickFirsts += "pom.xml"
+            pickFirsts += "component.properties"
+            pickFirsts += "bean.properties"
+            pickFirsts += "other.properties"
+            pickFirsts += "dev-consoles.properties"
         }
     }
 
@@ -80,11 +88,13 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
-    implementation(libs.sshd.sftp)
 
+    implementation(libs.sshd.sftp)
     // To avoid logging error
     runtimeOnly(libs.slf4j.api)
     runtimeOnly(libs.slf4j.nop)
+
+    implementation(libs.camel.ftp)
 }
 
 // Plugins are used to parse Gradle configuration.
