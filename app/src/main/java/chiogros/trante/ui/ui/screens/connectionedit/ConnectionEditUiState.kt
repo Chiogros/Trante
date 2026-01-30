@@ -1,13 +1,13 @@
 package chiogros.trante.ui.ui.screens.connectionedit
 
-import chiogros.trante.data.room.Connection
 import chiogros.trante.protocols.Protocol
+import chiogros.trante.protocols.common.CommonConnectionEditFormState
 
 /**
  * Screen level UI state
  */
 data class ConnectionEditUiState(
-    var deletedConnection: Connection,
+    var deletedConnection: CommonConnectionEditFormState,
     val isEditing: Boolean = false,
     val isDialogShown: Boolean = false,
 

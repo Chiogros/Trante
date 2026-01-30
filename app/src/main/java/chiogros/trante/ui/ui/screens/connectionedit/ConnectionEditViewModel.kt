@@ -32,14 +32,15 @@ class ConnectionEditViewModel(
     private val _uiState =
         MutableStateFlow(
             ConnectionEditUiState(
-                deletedConnection = factory.formStateRoomAdapter.convert(
-                    factory.screensConnectionEditFormState.value
-                ),
+                deletedConnection = factory.screensConnectionEditFormState.value,
                 protocol = defaultProtocol,
                 unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode()
             )
         )
 
+    // Allows to track multiple StateFlow from a single "uiState" variable.
+    // Actually, data displayed on screen results from those stored in "_uiState" and in each
+    // protocol form, so we need to track data updates coming from these two sources.
     val uiState: StateFlow<ConnectionEditUiState> = combine(
         _uiState,
         factory.screensConnectionEditFormState
@@ -49,9 +50,7 @@ class ConnectionEditViewModel(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = ConnectionEditUiState(
-            deletedConnection = factory.formStateRoomAdapter.convert(
-                factory.screensConnectionEditFormState.value
-            ),
+            deletedConnection = factory.screensConnectionEditFormState.value,
             protocol = defaultProtocol,
             unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode()
         )
@@ -60,12 +59,9 @@ class ConnectionEditViewModel(
     // Backup the deleted connection, useful in case of restore()
     fun backup() {
         viewModelScope.launch {
-            val room = factory.roomRepository
-
             _uiState.update {
                 it.copy(
-                    deletedConnection = room.get(factory.screensConnectionEditFormState.value.id)
-                        .first()
+                    deletedConnection = factory.screensConnectionEditFormState.value
                 )
             }
         }
@@ -120,9 +116,7 @@ class ConnectionEditViewModel(
 
             _uiState.emit(
                 ConnectionEditUiState(
-                    deletedConnection = factory.formStateRoomAdapter.convert(
-                        factory.screensConnectionEditFormState.value
-                    ),
+                    deletedConnection = factory.screensConnectionEditFormState.value,
                     protocol = defaultProtocol,
                     unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode(),
                 )
@@ -132,10 +126,10 @@ class ConnectionEditViewModel(
 
     // Restore the last deleted connection
     fun restore() {
-        val formState2 = factory.formStateRoomAdapter.convert(uiState.value.deletedConnection)
+        val formState = uiState.value.deletedConnection
 
         viewModelScope.launch {
-            factory.screensConnectionEditFormState.emit(formState2)
+            factory.screensConnectionEditFormState.emit(formState)
         }
 
         insert()
