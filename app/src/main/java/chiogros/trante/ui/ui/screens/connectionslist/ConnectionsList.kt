@@ -3,6 +3,7 @@ package chiogros.trante.ui.ui.screens.connectionslist
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -135,11 +137,18 @@ fun Item(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = protocol.name,
-            modifier = Modifier.weight(1F),
-            fontWeight = FontWeight.Normal
-        )
+        OutlinedButton(
+            onClick = {},
+            modifier = Modifier.weight(1F)
+        ) {
+            Text(
+                text = protocol.name,
+                modifier = Modifier,
+                fontWeight = FontWeight.Normal,
+            )
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
 
         if (!con.name.isEmpty()) {
             // Only print connection name if defined
@@ -183,6 +192,7 @@ fun Item(
                         else -> {}
                     }
                 }
-            })
+            }
+        )
     }
 }
