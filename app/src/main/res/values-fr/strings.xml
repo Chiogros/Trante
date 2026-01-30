@@ -33,4 +33,7 @@
     <string name="third_party_licenses_description">Licences des bibliothèques tierces utilisées dans cette application</string>
     <string name="repository_description">Code source, documentation et bogues</string>
     <string name="app_description">Accédez facilement à vos fichiers hébergés sur un stockage distant en SFTP.</string>
+    <string name="build_variant">Variante de compilation</string>
+    <string name="debug_build">Développement</string>
+    <string name="release_build">Stable</string>
 </resources>
