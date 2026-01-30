@@ -41,7 +41,7 @@ fun SftpConnectionEditForm(viewModel: SftpConnectionEditViewModel) {
         value = uiState.host,
         onValueChange = { viewModel.setHost(it) },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(stringResource(R.string.host)) },
+        label = { Text(stringResource(R.string.host) + stringResource(R.string.required_char)) },
         placeholder = { Text(stringResource(R.string.example_dot_net)) },
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.None, autoCorrectEnabled = false
@@ -53,18 +53,18 @@ fun SftpConnectionEditForm(viewModel: SftpConnectionEditViewModel) {
         value = uiState.user,
         onValueChange = { viewModel.setUser(it) },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(stringResource(R.string.user)) },
+        label = { Text(stringResource(R.string.user) + stringResource(R.string.required_char)) },
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.None, autoCorrectEnabled = false
         ),
-        singleLine = true
+        singleLine = true,
     )
 
     OutlinedTextField(
         value = uiState.password,
         onValueChange = { viewModel.setPassword(it) },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(stringResource(R.string.password)) },
+        label = { Text(stringResource(R.string.password) + stringResource(R.string.required_char)) },
         placeholder = { Text(uiState.password) },
         trailingIcon = {
             IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
@@ -87,6 +87,6 @@ fun SftpConnectionEditForm(viewModel: SftpConnectionEditViewModel) {
             keyboardType = KeyboardType.Password
         ),
         visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-        singleLine = true
+        singleLine = true,
     )
 }

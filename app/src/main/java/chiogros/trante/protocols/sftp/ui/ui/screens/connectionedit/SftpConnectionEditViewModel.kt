@@ -43,4 +43,10 @@ class SftpConnectionEditViewModel(private val _uiState: MutableStateFlow<SftpCon
             showPassword.emit(!showPassword.value)
         }
     }
+
+    override fun verify(): Boolean {
+        return (uiState.value.host.isNotEmpty()
+                && uiState.value.user.isNotEmpty()
+                && uiState.value.password.isNotEmpty())
+    }
 }

@@ -33,7 +33,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import chiogros.trante.R
 import chiogros.trante.protocols.Protocol
 import chiogros.trante.protocols.ProtocolFactoryManager
@@ -165,6 +167,14 @@ fun ConnectionEditBody(
 
     // Show inputs form
     protocolFactoryManager.getFactory(uiState.protocol).screensConnectionEditForm()
+
+    Text(
+        text = stringResource(R.string.required_char) + stringResource(R.string.required),
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.outline
+    )
 }
 
 @Composable

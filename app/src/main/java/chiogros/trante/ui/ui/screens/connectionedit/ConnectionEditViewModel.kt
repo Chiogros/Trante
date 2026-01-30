@@ -131,7 +131,7 @@ class ConnectionEditViewModel(
         viewModelScope.launch {
             val protocol = getProtocolFromIdUseCase(formState.id)
             setProtocol(protocol)
-            
+
             factory.screensConnectionEditFormState.emit(formState)
         }
 

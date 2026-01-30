@@ -38,4 +38,6 @@
     <string name="build_variant">Build variant</string>
     <string name="debug_build">Debug</string>
     <string name="release_build">Release</string>
+    <string name="required">required</string>
+    <string name="required_char" translatable="false">*</string>
 </resources>

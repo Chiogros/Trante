@@ -36,4 +36,5 @@
     <string name="build_variant">Variante de compilation</string>
     <string name="debug_build">Développement</string>
     <string name="release_build">Stable</string>
+    <string name="required">obligatoire</string>
 </resources>
