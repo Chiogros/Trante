@@ -62,6 +62,11 @@ android {
             pickFirsts += "META-INF/DEPENDENCIES"
         }
     }
+
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        generateLocaleConfig = true
+    }
 }
 
 dependencies {
