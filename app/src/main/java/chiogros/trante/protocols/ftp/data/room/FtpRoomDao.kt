@@ -19,9 +19,9 @@ interface FtpRoomDao {
     @Update
     suspend fun update(con: FtpRoom)
 
-    @Query("SELECT * FROM SftpRoom WHERE id = :id")
+    @Query("SELECT * FROM FtpRoom WHERE id = :id")
     fun get(id: String): Flow<FtpRoom>
 
-    @Query("SELECT * FROM SftpRoom")
+    @Query("SELECT * FROM FtpRoom")
     fun getAll(): Flow<List<FtpRoom>>
 }

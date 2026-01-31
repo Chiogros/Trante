@@ -6,7 +6,7 @@ import chiogros.trante.data.room.RoomRepository
 import chiogros.trante.domain.adapters.FormStateToRoomAdapter
 import chiogros.trante.protocols.ProtocolFactory
 import chiogros.trante.protocols.common.CommonConnectionEditFormState
-import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectionEditFormState
+import chiogros.trante.protocols.ftp.ui.ui.screens.connectionedit.FtpConnectionEditFormState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class FtpFactory(
@@ -17,6 +17,6 @@ class FtpFactory(
     override val formStateRoomAdapter: FormStateToRoomAdapter
 ) : ProtocolFactory {
     override suspend fun resetScreensConnectionEditFormState() {
-        screensConnectionEditFormState.emit(SftpConnectionEditFormState())
+        screensConnectionEditFormState.emit(FtpConnectionEditFormState())
     }
 }
