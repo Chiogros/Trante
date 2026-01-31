@@ -10,6 +10,7 @@ import chiogros.trante.domain.UpdateConnectionUseCase
 import chiogros.trante.protocols.Protocol
 import chiogros.trante.protocols.ProtocolFactory
 import chiogros.trante.protocols.ProtocolFactoryManager
+import chiogros.trante.protocols.common.CommonConnectionEditFormState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,32 +29,24 @@ class ConnectionEditViewModel(
 ) : ViewModel() {
     val defaultProtocol = Protocol.SFTP
     var factory: ProtocolFactory = protocolFactoryManager.getFactory(defaultProtocol)
+    val formStateFlow: MutableStateFlow<MutableStateFlow<CommonConnectionEditFormState>> =
+        MutableStateFlow(factory.screensConnectionEditFormState)
 
     private val _uiState =
-        MutableStateFlow(
-            ConnectionEditUiState(
-                deletedConnection = factory.screensConnectionEditFormState.value,
-                protocol = defaultProtocol,
-                unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode()
-            )
-        )
+        MutableStateFlow(getNewUiState())
 
     // Allows to track multiple StateFlow from a single "uiState" variable.
     // Actually, data displayed on screen results from those stored in "_uiState" and in each
     // protocol form, so we need to track data updates coming from these two sources.
     val uiState: StateFlow<ConnectionEditUiState> = combine(
         _uiState,
-        factory.screensConnectionEditFormState
+        formStateFlow
     ) { uiState, formState ->
         uiState.copy(isModified = uiState.unmodifiedFormHash != formState.hashCode())
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ConnectionEditUiState(
-            deletedConnection = factory.screensConnectionEditFormState.value,
-            protocol = defaultProtocol,
-            unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode()
-        )
+        initialValue = getNewUiState()
     )
 
     // Backup the deleted connection, useful in case of restore()
@@ -79,6 +72,14 @@ class ConnectionEditViewModel(
         }
     }
 
+    private fun getNewUiState(): ConnectionEditUiState {
+        return ConnectionEditUiState(
+            deletedConnection = factory.screensConnectionEditFormState.value,
+            protocol = defaultProtocol,
+            unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode()
+        )
+    }
+
     fun insert() {
         val con = factory.formStateRoomAdapter.convert(factory.screensConnectionEditFormState.value)
 
@@ -101,7 +102,7 @@ class ConnectionEditViewModel(
             _uiState.update {
                 it.copy(
                     isEditing = true,
-                    unmodifiedFormHash = form.hashCode()
+                    unmodifiedFormHash = form.hashCode(),
                 )
             }
         }
@@ -114,13 +115,7 @@ class ConnectionEditViewModel(
         viewModelScope.launch {
             factory.resetScreensConnectionEditFormState()
 
-            _uiState.emit(
-                ConnectionEditUiState(
-                    deletedConnection = factory.screensConnectionEditFormState.value,
-                    protocol = defaultProtocol,
-                    unmodifiedFormHash = factory.screensConnectionEditFormState.value.hashCode(),
-                )
-            )
+            _uiState.emit(getNewUiState())
         }
     }
 
@@ -145,6 +140,10 @@ class ConnectionEditViewModel(
             it.copy(
                 protocol = type
             )
+        }
+
+        viewModelScope.launch {
+            formStateFlow.emit(factory.screensConnectionEditFormState)
         }
     }
 

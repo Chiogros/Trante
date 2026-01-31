@@ -56,7 +56,6 @@ fun ConnectionsList(
     snackbarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val connections by uiState.connections.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -64,7 +63,7 @@ fun ConnectionsList(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = { Fab(onFabClick) },
     ) { innerPadding ->
-        if (connections.isEmpty()) {
+        if (uiState.connections.isEmpty()) {
             // Print a message if there is nothing to list
             Text(
                 text = stringResource(R.string.no_connection) + "...",
@@ -76,8 +75,10 @@ fun ConnectionsList(
             )
         } else {
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                items(items = connections, contentType = { it }) { con ->
-                    Item(con.second, viewModel, onItemClick, con.first)
+                uiState.connections.forEach { (protocol, connections) ->
+                    items(items = connections, contentType = { it }) { con ->
+                        Item(con, viewModel, onItemClick, protocol)
+                    }
                 }
             }
         }
