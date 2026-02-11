@@ -8,8 +8,7 @@ import chiogros.trante.protocols.sftp.data.room.SftpRoom
 
 enum class Protocol {
     FTP,
-    SFTP,
-    UNKNOWN
+    SFTP
 }
 
 class ProtocolFactoryManager(
@@ -20,7 +19,6 @@ class ProtocolFactoryManager(
         return when (protocol) {
             Protocol.SFTP -> sftpFactory
             Protocol.FTP  -> ftpFactory
-            else          -> error("Unsupported connection type!")
         }
     }
 
@@ -29,7 +27,7 @@ class ProtocolFactoryManager(
             when (con) {
                 is SftpRoom -> Protocol.SFTP
                 is FtpRoom  -> Protocol.FTP
-                else        -> Protocol.UNKNOWN
+                else        -> throw TypeNotPresentException(con.toString(), null)
             }
         )
     }

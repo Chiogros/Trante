@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.first
 
 class GetProtocolFromIdUseCase(private val protocolFactoryManager: ProtocolFactoryManager) {
     suspend operator fun invoke(id: String): Protocol {
-        Protocol.entries.filter { protocol -> protocol != Protocol.UNKNOWN }.forEach { protocol ->
+        Protocol.entries.forEach { protocol ->
             val factory = protocolFactoryManager.getFactory(protocol)
             val room = factory.roomRepository
 
@@ -17,6 +17,6 @@ class GetProtocolFromIdUseCase(private val protocolFactoryManager: ProtocolFacto
             }
         }
 
-        return Protocol.UNKNOWN
+        throw NoSuchElementException(id)
     }
 }

@@ -12,7 +12,7 @@ class GetConnectionsUseCase(private val protocolFactoryManager: ProtocolFactoryM
     operator fun invoke(): Flow<Pair<Protocol, List<Connection>>> {
         var allConnections = emptyFlow<Pair<Protocol, List<Connection>>>()
 
-        Protocol.entries.filter { protocol -> protocol != Protocol.UNKNOWN }.forEach { protocol ->
+        Protocol.entries.forEach { protocol ->
             val factory = protocolFactoryManager.getFactory(protocol)
             val room = factory.roomRepository
 
