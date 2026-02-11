@@ -31,34 +31,30 @@ class FtpNetwork {
             return this
         }
 
-        suspend fun connect(host: String, port: Int, user: String, pwd: String): FtpNetwork {
-            val ftp = FTPClient()
+        suspend fun connect(host: String, port: Int, user: String, pwd: String): FtpNetwork =
+            withContext(coroutineDispatcher) {
+                val ftp = FTPClient()
 
-            ftp.connect(host, port)
-            ftp.login(user, pwd)
+                ftp.connect(host, port)
+                ftp.login(user, pwd)
 
-            if (ftp.isConnected()) {
-                return FtpNetwork(coroutineDispatcher, ftp)
-            } else {
-                throw Exception("Wrong login")
+                if (ftp.isConnected()) {
+                    FtpNetwork(coroutineDispatcher, ftp)
+                } else {
+                    throw Exception("Wrong login")
+                }
             }
-        }
     }
 
-    suspend fun createFile(path: String): Boolean {
-        var ret: Boolean
-
+    suspend fun createFile(path: String): Boolean =
         withContext(coroutineDispatcher) {
             try {
                 ftpClient.storeFileStream(path)
-                ret = true
+                true
             } catch (_: FTPConnectionClosedException) {
-                ret = false
+                false
             }
         }
-
-        return ret
-    }
 
     suspend fun getFileStat(path: String): FTPFile =
         withContext(coroutineDispatcher) {
@@ -67,16 +63,11 @@ class FtpNetwork {
 
     suspend fun listFiles(path: String): Iterable<FTPFile> =
         withContext(coroutineDispatcher) {
-            ftpClient.listDirectories(path).toList()
+            ftpClient.listFiles(path).toList()
         }
 
-    suspend fun readFile(path: String): InputStream {
-        var content: InputStream
-
+    suspend fun readFile(path: String): InputStream =
         withContext(coroutineDispatcher) {
-            content = ftpClient.retrieveFileStream(path)
+            ftpClient.retrieveFileStream(path)
         }
-
-        return content
-    }
 }
