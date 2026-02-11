@@ -11,7 +11,6 @@ import chiogros.trante.domain.AddConnectionUseCase
 import chiogros.trante.domain.DeleteConnectionUseCase
 import chiogros.trante.domain.DisableConnectionUseCase
 import chiogros.trante.domain.EnableConnectionUseCase
-import chiogros.trante.domain.GetConnectionUseCase
 import chiogros.trante.domain.GetConnectionsUseCase
 import chiogros.trante.domain.GetProtocolFromIdUseCase
 import chiogros.trante.domain.NotifyContentResolverUseCase
@@ -123,7 +122,6 @@ class MainActivity : ComponentActivity() {
         val getConnectionsUseCase = GetConnectionsUseCase(protocolFactoryManager)
         val deleteConnectionUseCase = DeleteConnectionUseCase(protocolFactoryManager)
         val addConnectionUseCase = AddConnectionUseCase(protocolFactoryManager)
-        val getConnectionUseCase = GetConnectionUseCase(protocolFactoryManager)
         val updateConnectionUseCase = UpdateConnectionUseCase(protocolFactoryManager)
         val getProtocolFromIdUseCase = GetProtocolFromIdUseCase(protocolFactoryManager)
 
@@ -131,8 +129,7 @@ class MainActivity : ComponentActivity() {
         val connectionsListViewModel = ConnectionsListViewModel(
             enableConnectionUseCase,
             disableConnectionUseCase,
-            getConnectionsUseCase,
-            getProtocolFromIdUseCase
+            getConnectionsUseCase
         )
         val connectionEditViewModel = ConnectionEditViewModel(
             protocolFactoryManager = protocolFactoryManager,

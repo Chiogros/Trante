@@ -8,7 +8,6 @@ import chiogros.trante.data.room.Connection
 import chiogros.trante.domain.DisableConnectionUseCase
 import chiogros.trante.domain.EnableConnectionUseCase
 import chiogros.trante.domain.GetConnectionsUseCase
-import chiogros.trante.domain.GetProtocolFromIdUseCase
 import chiogros.trante.protocols.Protocol
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,8 +23,7 @@ data class ConnectionsListUiState(
 class ConnectionsListViewModel(
     private val enableConnectionUseCase: EnableConnectionUseCase,
     private val disableConnectionUseCase: DisableConnectionUseCase,
-    private val getConnectionsUseCase: GetConnectionsUseCase,
-    private val getProtocolFromIdUseCase: GetProtocolFromIdUseCase
+    private val getConnectionsUseCase: GetConnectionsUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ConnectionsListUiState())
 
