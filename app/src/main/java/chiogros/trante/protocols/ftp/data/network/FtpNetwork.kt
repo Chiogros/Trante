@@ -34,6 +34,8 @@ class FtpNetwork {
         suspend fun connect(host: String, port: Int, user: String, pwd: String): FtpNetwork =
             withContext(coroutineDispatcher) {
                 val ftp = FTPClient()
+                // Wait for server to share data port
+                ftp.enterLocalPassiveMode()
 
                 ftp.connect(host, port)
                 ftp.login(user, pwd)
