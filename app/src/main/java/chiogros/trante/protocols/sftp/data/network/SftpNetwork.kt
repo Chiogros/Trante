@@ -67,20 +67,15 @@ class SftpNetwork {
         }
     }
 
-    suspend fun createFile(path: String): Boolean {
-        var ret: Boolean
-
+    suspend fun createFile(path: String): Boolean =
         withContext(coroutineDispatcher) {
             try {
                 sftpClient.write(path, SftpClient.OpenMode.Create)
-                ret = true
+                true
             } catch (_: IOException) {
-                ret = false
+                false
             }
         }
-
-        return ret
-    }
 
     suspend fun getFileStat(path: String): SftpClient.Attributes =
         withContext(coroutineDispatcher) {
@@ -92,18 +87,12 @@ class SftpNetwork {
             sftpClient.readEntries(sftpClient.canonicalPath(path))
         }
 
-    suspend fun readFile(path: String): InputStream {
-        var content: InputStream
-
+    suspend fun readFile(path: String): InputStream =
         withContext(coroutineDispatcher) {
             val canonicalPath: String = sftpClient.canonicalPath(path)
             sftpClient.open(canonicalPath)
-
-            content = sftpClient.read(canonicalPath)
+            sftpClient.read(canonicalPath)
         }
-
-        return content
-    }
 
     class ConcurrentSftpClient internal constructor(clientSession: ClientSession) :
         DefaultSftpClient(clientSession, SftpVersionSelector.CURRENT, EMPTY) {
