@@ -180,16 +180,15 @@ fun ConnectionEditBody(
 @Composable
 fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val protocols = Protocol.entries.filter { protocol -> protocol != Protocol.UNKNOWN }
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-        protocols.forEachIndexed { index, protocol ->
+        Protocol.entries.forEachIndexed { index, protocol ->
             SegmentedButton(
                 selected = (uiState.protocol == protocol),
                 onClick = { if (!uiState.isEditing) viewModel.setProtocol(protocol) },
                 enabled = !uiState.isEditing or (uiState.isEditing and (uiState.protocol == protocol)),
                 shape = SegmentedButtonDefaults.itemShape(
-                    index = index, count = protocols.size
+                    index = index, count = Protocol.entries.size
                 ),
                 label = { Text(protocol.toString()) })
         }
