@@ -4,18 +4,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.sshd.client.SshClient
-import org.apache.sshd.client.session.ClientSession
-import org.apache.sshd.common.util.buffer.Buffer
 import org.apache.sshd.common.util.io.PathUtils.setUserHomeFolderResolver
 import org.apache.sshd.sftp.client.SftpClient
+import org.apache.sshd.sftp.client.SftpErrorDataHandler
 import org.apache.sshd.sftp.client.SftpVersionSelector
 import org.apache.sshd.sftp.client.impl.DefaultSftpClient
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReentrantLock
 import java.util.function.Supplier
 
 
@@ -60,7 +57,10 @@ class SftpNetwork {
                 if (authVerif.isSuccess) {
                     SftpNetwork(
                         coroutineDispatcher,
-                        ConcurrentSftpClient(session)
+                        DefaultSftpClient(
+                            session, SftpVersionSelector.CURRENT,
+                            SftpErrorDataHandler.EMPTY
+                        )
                     )
                 } else throw authVerif.exception
             }
@@ -93,18 +93,4 @@ class SftpNetwork {
             sftpClient.open(canonicalPath)
             sftpClient.read(canonicalPath)
         }
-
-    class ConcurrentSftpClient internal constructor(clientSession: ClientSession) :
-        DefaultSftpClient(clientSession, SftpVersionSelector.CURRENT, EMPTY) {
-        private val sendLock: Lock = ReentrantLock()
-
-        override fun send(cmd: Int, buffer: Buffer?): Int {
-            this.sendLock.lock()
-            try {
-                return super.send(cmd, buffer)
-            } finally {
-                this.sendLock.unlock()
-            }
-        }
-    }
 }
