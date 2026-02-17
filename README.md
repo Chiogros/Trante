@@ -21,13 +21,13 @@ _Browse remote storages from Android through SFTP._
 
 ## Security and Privacy
 
-![Static Badge](https://img.shields.io/badge/%C6%90xodus%20Privacy-Not%20analyzed%20yet-674f71?link=https%3A%2F%2Freports.exodus-privacy.eu.org%2Fen%2Freports%2F)
+![Badge linking to Exodus Privacy analysis report](https://img.shields.io/badge/%C6%90xodus%20Privacy-Not%20analyzed%20yet-674f71?link=https%3A%2F%2Freports.exodus-privacy.eu.org%2Fen%2Freports%2F)
 
 No tracking, no data sharing.
 
 Your sensitive data, such as passwords, are stored encrypted
 in [Room](https://developer.android.com/training/data-storage/room) on your device using
-_AES-256-GCM_ algorithm (see [Agreed Cryptographic Mechanisms, ENISA, 2025](https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en?filename=ECCG%20Agreed%20Cryptographic%20Mechanisms%20version%202.pdf)).
+_AES-256-GCM_[^enisa].
 
 Data encryption keys and operations are handled
 by [Android Keystore system](https://developer.android.com/privacy-and-security/keystore).
@@ -36,6 +36,9 @@ Sensitive data flow looks:
 UI (data
 decrypted) <---> [CryptoUtils](app/src/main/java/chiogros/trante/data/room/crypto/CryptoUtils.kt) <--->
 Room (data encrypted)
+
+[^enisa]: is recommended
+from [Agreed Cryptographic Mechanisms, ENISA, 2025](https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en?filename=ECCG%20Agreed%20Cryptographic%20Mechanisms%20version%202.pdf).
 
 ## Contributing
 
