@@ -75,11 +75,17 @@ fun ConnectionsList(
             )
         } else {
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                uiState.connections.forEach { (protocol, connections) ->
-                    items(items = connections, contentType = { it }) { con ->
-                        Item(con, viewModel, onItemClick, protocol)
+                uiState.connections
+                    // Sort protocols display order
+                    .toSortedMap { protocol1, protocol2 ->
+                        protocol1.toString().compareTo(protocol2.toString())
                     }
-                }
+                    // Handle each protocol's connections
+                    .forEach { (protocol, connections) ->
+                        items(items = connections, contentType = { it }) { con ->
+                            Item(con, viewModel, onItemClick, protocol)
+                        }
+                    }
             }
         }
     }
