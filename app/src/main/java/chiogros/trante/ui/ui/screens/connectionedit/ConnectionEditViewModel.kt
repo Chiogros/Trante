@@ -113,8 +113,6 @@ class ConnectionEditViewModel(
         setProtocol(defaultProtocol)
 
         viewModelScope.launch {
-            factory.resetScreensConnectionEditFormState()
-
             _uiState.emit(getNewUiState())
         }
     }
@@ -143,6 +141,7 @@ class ConnectionEditViewModel(
         }
 
         viewModelScope.launch {
+            factory.resetScreensConnectionEditFormState()
             formStateFlow.emit(factory.screensConnectionEditFormState)
         }
     }
