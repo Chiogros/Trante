@@ -1,6 +1,6 @@
 [versions]
 aboutLibraries = "14.0.0-b02"
-agp = "9.0.0"
+agp = "9.0.1"
 camelFtp = "4.17.0"
 composeBom = "2026.02.00"
 coreSplashscreen = "1.2.0"
