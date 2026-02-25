@@ -7,6 +7,7 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.GCMParameterSpec
 
+/** Handles data decryption/encryption between app and Room. */
 class CryptoUtils {
     val keyId = "keyId"
     var keygen: KeyGenerator = KeyGenerator.getInstance(KEY_GEN_ALG, PROVIDER)

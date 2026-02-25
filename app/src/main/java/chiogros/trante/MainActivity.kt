@@ -53,9 +53,9 @@ class MainActivity : ComponentActivity() {
         val dispatcher = Dispatchers.IO
         val context = this.applicationContext
 
-        /**
-         * FTP
-         */
+        /////////
+        // FTP //
+        /////////
         // Room
         val ftpConnectionDao = AppDatabase.getDatabase(context).connectionFtpDao()
         val ftpRoomDataSource = FtpRoomDataSource(ftpConnectionDao)
@@ -82,9 +82,9 @@ class MainActivity : ComponentActivity() {
             formStateRoomAdapter = ftpFormStateAdapter
         )
 
-        /**
-         * SFTP
-         */
+        //////////
+        // SFTP //
+        //////////
         // Room
         val sftpConnectionDao = AppDatabase.getDatabase(context).connectionSftpDao()
         val sftpRoomDataSource = SftpRoomDataSource(sftpConnectionDao)

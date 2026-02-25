@@ -29,6 +29,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 object ConnectionsList
 
+/** [connectionId] allows to pass data to the screen, such as the connection being edited. */
 @Serializable
 data class ConnectionEdit(val connectionId: String = "")
 
@@ -48,11 +49,16 @@ fun App(
     protocolFactoryManager: ProtocolFactoryManager
 ) {
     val navController = rememberNavController()
+
+    /** Holds snackbar messages shown to the UI. Every message is shown for a while before being discarded.
+     * @see "https://developer.android.com/develop/ui/compose/components/snackbar"
+     */
     val snackbarHostState = SnackbarHostState()
     val coroutineScope = rememberCoroutineScope()
 
     NavHost(
         navController = navController,
+        // First screen shown
         startDestination = ConnectionsList,
         enterTransition = {
             slideIn { IntOffset(it.width, 0) }

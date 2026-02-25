@@ -2,6 +2,7 @@ package chiogros.trante.data.room
 
 import kotlinx.coroutines.flow.Flow
 
+/** Commands available to exchange data with Room. */
 interface RoomRepository {
     suspend fun delete(con: Connection)
     fun get(id: String): Flow<Connection>

@@ -28,6 +28,7 @@ class ConnectionEditViewModel(
     private val updateConnectionUseCase: UpdateConnectionUseCase,
     private val getProtocolFromIdUseCase: GetProtocolFromIdUseCase
 ) : ViewModel() {
+    /** Protocol selected by default when creating a connection. */
     val defaultProtocol = Protocol.SFTP
 
     var factory: ProtocolFactory = protocolFactoryManager.getFactory(defaultProtocol)
@@ -37,10 +38,6 @@ class ConnectionEditViewModel(
         MutableStateFlow(factory.screensConnectionEditFormState)
 
     private val _uiState = MutableStateFlow(getNewUiState())
-
-    // Allows to track multiple StateFlow from a single "uiState" variable.
-    // Actually, data displayed on screen results from those stored in "_uiState" and in each
-    // protocol form, so we need to track data updates coming from these two sources.
     val uiState: StateFlow<ConnectionEditUiState> = _uiState.asStateFlow()
 
     init {
@@ -57,7 +54,9 @@ class ConnectionEditViewModel(
         }
     }
 
-    // Backup the deleted connection, useful in case of restore()
+    /** Backup the deleted connection, just in case connection gets restored.
+     * @see restore
+     */
     fun backup() {
         viewModelScope.launch {
             _uiState.update {
@@ -69,6 +68,7 @@ class ConnectionEditViewModel(
     }
 
     fun delete() {
+        // Backup the connection so it can be restored if removal was a mistake
         backup()
 
         val room = factory.roomRepository
@@ -104,23 +104,23 @@ class ConnectionEditViewModel(
             val con = factory.roomRepository.get(id).first()
             val form = factory.formStateRoomAdapter.convert(con)
 
-
             _uiState.update {
                 it.copy(
                     isEditing = true,
                     // Hashcode must be set before emitting new form
                     // state (see instruction below _uiState.update).
-                    // Otherwise, once state gets emitted, modification check (see init{} block
-                    // )won't compare to the right value.
+                    // Otherwise, once state gets emitted, modification check (see init{} block)
+                    // won't compare to the right value.
                     unmodifiedFormHash = form.hashCode(),
                 )
             }
 
+            // See comment in _uiState.update above
             factory.screensConnectionEditFormState.emit(form)
         }
     }
 
-    // Initialize states
+    /** Clear out display from old values and options. */
     fun reset() {
         setProtocol(defaultProtocol)
 
@@ -129,7 +129,7 @@ class ConnectionEditViewModel(
         }
     }
 
-    // Restore the last deleted connection
+    /** @see backup */
     fun restore() {
         val formState = uiState.value.deletedConnection
 
@@ -137,6 +137,7 @@ class ConnectionEditViewModel(
             val protocol = getProtocolFromIdUseCase(formState.id)
             setProtocol(protocol)
 
+            // Needs to be emitted again as insert() relies on formState value
             factory.screensConnectionEditFormState.emit(formState)
         }
 
@@ -158,13 +159,16 @@ class ConnectionEditViewModel(
         }
     }
 
+
     fun showDialog(state: Boolean) {
         _uiState.update { it.copy(isDialogShown = state) }
     }
 
+    /** Update existing connection. */
     fun update() {
         val con = factory.formStateRoomAdapter.convert(factory.screensConnectionEditFormState.value)
 
+        // As connection's settings changed, "disconnect" it
         con.state = ConnectionState.NEVER_USED
         con.enabled = false
 

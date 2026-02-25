@@ -195,6 +195,7 @@ fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     }
 }
 
+/** Message box shown when trying to leave screen but there are pending changes. */
 @Composable
 fun ConnectionEditDialog(viewModel: ConnectionEditViewModel, onSave: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()

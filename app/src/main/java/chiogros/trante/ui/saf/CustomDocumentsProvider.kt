@@ -42,6 +42,7 @@ import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 
+/** Provide metadata and methods to Android's file manager to browse remote filesystem. */
 class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var createFileUseCase: CreateFileUseCase
     lateinit var getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase
@@ -52,9 +53,9 @@ class CustomDocumentsProvider : DocumentsProvider() {
     private val dispatcher = Dispatchers.IO
 
     fun init(context: Context) {
-        /**
-         * FTP
-         */
+        /////////
+        // FTP //
+        /////////
         // Room
         val ftpConnectionDao = AppDatabase.getDatabase(context).connectionFtpDao()
         val ftpRoomDataSource = FtpRoomDataSource(ftpConnectionDao)
@@ -81,9 +82,9 @@ class CustomDocumentsProvider : DocumentsProvider() {
             formStateRoomAdapter = ftpFormStateAdapter
         )
 
-        /**
-         * SFTP
-         */
+        //////////
+        // SFTP //
+        //////////
         // Room
         val sftpConnectionDao = AppDatabase.getDatabase(context).connectionSftpDao()
         val sftpRoomDataSource = SftpRoomDataSource(sftpConnectionDao)
@@ -130,8 +131,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         )
     }
 
-    /**
-     * Only called when doing remote-to-remote copy. Remote-to-device and vice-versa do not trigger
+    /** Only called when doing remote-to-remote copy. Remote-to-device and vice versa do not trigger
      * this function.
      */
     override fun copyDocument(sourceDocumentId: String?, targetParentDocumentId: String?): String? {
@@ -171,6 +171,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return readPipe
     }
 
+    /** List files in current directory. */
     override fun queryChildDocuments(
         parentDocumentId: String?, projection: Array<out String?>?, sortOrder: String?
     ): Cursor {
@@ -206,12 +207,14 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return cursor
     }
 
+    /** Called on [CustomDocumentsProvider] start. */
     override fun onCreate(): Boolean {
         val context = this.context ?: return false
         init(context)
         return true
     }
 
+    /** Describe metadata of files in the currently browsed directory. */
     fun getDefaultDocumentProjection(): Array<out String?> {
         val columnNames = listOf(
             DocumentsContract.Document.COLUMN_DOCUMENT_ID,
@@ -224,6 +227,7 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return Array(columnNames.size) { index -> columnNames[index] }
     }
 
+    /** Root projections describe remote storage metadata for Android's file manager. */
     fun getDefaultRootProjection(): Array<out String?> {
         val columnNames = listOf(
             DocumentsContract.Root.COLUMN_TITLE,
