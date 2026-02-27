@@ -1,0 +1,133 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "d6e0a5fc56ce01a2b0a0611d9e389cc3",
+    "entities": [
+      {
+        "tableName": "SftpRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `state` TEXT NOT NULL, `host` TEXT NOT NULL, `user` TEXT NOT NULL, `password_ciphertext` BLOB NOT NULL, `password_iv` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "host",
+            "columnName": "host",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "user",
+            "columnName": "user",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "password.ciphertext",
+            "columnName": "password_ciphertext",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "password.iv",
+            "columnName": "password_iv",
+            "affinity": "BLOB",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "FtpRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `state` TEXT NOT NULL, `host` TEXT NOT NULL, `user` TEXT NOT NULL, `password_ciphertext` BLOB NOT NULL, `password_iv` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "host",
+            "columnName": "host",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "user",
+            "columnName": "user",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "password.ciphertext",
+            "columnName": "password_ciphertext",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "password.iv",
+            "columnName": "password_iv",
+            "affinity": "BLOB",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd6e0a5fc56ce01a2b0a0611d9e389cc3')"
+    ]
+  }
+}

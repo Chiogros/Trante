@@ -33,5 +33,4 @@ google-services.json
 *.hprof
 
 # Custom
-app/schemas/*/*.json
 app/release/
