@@ -2,24 +2,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:appCategory="productivity"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:description="@string/app_description"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher${logo}"
-        android:label="${app_name}"
-        android:roundIcon="@mipmap/ic_launcher${logo}_round"
+        android:gwpAsanMode="always"
+        android:icon="${appLogo}"
+        android:label="${appName}"
+        android:memtagMode="async"
+        android:roundIcon="${appLogo}"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.SplashScreen"
-        android:memtagMode="async"
         tools:targetApi="36">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,17 +32,16 @@
         TODO
         [grantUriPermissions]
         If you enable this feature, either by setting this attribute to "true" or by defining
-        <grant-uri-permission> subelements, call Context.revokeUriPermission() when
+        <grant-uri-permission> sub-elements, call Context.revokeUriPermission() when
         a covered URI is deleted from the provider.
         -->
         <provider
-            android:name="${provider_name}"
-            android:authorities="${package_name}${provider_name}"
-            android:grantUriPermissions="true"
+            android:authorities="${providerName}"
             android:exported="true"
-            android:permission="android.permission.MANAGE_DOCUMENTS"
-            android:icon="@mipmap/ic_launcher"
-            android:label="${app_name}">
+            android:grantUriPermissions="true"
+            android:icon="${appLogo}"
+            android:name="chiogros.trante.ui.saf.CustomDocumentsProvider"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
             <intent-filter>
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>

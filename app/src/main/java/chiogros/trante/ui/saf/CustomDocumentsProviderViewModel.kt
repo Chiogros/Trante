@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 import java.io.InputStream
 import kotlin.io.path.Path
 
+/** Handles UI logic like for screens' ViewModels, but here is for the SAF. */
 class CustomDocumentProviderViewModel(
     val createFileUseCase: CreateFileUseCase,
     val getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase,
@@ -28,6 +29,7 @@ class CustomDocumentProviderViewModel(
     val listFilesInDirectoryUseCase: ListFilesInDirectoryUseCase,
     val readFileUseCase: ReadFileUseCase
 ) : ViewModel() {
+
     val pathDelimiter = '/'
     fun createDocument(parentDocumentId: String, mimeType: String, displayName: String): String? {
         val conId = getConnectionIdFromDocumentId(parentDocumentId)
@@ -36,7 +38,7 @@ class CustomDocumentProviderViewModel(
         val newDocumentId = conId + pathDelimiter + path
         var isFileCreated = false
 
-        // Create new folders is not supported yet
+        // Creating new folders is not supported yet
         if (mimeType == "vnd.android.document/directory") {
             return null
         }
@@ -136,7 +138,7 @@ class CustomDocumentProviderViewModel(
         }
     }
 
-    // Do not list . and .. directories
+    /** Do not list . and .. directories. */
     fun filterNavigationFiles(files: List<File>): List<File> {
         // Match . and ..
         val hideDirectoriesRegex = Regex("^\\.{1,2}$")
@@ -144,10 +146,8 @@ class CustomDocumentProviderViewModel(
         return files.filter { it.path.fileName.toString().matches(hideDirectoriesRegex).not() }
     }
 
-    fun getConnectionFriendlyName(user: String, host: String): String {
-        return "$user@$host"
-    }
-
+    /** All paths look: `documentsId/path/to/file`. The document ID corresponds to [chiogros.trante.data.room.Connection.id].
+     * @see getPathFromDocumentId */
     fun getConnectionIdFromDocumentId(documentId: String): String {
         return documentId.substringBefore(pathDelimiter)
     }
@@ -170,6 +170,7 @@ class CustomDocumentProviderViewModel(
         return resolved ?: "application/octet-stream"
     }
 
+    /** @see getConnectionIdFromDocumentId */
     fun getPathFromDocumentId(documentId: String): String {
         return documentId.substringAfter(pathDelimiter, ".")
     }

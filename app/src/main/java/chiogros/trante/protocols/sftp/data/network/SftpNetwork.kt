@@ -4,18 +4,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.sshd.client.SshClient
-import org.apache.sshd.client.session.ClientSession
-import org.apache.sshd.common.util.buffer.Buffer
 import org.apache.sshd.common.util.io.PathUtils.setUserHomeFolderResolver
 import org.apache.sshd.sftp.client.SftpClient
+import org.apache.sshd.sftp.client.SftpErrorDataHandler
 import org.apache.sshd.sftp.client.SftpVersionSelector
 import org.apache.sshd.sftp.client.impl.DefaultSftpClient
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReentrantLock
 import java.util.function.Supplier
 
 
@@ -55,35 +52,30 @@ class SftpNetwork {
                 session.addPasswordIdentity(pwd)
 
                 val authVerif = session.auth()
+                authVerif.verify()
 
-                // TODO: verify() doesn't work, timeout skips time
-                // and reaches time limit
-                while (!authVerif.isDone) {
-                }
-
-                if (authVerif.isSuccess) SftpNetwork(
-                    coroutineDispatcher,
-                    ConcurrentSftpClient(session)
-                )
-                else throw authVerif.exception
+                if (authVerif.isSuccess) {
+                    SftpNetwork(
+                        coroutineDispatcher,
+                        DefaultSftpClient(
+                            session, SftpVersionSelector.CURRENT,
+                            SftpErrorDataHandler.EMPTY
+                        )
+                    )
+                } else throw authVerif.exception
             }
         }
     }
 
-    suspend fun createFile(path: String): Boolean {
-        var ret: Boolean
-
+    suspend fun createFile(path: String): Boolean =
         withContext(coroutineDispatcher) {
             try {
                 sftpClient.write(path, SftpClient.OpenMode.Create)
-                ret = true
+                true
             } catch (_: IOException) {
-                ret = false
+                false
             }
         }
-
-        return ret
-    }
 
     suspend fun getFileStat(path: String): SftpClient.Attributes =
         withContext(coroutineDispatcher) {
@@ -95,30 +87,10 @@ class SftpNetwork {
             sftpClient.readEntries(sftpClient.canonicalPath(path))
         }
 
-    suspend fun readFile(path: String): InputStream {
-        var content: InputStream
-
+    suspend fun readFile(path: String): InputStream =
         withContext(coroutineDispatcher) {
             val canonicalPath: String = sftpClient.canonicalPath(path)
             sftpClient.open(canonicalPath)
-
-            content = sftpClient.read(canonicalPath)
+            sftpClient.read(canonicalPath)
         }
-
-        return content
-    }
-
-    class ConcurrentSftpClient internal constructor(clientSession: ClientSession) :
-        DefaultSftpClient(clientSession, SftpVersionSelector.CURRENT, EMPTY) {
-        private val sendLock: Lock = ReentrantLock()
-
-        override fun send(cmd: Int, buffer: Buffer?): Int {
-            this.sendLock.lock()
-            try {
-                return super.send(cmd, buffer)
-            } finally {
-                this.sendLock.unlock()
-            }
-        }
-    }
 }

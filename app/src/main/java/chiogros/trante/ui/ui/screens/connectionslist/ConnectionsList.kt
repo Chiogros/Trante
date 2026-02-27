@@ -3,6 +3,7 @@ package chiogros.trante.ui.ui.screens.connectionslist
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -36,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,6 @@ fun ConnectionsList(
     snackbarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val connections by uiState.connections.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -62,7 +62,7 @@ fun ConnectionsList(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = { Fab(onFabClick) },
     ) { innerPadding ->
-        if (connections.isEmpty()) {
+        if (uiState.connections.isEmpty()) {
             // Print a message if there is nothing to list
             Text(
                 text = stringResource(R.string.no_connection) + "...",
@@ -74,9 +74,17 @@ fun ConnectionsList(
             )
         } else {
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                items(items = connections, contentType = { it }) { con ->
-                    Item(con.second, viewModel, onItemClick, con.first)
-                }
+                uiState.connections
+                    // Sort protocols display order
+                    .toSortedMap { protocol1, protocol2 ->
+                        protocol1.toString().compareTo(protocol2.toString())
+                    }
+                    // Handle each protocol's connections
+                    .forEach { (protocol, connections) ->
+                        items(items = connections, contentType = { it }) { con ->
+                            Item(con, viewModel, onItemClick, protocol)
+                        }
+                    }
             }
         }
     }
@@ -135,11 +143,18 @@ fun Item(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = protocol.name,
-            modifier = Modifier.weight(1F),
-            fontWeight = FontWeight.Normal
-        )
+        OutlinedButton(
+            onClick = {},
+            modifier = Modifier.weight(1F)
+        ) {
+            Text(
+                text = protocol.name,
+                modifier = Modifier,
+                fontWeight = FontWeight.Normal,
+            )
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
 
         if (!con.name.isEmpty()) {
             // Only print connection name if defined
@@ -148,7 +163,6 @@ fun Item(
             Column(modifier = Modifier.weight(3F)) {
                 Text(
                     text = con.toString(),
-                    fontFamily = FontFamily.Monospace,
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -183,6 +197,7 @@ fun Item(
                         else -> {}
                     }
                 }
-            })
+            }
+        )
     }
 }

@@ -28,7 +28,7 @@ data class SftpRoom(
         var stringyfied = super.toString()
 
         if (host.isNotEmpty() and user.isNotEmpty()) {
-            stringyfied = user + '@' + host
+            stringyfied = "$user@$host"
         }
 
         return stringyfied

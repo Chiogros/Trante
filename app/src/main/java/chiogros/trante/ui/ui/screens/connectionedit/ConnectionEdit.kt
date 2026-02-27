@@ -33,7 +33,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import chiogros.trante.R
 import chiogros.trante.protocols.Protocol
 import chiogros.trante.protocols.ProtocolFactoryManager
@@ -164,27 +166,36 @@ fun ConnectionEditBody(
     ConnectionEditTypePicker(viewModel)
 
     // Show inputs form
-    (protocolFactoryManager.getFactory(uiState.protocol).screensConnectionEditForm)()
+    protocolFactoryManager.getFactory(uiState.protocol).screensConnectionEditForm()
+
+    Text(
+        text = stringResource(R.string.required_char) + stringResource(R.string.required),
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.outline
+    )
 }
 
 @Composable
 fun ConnectionEditTypePicker(viewModel: ConnectionEditViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val protocols = Protocol.entries.filter { protocol -> protocol != Protocol.UNKNOWN }
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-        protocols.forEachIndexed { index, protocol ->
+        Protocol.entries.forEachIndexed { index, protocol ->
             SegmentedButton(
                 selected = (uiState.protocol == protocol),
-                onClick = { viewModel.setProtocol(protocol) },
+                onClick = { if (!uiState.isEditing) viewModel.setProtocol(protocol) },
+                enabled = !uiState.isEditing or (uiState.isEditing and (uiState.protocol == protocol)),
                 shape = SegmentedButtonDefaults.itemShape(
-                    index = index, count = protocols.size
+                    index = index, count = Protocol.entries.size
                 ),
                 label = { Text(protocol.toString()) })
         }
     }
 }
 
+/** Message box shown when trying to leave screen but there are pending changes. */
 @Composable
 fun ConnectionEditDialog(viewModel: ConnectionEditViewModel, onSave: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()

@@ -16,7 +16,7 @@
 ################
 # Keep options #
 ################
-# SSH
+# SFTP
 -keep,allowoptimization,allowobfuscation class org.apache.sshd.common.io.nio2.Nio2ServiceFactoryFactory { *; }
 -keep,allowoptimization,allowobfuscation class org.apache.sshd.common.session.helpers.SessionHelper { *; }
 -keep,allowoptimization class org.apache.sshd.common.util.security.bouncycastle.BouncyCastleSecurityProviderRegistrar { *; }

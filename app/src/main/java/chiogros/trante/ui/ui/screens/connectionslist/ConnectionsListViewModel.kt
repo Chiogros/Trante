@@ -1,36 +1,32 @@
 package chiogros.trante.ui.ui.screens.connectionslist
 
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import chiogros.trante.data.room.Connection
 import chiogros.trante.domain.DisableConnectionUseCase
 import chiogros.trante.domain.EnableConnectionUseCase
 import chiogros.trante.domain.GetConnectionsUseCase
-import chiogros.trante.domain.GetProtocolFromIdUseCase
 import chiogros.trante.protocols.Protocol
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ConnectionsListUiState(
-    val connections: StateFlow<List<Pair<Protocol, Connection>>>,
+    val connections: SnapshotStateMap<Protocol, List<Connection>> = mutableStateMapOf(),
+    val isLoadingConnections: Boolean = true,
     val isConnectionDeleted: Boolean = false
 )
 
 class ConnectionsListViewModel(
     private val enableConnectionUseCase: EnableConnectionUseCase,
     private val disableConnectionUseCase: DisableConnectionUseCase,
-    private val getConnectionsUseCase: GetConnectionsUseCase,
-    private val getProtocolFromIdUseCase: GetProtocolFromIdUseCase
+    private val getConnectionsUseCase: GetConnectionsUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(
-        ConnectionsListUiState(connections = MutableStateFlow(emptyList()))
-    )
+    private val _uiState = MutableStateFlow(ConnectionsListUiState())
+
     val uiState: StateFlow<ConnectionsListUiState> = _uiState.asStateFlow()
 
     init {
@@ -38,18 +34,10 @@ class ConnectionsListViewModel(
     }
 
     fun loadConnections() {
-        _uiState.update {
-            it.copy(
-                connections = getConnectionsUseCase().map { connections ->
-                    val pairs: MutableList<Pair<Protocol, Connection>> = mutableListOf()
-                    connections.forEach { connection ->
-                        pairs.add(Pair(getProtocolFromIdUseCase(connection.id), connection))
-                    }
-                    pairs
-                }.stateIn(
-                    viewModelScope, WhileSubscribed(5000), emptyList()
-                )
-            )
+        viewModelScope.launch {
+            getConnectionsUseCase().collect { pair ->
+                uiState.value.connections[pair.first] = pair.second
+            }
         }
     }
 

@@ -10,7 +10,7 @@ class GetEnabledConnectionsUseCase(private val protocolFactoryManager: ProtocolF
     operator fun invoke(): List<Connection> {
         val connections: MutableList<Connection> = mutableListOf()
 
-        Protocol.entries.filter { protocol -> protocol != Protocol.UNKNOWN }.forEach { protocol ->
+        Protocol.entries.forEach { protocol ->
             val factory = protocolFactoryManager.getFactory(protocol)
             val room = factory.roomRepository
 

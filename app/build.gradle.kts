@@ -1,6 +1,6 @@
 val appName = "Trante"
 val packageName = "chiogros." + appName.lowercase()
-val providerName = ".ui.saf.CustomDocumentsProvider"
+val providerClass = ".ui.saf.CustomDocumentsProvider"
 
 android {
     namespace = packageName
@@ -10,19 +10,14 @@ android {
         applicationId = android.namespace
         minSdk = 26
         targetSdk = android.compileSdk
-        versionCode = 4
-        versionName = "1.2.0"
+        versionCode = 5
+        versionName = "1.3.0"
 
         // Values to be used from manifest file
-        manifestPlaceholders["app_name"] = appName
-        manifestPlaceholders["logo"] = ""
-        manifestPlaceholders["package_name"] = packageName
-        manifestPlaceholders["provider_name"] = providerName
+        manifestPlaceholders["appName"] = appName
 
         // Values to be used from code
         buildConfigField("String", "APP_NAME", "\"$appName\"")
-        buildConfigField("String", "PACKAGE_NAME", "\"$packageName\"")
-        buildConfigField("String", "PROVIDER_NAME", "\"$providerName\"")
         buildConfigField("String", "VERSION_NAME", "\"$versionName\"")
     }
 
@@ -35,15 +30,20 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            val providerName = "$packageName$providerClass"
+            manifestPlaceholders["providerName"] = providerName
+            manifestPlaceholders["appLogo"] = "@mipmap/ic_launcher"
+            buildConfigField("String", "PROVIDER_NAME", "\"$providerName\"")
         }
         debug {
             isDebuggable = true
             applicationIdSuffix = ".debug"
-            manifestPlaceholders["logo"] = "_debug"
 
-            val debugPackageName: String = packageName + applicationIdSuffix
-            manifestPlaceholders["package_name"] = debugPackageName
-            buildConfigField("String", "PACKAGE_NAME", "\"$debugPackageName\"")
+            val debugProviderName: String = packageName + applicationIdSuffix + providerClass
+            manifestPlaceholders["providerName"] = debugProviderName
+            manifestPlaceholders["appLogo"] = "@mipmap/ic_launcher_debug"
+            buildConfigField("String", "PROVIDER_NAME", "\"$debugProviderName\"")
         }
     }
 
@@ -57,14 +57,23 @@ android {
         buildConfig = true
     }
 
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
-
     packaging {
         resources {
             pickFirsts += "META-INF/DEPENDENCIES"
+            pickFirsts += "META-INF/LICENSE.md"
+            pickFirsts += "META-INF/NOTICE.md"
+            pickFirsts += "META-INF/jandex.idx"
+            pickFirsts += "pom.xml"
+            pickFirsts += "component.properties"
+            pickFirsts += "bean.properties"
+            pickFirsts += "other.properties"
+            pickFirsts += "dev-consoles.properties"
         }
+    }
+
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        generateLocaleConfig = true
     }
 }
 
@@ -79,11 +88,13 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
-    implementation(libs.sshd.sftp)
 
+    implementation(libs.sshd.sftp)
     // To avoid logging error
     runtimeOnly(libs.slf4j.api)
     runtimeOnly(libs.slf4j.nop)
+
+    implementation(libs.camel.ftp)
 }
 
 // Plugins are used to parse Gradle configuration.
@@ -93,5 +104,11 @@ plugins {
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.kotlin.compose)
-    kotlin(libs.plugins.plugin.serialization.get().pluginId).version(libs.versions.serialization)
+    alias(libs.plugins.kotlin.serialization)
+}
+
+// Required for Room DB schemas migration
+// https://developer.android.com/training/data-storage/room/migrating-db-versions#test
+room {
+    schemaDirectory("$projectDir/schemas")
 }

@@ -17,6 +17,17 @@ import chiogros.trante.domain.ListFilesInDirectoryUseCase
 import chiogros.trante.domain.ReadFileUseCase
 import chiogros.trante.protocols.ProtocolFactoryManager
 import chiogros.trante.protocols.common.CommonConnectionEditFormState
+import chiogros.trante.protocols.ftp.FtpFactory
+import chiogros.trante.protocols.ftp.data.network.FtpLocalNetworkDataSource
+import chiogros.trante.protocols.ftp.data.network.FtpNetwork
+import chiogros.trante.protocols.ftp.data.network.FtpNetworkRepository
+import chiogros.trante.protocols.ftp.data.network.FtpRemoteNetworkDataSource
+import chiogros.trante.protocols.ftp.data.room.FtpRoomDataSource
+import chiogros.trante.protocols.ftp.data.room.FtpRoomRepository
+import chiogros.trante.protocols.ftp.domain.FtpFormStateToRoomAdapter
+import chiogros.trante.protocols.ftp.ui.ui.screens.connectionedit.FtpConnectionEditForm
+import chiogros.trante.protocols.ftp.ui.ui.screens.connectionedit.FtpConnectionEditFormState
+import chiogros.trante.protocols.ftp.ui.ui.screens.connectionedit.FtpConnectionEditViewModel
 import chiogros.trante.protocols.sftp.SftpFactory
 import chiogros.trante.protocols.sftp.data.network.SftpLocalNetworkDataSource
 import chiogros.trante.protocols.sftp.data.network.SftpNetwork
@@ -31,6 +42,7 @@ import chiogros.trante.protocols.sftp.ui.ui.screens.connectionedit.SftpConnectio
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 
+/** Provide metadata and methods to Android's file manager to browse remote filesystem. */
 class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var createFileUseCase: CreateFileUseCase
     lateinit var getEnabledConnectionsUseCase: GetEnabledConnectionsUseCase
@@ -40,34 +52,66 @@ class CustomDocumentsProvider : DocumentsProvider() {
     lateinit var viewModel: CustomDocumentProviderViewModel
     private val dispatcher = Dispatchers.IO
 
-    fun init(context: Context): Boolean {
-        // Sftp
-        val connectionSftpDao = AppDatabase.getDatabase(context).connectionSftpDao()
-        val sftpRoomDataSource = SftpRoomDataSource(connectionSftpDao)
+    fun init(context: Context) {
+        /////////
+        // FTP //
+        /////////
+        // Room
+        val ftpConnectionDao = AppDatabase.getDatabase(context).connectionFtpDao()
+        val ftpRoomDataSource = FtpRoomDataSource(ftpConnectionDao)
+        val ftpRoomRepository = FtpRoomRepository(ftpRoomDataSource)
+        // Remote
+        val ftpNetwork = FtpNetwork.new(dispatcher)
+        val ftpRemoteRoomDataSource = FtpRemoteNetworkDataSource(ftpNetwork)
+        val ftpLocalNetworkDataSource = FtpLocalNetworkDataSource()
+        val ftpNetworkRepository =
+            FtpNetworkRepository(ftpRemoteRoomDataSource, ftpLocalNetworkDataSource)
+        // View model
+        val ftpScreenConnectionEditFormState = MutableStateFlow(FtpConnectionEditFormState())
+        val ftpScreenConnectionEditViewModel =
+            FtpConnectionEditViewModel(ftpScreenConnectionEditFormState)
+        val ftpScreenConnectionEditForm: @Composable () -> Unit =
+            { FtpConnectionEditForm(ftpScreenConnectionEditViewModel) }
+        val ftpFormStateAdapter = FtpFormStateToRoomAdapter()
+        // Protocols factories
+        val ftpFactory = FtpFactory(
+            networkRepository = ftpNetworkRepository,
+            roomRepository = ftpRoomRepository,
+            screensConnectionEditForm = ftpScreenConnectionEditForm,
+            screensConnectionEditFormState = ftpScreenConnectionEditFormState as MutableStateFlow<CommonConnectionEditFormState>,
+            formStateRoomAdapter = ftpFormStateAdapter
+        )
+
+        //////////
+        // SFTP //
+        //////////
+        // Room
+        val sftpConnectionDao = AppDatabase.getDatabase(context).connectionSftpDao()
+        val sftpRoomDataSource = SftpRoomDataSource(sftpConnectionDao)
         val sftpRoomRepository = SftpRoomRepository(sftpRoomDataSource)
         // Remote
         val sftpNetwork = SftpNetwork.new(dispatcher)
-        val remoteSftpRoomDataSource = SftpRemoteNetworkDataSource(sftpNetwork)
+        val sftpRemoteRoomDataSource = SftpRemoteNetworkDataSource(sftpNetwork)
         val sftpLocalNetworkDataSource = SftpLocalNetworkDataSource()
         val sftpNetworkRepository =
-            SftpNetworkRepository(remoteSftpRoomDataSource, sftpLocalNetworkDataSource)
+            SftpNetworkRepository(sftpRemoteRoomDataSource, sftpLocalNetworkDataSource)
         // View model
-        val screenSftpConnectionEditFormState = MutableStateFlow(SftpConnectionEditFormState())
-        val screenConnectionEditViewModel =
-            SftpConnectionEditViewModel(screenSftpConnectionEditFormState)
-        val screenConnectionEditForm: @Composable () -> Unit =
-            { SftpConnectionEditForm(screenConnectionEditViewModel) }
+        val sftpScreenConnectionEditFormState = MutableStateFlow(SftpConnectionEditFormState())
+        val sftpScreenConnectionEditViewModel =
+            SftpConnectionEditViewModel(sftpScreenConnectionEditFormState)
+        val sftpScreenConnectionEditForm: @Composable () -> Unit =
+            { SftpConnectionEditForm(sftpScreenConnectionEditViewModel) }
         val formStateAdapter = SftpFormStateToRoomAdapter()
-
         // Protocols factories
         val sftpFactory = SftpFactory(
             networkRepository = sftpNetworkRepository,
             roomRepository = sftpRoomRepository,
-            screensConnectionEditForm = screenConnectionEditForm,
-            screensConnectionEditFormState = screenSftpConnectionEditFormState as MutableStateFlow<CommonConnectionEditFormState>,
+            screensConnectionEditForm = sftpScreenConnectionEditForm,
+            screensConnectionEditFormState = sftpScreenConnectionEditFormState as MutableStateFlow<CommonConnectionEditFormState>,
             formStateRoomAdapter = formStateAdapter
         )
-        val protocolFactoryManager = ProtocolFactoryManager(sftpFactory)
+
+        val protocolFactoryManager = ProtocolFactoryManager(sftpFactory, ftpFactory)
 
         // Use cases
         val getProtocolFromIdUseCase = GetProtocolFromIdUseCase(protocolFactoryManager)
@@ -85,12 +129,9 @@ class CustomDocumentsProvider : DocumentsProvider() {
             listFilesInDirectoryUseCase,
             readFileUseCase
         )
-
-        return true
     }
 
-    /**
-     * Only called when doing remote-to-remote copy. Remote-to-device and vice-versa do not trigger
+    /** Only called when doing remote-to-remote copy. Remote-to-device and vice versa do not trigger
      * this function.
      */
     override fun copyDocument(sourceDocumentId: String?, targetParentDocumentId: String?): String? {
@@ -130,9 +171,10 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return readPipe
     }
 
+    /** List files in current directory. */
     override fun queryChildDocuments(
         parentDocumentId: String?, projection: Array<out String?>?, sortOrder: String?
-    ): Cursor? {
+    ): Cursor {
         val column: Array<out String?> = projection ?: getDefaultDocumentProjection()
         val cursor = MatrixCursor(column)
 
@@ -145,8 +187,8 @@ class CustomDocumentsProvider : DocumentsProvider() {
 
     override fun queryDocument(
         documentId: String?, projection: Array<out String?>?
-    ): Cursor? {
-        val column: Array<out String?>? = projection ?: getDefaultDocumentProjection()
+    ): Cursor {
+        val column: Array<out String?> = projection ?: getDefaultDocumentProjection()
         val cursor = MatrixCursor(column)
 
         if (documentId != null) {
@@ -156,8 +198,8 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return cursor
     }
 
-    override fun queryRoots(projection: Array<out String?>?): Cursor? {
-        val column: Array<out String?>? = projection ?: getDefaultRootProjection()
+    override fun queryRoots(projection: Array<out String?>?): Cursor {
+        val column: Array<out String?> = projection ?: getDefaultRootProjection()
         val cursor = MatrixCursor(column)
 
         viewModel.queryRoots(cursor)
@@ -165,15 +207,14 @@ class CustomDocumentsProvider : DocumentsProvider() {
         return cursor
     }
 
+    /** Called on [CustomDocumentsProvider] start. */
     override fun onCreate(): Boolean {
-        val context = this.context
-        if (context == null) {
-            return false
-        }
-
-        return init(context)
+        val context = this.context ?: return false
+        init(context)
+        return true
     }
 
+    /** Describe metadata of files in the currently browsed directory. */
     fun getDefaultDocumentProjection(): Array<out String?> {
         val columnNames = listOf(
             DocumentsContract.Document.COLUMN_DOCUMENT_ID,
@@ -183,10 +224,11 @@ class CustomDocumentsProvider : DocumentsProvider() {
             DocumentsContract.Document.COLUMN_SIZE,
             DocumentsContract.Document.COLUMN_LAST_MODIFIED,
         )
-        return Array(columnNames.size, { index -> columnNames[index] })
+        return Array(columnNames.size) { index -> columnNames[index] }
     }
 
-    fun getDefaultRootProjection(): Array<out String?>? {
+    /** Root projections describe remote storage metadata for Android's file manager. */
+    fun getDefaultRootProjection(): Array<out String?> {
         val columnNames = listOf(
             DocumentsContract.Root.COLUMN_TITLE,
             DocumentsContract.Root.COLUMN_ROOT_ID,
@@ -194,6 +236,6 @@ class CustomDocumentsProvider : DocumentsProvider() {
             DocumentsContract.Root.COLUMN_DOCUMENT_ID,
             DocumentsContract.Root.COLUMN_ICON
         )
-        return Array(columnNames.size, { index -> columnNames[index] })
+        return Array(columnNames.size) { index -> columnNames[index] }
     }
 }

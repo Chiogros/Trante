@@ -8,8 +8,4 @@ data class SftpConnectionEditFormState(
     var host: String = String(),
     var user: String = String(),
     var password: String = String(),
-) : CommonConnectionEditFormState {
-    override fun clone(): CommonConnectionEditFormState {
-        return this.copy()
-    }
-}
+) : CommonConnectionEditFormState
