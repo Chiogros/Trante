@@ -110,7 +110,8 @@ Let's take an example, assuming SFTP is supported and we now want to support FTP
    as [Camel FTP](https://mvnrepository.com/artifact/org.apache.camel/camel-ftp).
    Pick the latest
    version ([4.17.0](https://mvnrepository.com/artifact/org.apache.camel/camel-ftp/4.17.0) at this
-   time) or a version compatible with other libraries of the app.
+   time) or a version compatible with other libraries of the app (if you manage to compile the app,
+   then it's compatible with).
    In [build.gradle.kts](app/build.gradle.kts), in `dependencies` section, add the library:
 
 ```groovy

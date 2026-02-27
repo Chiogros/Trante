@@ -37,8 +37,16 @@ UI (data
 decrypted) <---> [CryptoUtils](app/src/main/java/chiogros/trante/data/room/crypto/CryptoUtils.kt) <--->
 Room (data encrypted)
 
+Memory Tagging Extension enabled. No WebView.
+No [DCL](https://developer.android.com/privacy-and-security/risks/dynamic-code-loading) via memory
+nor storage.
+
+Efforts are ongoing to make [reproductive builds](https://reproducible-builds.org), so you can
+verify app's integrity.
+
 [^enisa]: is recommended
-from [Agreed Cryptographic Mechanisms, ENISA, 2025](https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en?filename=ECCG%20Agreed%20Cryptographic%20Mechanisms%20version%202.pdf).
+from [Agreed Cryptographic Mechanisms, ENISA, 2025](https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en?filename=ECCG%20Agreed%20Cryptographic%20Mechanisms%20version%202.pdf)
+and [Broken or risky cryptographic algorithm, Android](https://developer.android.com/privacy-and-security/risks/broken-cryptographic-algorithm#weak-or-broken-cryptographic-encryption-functions-use-strong-cryptographic-algorithms-in-encryption-1B2M2Y8Asg).
 
 ## Contributing
 
