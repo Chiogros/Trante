@@ -80,7 +80,7 @@ principle, but it doesn't.
 The data sources are:
 
 - [room](app/src/main/java/chiogros/trante/data/room), in-device SQLite database where app's data is
-  stored (connections, IP addresses, credentials, etc)
+  stored (connections, IP addresses, credentials, etc.)
 - [network](app/src/main/java/chiogros/trante/data/network), gateway to access files stored on
   remote storage on the network.
 
@@ -101,23 +101,21 @@ It should be as easy as:
 - mapping protocol to abstract types
 - designing UI to fill out data
 
-Let's take an example, assuming SFTP is supported and we now want to support FTP.
+Let's take an example, assuming SFTP is supported, and we now want to support FTP.
 
 1. Duplicate [protocols/sftp](app/src/main/java/chiogros/trante/protocols/sftp) folder
    to [protocols/ftp](app/src/main/java/chiogros/trante/protocols/ftp)
 2. Pick a library that brings
-   a [FTP client from Maven Repository](https://mvnrepository.com/search?q=ftp), such
+   any FTP client from [Maven Repository](https://mvnrepository.com/search?q=ftp), such
    as [Camel FTP](https://mvnrepository.com/artifact/org.apache.camel/camel-ftp).
    Pick the latest
    version ([4.17.0](https://mvnrepository.com/artifact/org.apache.camel/camel-ftp/4.17.0) at this
    time) or a version compatible with other libraries of the app (if you manage to compile the app,
    then it's compatible with).
    In [build.gradle.kts](app/build.gradle.kts), in `dependencies` section, add the library:
-
-```groovy
-dependencies {
-    implementation("org.apache.camel:camel-ftp:4.17.0")
-}
-```
-
-3.
+    ```groovy
+    dependencies {
+        implementation("org.apache.camel:camel-ftp:4.17.0")
+    }
+    ```
+3. todo

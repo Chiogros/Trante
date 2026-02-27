@@ -12,7 +12,7 @@
     <string name="continue_">Continue</string>
     <string name="cancel">Cancel</string>
     <string name="changes_not_saved">Changes not saved</string>
-    <string name="you_may_lost_your_changes">You may lost your changes.</string>
+    <string name="you_may_lost_your_changes">You may lose your changes.</string>
     <string name="no_connection">No connection</string>
     <string name="repository_url" translatable="false">https://github.com/Chiogros/Trante</string>
     <string name="connection_deleted">Connection deleted</string>
