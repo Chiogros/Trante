@@ -2,7 +2,7 @@
 aboutLibraries = "14.0.0-b02"
 agp = "9.0.1"
 camelFtp = "4.18.0"
-composeBom = "2026.02.00"
+composeBom = "2026.02.01"
 coreSplashscreen = "1.2.0"
 kotlin = "2.3.10"
 # Remove android.disallowKotlinSourceSets in gradle.properties once ksp gets >= 2.3.4
